@@ -1,74 +1,63 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import react from '@vitejs/plugin-react-swc'; // Supondo que você usa este ou o plugin-react padrão
+import svgr from 'vite-plugin-svgr';
 
-// Em módulos ES (que o Vite usa), __dirname não existe globalmente.
-// A implementação abaixo é a forma correta de recriá-lo em TS/ESM.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }) => {
-  // Carrega as variáveis de ambiente baseadas no mode (development, production, etc.)
-  const env = loadEnv(mode, process.cwd(), '');
-  const API_TARGET = env.VITE_API_URL || 'http://localhost:3000';
-
-  console.log(`🚀 Vite Proxy target: ${API_TARGET}`);
-
-  // --- Configuração do Proxy Centralizada ---
-  // A tipagem é inferida automaticamente pelo defineConfig,
-  // mas você pode ser explícito se quiser (ex: ProxyOptions)
-  const proxyConfig = {
-    '/api': {
-      target: API_TARGET,
-      changeOrigin: true,
-      secure: false,
-    },
-  };
-
   return {
+    // Adicione o tsconfigPaths aqui
+    plugins: [
+      react(), 
+      tsconfigPaths(),
+      svgr({
+        include: "**/*.svg?react"
+      })
+    ],
+    
     root: 'src', 
     base: '/',
 
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@assets': path.resolve(__dirname, './src/assets'),
-        '@js': path.resolve(__dirname, './src/js'),
-        '@css': path.resolve(__dirname, './src/css'),
-      },
-    },
+    // A seção 'resolve' foi removida pois o tsconfigPaths cuida disso agora
 
-    // Servidor de Desenvolvimento
     server: {
-      host: true, // Escuta em todos os IPs locais
+      host: true,
       port: 5173,
       open: true,
-      cors: true,
-      proxy: proxyConfig, 
+      cors: true, 
     },
 
-    // Servidor de Preview da Build
     preview: {
       port: 4173,
       open: true,
-      proxy: proxyConfig, 
     },
 
     build: {
+      // Como o root é 'src', precisamos subir um nível para gerar a dist na raiz do pacote
       outDir: path.resolve(__dirname, 'dist'),
       emptyOutDir: true,
       sourcemap: mode === 'development',
       rollupOptions: {
         output: {
-          // assetInfo é tipado automaticamente aqui
           assetFileNames: (assetInfo) => {
-            // Verificação de segurança caso assetInfo.name seja undefined (raro, mas possível em TS estrito)
-            const name = assetInfo.name || '';
-            let extType = name.split('.').at(1) || 'unknown';
+            // CORREÇÃO: Usamos .names[0] em vez de .name
+            const info = assetInfo.names ? assetInfo.names[0] : (assetInfo.name || '');
+            let extType = info.split('.').at(1) || 'unknown';
             
             if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
               extType = 'img';
+            } else if (/css|scss|sass/i.test(extType)) {
+                // Opcional: organizar CSS também
+                extType = 'css';
+            } else if (/woff|woff2|eot|ttf|otf/i.test(extType)) {
+                // Opcional: organizar Fontes
+                extType = 'fonts';
             }
+
             return `assets/${extType}/[name]-[hash][extname]`;
           },
           chunkFileNames: 'assets/js/[name]-[hash].js',

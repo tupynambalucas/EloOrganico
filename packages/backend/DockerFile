@@ -1,0 +1,41 @@
+# Estágio 1: Build
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copia apenas os arquivos de dependência primeiro (cache layer)
+COPY package*.json ./
+
+# Instala dependências (incluindo devDependencies para rodar o tsc)
+RUN npm ci
+
+# Copia o código fonte e configs
+COPY tsconfig.json ./
+COPY src ./src
+COPY types ./types
+
+# Compila o TypeScript para JavaScript (gera pasta dist)
+RUN npm run build
+
+# Estágio 2: Produção
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+# Define ambiente como produção
+ENV NODE_ENV=production
+
+# Copia package.json para instalar apenas dependências de produção
+COPY package*.json ./
+
+# Instala APENAS dependencies (remove devDependencies)
+RUN npm ci --only=production
+
+# Copia o build gerado no estágio anterior
+COPY --from=builder /app/dist ./dist
+
+# Expõe a porta que o Fastify usa (geralmente 3000 ou definido via ENV)
+EXPOSE 3000
+
+# Comando de inicialização
+CMD ["node", "dist/server.js"]

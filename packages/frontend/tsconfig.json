@@ -10,12 +10,21 @@
         "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
+        "noEmit": true,
         "jsx": "react-jsx",
 
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+
+        /* --- Configuração de Alias --- */
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@assets/*": ["./src/assets/*"],
+            "@components/*": ["./src/components/*"]
+        }
     },
-    "include": ["src/**/*", "types"]
+    "include": ["src"]
 }

@@ -1,8 +1,8 @@
 import { Model, Mongoose } from 'mongoose';
 import 'fastify';
-import { type IUser, userSchema } from '../src/models/User';
-import { type IProduct, productSchema } from '../src/models/Product';
-import { type ICycle, cycleSchema } from '../src/models/Cycle';
+import { type IUser, userSchema } from '../models/User';
+import { type IProduct, productSchema } from '../models/Product';
+import { type ICycle, cycleSchema } from '../models/Cycle';
 
 declare module 'fastify' {
     interface FastifyInstance {

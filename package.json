@@ -1,35 +1,23 @@
 {
-  "name": "@eloorganico/mentoring-monorepo",
+  "name": "@elo-organico/monorepo",
   "version": "1.0.0",
-  "author": "Tupynambá Lucas Varela Rodrigues",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
-"scripts": {
-
-    "frontend:dev": "npm run dev -w @eloorganico/frontend",
-    "backend:dev": "npm run dev -w @eloorganico/backend",
-
+  "scripts": {
+    "frontend:dev": "npm run dev -w @elo-organico/frontend",
+    "backend:dev": "npm run dev -w @elo-organico/backend",
     "dev:stack": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
 
-    "// --- TESTE DE BUILD (Frontend) ---": "",
-    "frontend:build": "npm run build -w @eloorganico/frontend",
-    "frontend:preview": "npm run preview -w @eloorganico/frontend",
+    "frontend:build": "npm run build -w @elo-organico/frontend",
+    "frontend:preview": "npm run preview -w @elo-organico/frontend",
     
     "prod:up": "docker compose up -d --build",
-    
-    "db:up": "docker compose up -d db",
-
-    "backend:up": "docker compose up -d",
-
     "docker:down": "docker compose down",
-
     "docker:logs": "docker compose logs -f",
-
-    "db:clean": "docker compose down --volumes",
-    
-    "db:reset": "npm run db:clean && npm run db:up"
+    "db:up": "docker compose up -d db",
+    "db:clean": "docker compose down --volumes"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

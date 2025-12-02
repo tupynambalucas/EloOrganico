@@ -1,0 +1,122 @@
+.container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: start;
+  background: ¨#c6ccd8;
+}
+
+.container > div:first-child{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 1.25vh;
+  margin-top: 15vh;
+}
+
+.container > div:first-child > svg:first-child{
+  height: 8vh;
+}
+
+.container > div:first-child > h2{
+  font-size: 3vh;  
+  margin-top: 4vh;
+}
+
+.container > div:first-child > a{
+  font-size: 2vh;  
+  color: #0f0f0f;
+  cursor: pointer;
+  text-underline-offset: 0.5vh;
+  text-decoration: underline;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20vw;
+  background: #dbc174;
+  flex-wrap: nowrap;
+  padding: 2rem; 
+  border-radius: 8px; 
+  gap: 1.5rem;
+  -webkit-box-shadow: 0px 0px 16px -5px rgba(0,0,0,0.15); 
+  box-shadow: 0px 0px 16px -5px rgba(0,0,0,0.15);
+}
+
+/* grid container */
+.form > div:nth-of-type(1){
+  display: grid;
+  /* Cria 3 colunas de tamanho igual que ocupam o espaço disponível */
+  grid-template-columns: repeat(3, 1fr);
+  /* Define um espaçamento de 20px entre os ícones */
+  gap: 20px;
+}
+/* grid div */
+.form > div:nth-of-type(1) > div{
+  background: snow;
+  /* Garante que a div seja sempre um quadrado perfeito */
+  height: 8vh;
+  width: 8vh;
+  aspect-ratio: 1 / 1;
+  /* Transforma a div quadrada em um círculo perfeito */
+  border-radius: 50%;
+  /* Esconde qualquer parte da imagem que saia do círculo */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Adiciona uma transição suave para o efeito de hover */
+  cursor: pointer;
+  border: 0.6vh solid transparent;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+/* grid div image */
+.form > div:nth-of-type(1) > div > img{
+  height: 100%!important;
+  width: 100%!important;
+  /* Garante que a imagem cubra a área sem distorcer */
+}
+.form > div:nth-of-type(2) {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 100%;
+  gap: 0.5rem; 
+
+}
+.form input,
+.form button {
+  width: 100%; 
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; 
+  border-radius: 1.25vh;
+}
+
+
+.form > button {
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.form > a {
+  margin-top: 1rem;
+  cursor: pointer;
+  color: white;
+  text-decoration: underline;
+}

@@ -1,0 +1,31 @@
+.container{
+    height: 100%;
+    width: 100%;
+    background: #E4E4E4;
+}
+
+.header{
+    height: 10vh;
+    width: 100%;
+    background: #09090b;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    -webkit-box-shadow: 0px 0.7vh 0.25vh -0.2vh rgba(148, 217, 2, 0.10); 
+    box-shadow: 0px 0.7vh 0.25vh -0.2vh rgba(148, 217, 2, 0.10);
+}
+
+.header > div:first-child{
+    width: 92.5vw;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header > div:first-child > svg {
+  height: 5vh;
+}

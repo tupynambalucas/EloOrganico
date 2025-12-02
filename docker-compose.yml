@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # --- MySQL DB ---
+  db:
+    image: mysql:8.0
+    container_name: geek_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: geek_management
+      MYSQL_USER: user_dev
+      MYSQL_PASSWORD: pass_dev
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - geek_network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # --- Backend Java ---
+  backend:
+    build: ./packages/backend # Caminho para o Dockerfile do backend
+    container_name: geek_backend
+    restart: on-failure 
+    depends_on: # Depende do MySQL estar rodando
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/geek_management?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: user_dev
+      SPRING_DATASOURCE_PASSWORD: pass_dev
+    # Observação do maluco: Não precisamos expor a porta 8080 para fora se usarmos o Nginx,
+    # mas é bom para testes locais e depuração.
+    ports:
+      - "8080:8080"
+    networks:
+      - geek_network
+
+  # --- Frontend (Nginx) ---
+  frontend:
+    build: ./packages/frontend  # Caminho para o Dockerfile do frontend
+    container_name: geek_frontend
+    restart: always
+    depends_on:
+      - backend # Depende do backend estar rodando
+    ports:
+      - "80:80" # Mapeia a porta 80 do container para a porta 80 do host
+    networks:
+      - geek_network
+
+volumes:
+  mysql_data:
+
+networks:
+  geek_network:
+    driver: bridge

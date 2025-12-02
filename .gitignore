@@ -1,0 +1,12 @@
+# ---------------------------------------------------------------- #
+# IGNORAR ARQUIVOS GERAIS DE PROJETOS DE DESENVOLVIMENTO
+# ---------------------------------------------------------------- #
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+/package-lock.json
+
+# Se usar IDEs como IntelliJ ou VS Code
+.idea/
+.vscode/

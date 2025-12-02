@@ -1,0 +1,15 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./packages/backend" },
+    { "path": "./packages/frontend" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      // Isso força o TS a olhar para o código fonte em DEV
+      "@elo-organico/shared": ["packages/shared/src/index.ts"]
+    }
+  }
+}

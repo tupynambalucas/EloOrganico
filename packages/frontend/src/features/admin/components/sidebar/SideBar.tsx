@@ -1,60 +1,79 @@
-import { forwardRef, useState } from 'react';
 import { faTableList, faUsers, faCarrot, faChartSimple } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import EloOrganicoLogo from '@assets/midia/svg/logo/logo-negative.svg?react';
-import SideBarStyle from '@cssComponents/admin-panel/user-interface/containers/side-bar.module.css'
+import { useAdminNavigation, type AdminViewType } from '../../admin.navigation';
+import styles from './sidebar.module.css';
 
-type ActivePanel =  'usuarios' | 'partilhas' | 'relatorios' | 'configuracoes' | 'produtos';
+// Removido: forwardRef, SideBarProps, HTMLDivElement
+const SideBar = () => {
+    // Conectamos na store
+    const { setView, currentView } = useAdminNavigation();
 
-type SideBarProps = {
-    setActivePanel: (panel: ActivePanel) => void;
-  
-};
+    const handleNavigation = (view: AdminViewType) => {
+        setView(view);
+    };
 
-// 2. Convert the component to use a block body with an explicit return
-const SideBar = forwardRef<HTMLDivElement, SideBarProps>(
-  (props, ref) => {
-    // Destructure props for easier access
-    const {
-      setActivePanel
-    } = props;
+    // Helper para verificar se o botão está ativo e aplicar classe CSS (opcional)
+    // Supondo que você tenha uma classe .active no seu CSS module
+    const getButtonClass = (view: AdminViewType) => {
+        // Se currentView for igual a view, retorna a classe active combinada, senão nada
+        // Ajuste a lógica de classe conforme seu CSS real
+        return currentView === view ? styles.active : ''; 
+    };
 
     return (
-        <div className={SideBarStyle.sidebar}>
+        <div className={styles.sidebar}>
           <div>
-            <div></div>
-            <div>
-                <button onClick={() => setActivePanel('partilhas')}>
+            {/* Espaço para Logo */}
+            <div className={styles.logoArea}></div>
+            
+            <div className={styles.menu}>
+                <button 
+                    onClick={() => handleNavigation('partilhas')}
+                    className={getButtonClass('partilhas')}
+                >
                     <div>
                         <FontAwesomeIcon icon={faTableList}/>
                         <p className='Inter-Regular'>Partilhas</p>
                     </div>
                 </button>
-                <button onClick={() => setActivePanel('usuarios')}>
+
+                <button 
+                    onClick={() => handleNavigation('usuarios')}
+                    className={getButtonClass('usuarios')}
+                >
                     <div>
                         <FontAwesomeIcon icon={faUsers}/>
                         <p className='Inter-Regular'>Usuários</p>
                     </div>
                 </button>
-                <button onClick={() => setActivePanel('produtos')}>
+
+                <button 
+                    onClick={() => handleNavigation('produtos')}
+                    className={getButtonClass('produtos')}
+                >
                     <div>
                         <FontAwesomeIcon icon={faCarrot}/>
                         <p className='Inter-Regular'>Produtos</p>
                     </div>
                 </button>
-                    <button onClick={() => setActivePanel('relatorios')}>
+                
+                <button 
+                    onClick={() => handleNavigation('relatorios')}
+                    className={getButtonClass('relatorios')}
+                >
                     <div>
                         <FontAwesomeIcon icon={faChartSimple}/>
                         <p className='Inter-Regular'>Relatórios</p>
                     </div>
                 </button>
             </div>
-            <div>
-                <button onClick={() => setActivePanel('configuracoes')}>Configurações</button>
+            
+            <div className={styles.footer}>
+                <button onClick={() => handleNavigation('configuracoes')}>Configurações</button>
             </div>
           </div>
         </div>
-    )
-  })
+    );
+};
 
 export default SideBar;

@@ -23,8 +23,13 @@
         "paths": {
             "@/*": ["./src/*"],
             "@assets/*": ["./src/assets/*"],
-            "@components/*": ["./src/components/*"]
+            "@components/*": ["./src/components/*"],
+            "@features/*": ["./src/features/*"],
+            "@elo-organico/shared": ["../shared/src/index.ts"]
         }
     },
-    "include": ["src"]
+    "include": ["src"],
+    "references": [
+        { "path": "../shared" }
+    ]
 }

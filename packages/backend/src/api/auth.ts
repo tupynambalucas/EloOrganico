@@ -57,6 +57,41 @@ const AuthRoute: FastifyPluginAsync = async (server: FastifyInstance, opts: Fast
     }
     reply.send({ message: 'Logged out' });
   });
+
+  server.get('/verify', async (request, reply) => {
+    if (!request.session.token) {
+      return reply.status(401).send({ message: "No session token found." });
+    }
+
+    try {
+      const payload = server.jwt.verify(request.session.token) as { _id: string, email: string };
+      
+      const user = await User.findById(payload._id);
+      
+      if (!user) {
+        return reply.status(404).send({ message: "User not found." });
+      }
+
+      const ProductsArray = await Product.find({});
+      const activeCycle = await Cycle.findOne({ isActive: true }).populate('products');
+      
+      reply.send({ 
+        authenticated: true, 
+        token: request.session.token,
+        user: {
+          email: user.email,
+          username: user.username,
+          role: user.role,
+          icon: user.icon
+        },
+        products: ProductsArray,
+        cycle: activeCycle
+      });
+
+    } catch (err) {
+      return reply.status(401).send({ message: "Invalid or expired token." });
+    }
+  });
 };
 
 // CORRECTED: Export the plugin directly without wrapping it in fp.

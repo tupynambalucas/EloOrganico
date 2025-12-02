@@ -1,16 +1,15 @@
 import { Schema, Document, model, Types } from 'mongoose';
-export type { ICycle } from '@sharedType/db-models.js';
-import type { ICycle } from '@sharedType/db-models.js';
+import type { ICycle } from '@elo-organico/shared';
 
-// 1. Omit all conflicting properties: _id, products, and the date fields.
-export type ICycleDocument = Omit<ICycle, '_id' | 'products' | 'openingDate' | 'closingDate'> & Document & {
-  // 2. Re-declare the properties with their correct Mongoose/database types.
+// 1. Omitimos propriedades conflitantes. 
+// No Shared, dates são string (JSON) e products podem ser objetos populados.
+// No Mongoose, dates são Date objects e products são ObjectIds.
+export interface ICycleDocument extends Omit<ICycle, '_id' | 'products' | 'openingDate' | 'closingDate'>, Document {
   openingDate: Date;
   closingDate: Date;
   products: Types.ObjectId[];
-};
+}
 
-// 3. The schema itself remains unchanged, as it was already correct.
 export const cycleSchema = new Schema<ICycleDocument>({
   description: {
     type: String,
@@ -33,3 +32,5 @@ export const cycleSchema = new Schema<ICycleDocument>({
     default: true,
   },
 }, { timestamps: true });
+
+export const Cycle = model<ICycleDocument>('Cycle', cycleSchema);

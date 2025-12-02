@@ -9,8 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@elo-organico/shared": "*",
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-brands-svg-icons": "^7.1.0",
+    "@fortawesome/free-regular-svg-icons": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.1",
+    "date-fns": "^2.30.0",
     "gsap": "^3.13.0",
     "react": "^19.2.0",
+    "react-datepicker": "^8.10.0",
     "react-dom": "^19.2.0",
     "zustand": "^5.0.1"
   },
@@ -18,17 +26,16 @@
     "@eslint/js": "^9.33.0",
     "@types/react": "^19.0.0-rc.0",
     "@types/react-dom": "^19.0.0-rc.0",
-    "@types/three": "^0.178.0",
     "@vitejs/plugin-react-swc": "^4.0.0",
-    "vite-plugin-svgr": "^4.3.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vite": "^7.1.2",
-    "typescript": "~5.8.3",
-    "globals": "^16.3.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
-    "typescript-eslint": "^8.39.1"
+    "globals": "^16.3.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.1.2",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

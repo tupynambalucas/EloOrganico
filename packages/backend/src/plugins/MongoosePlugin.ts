@@ -1,55 +1,42 @@
 import fp from 'fastify-plugin';
 import type { FastifyPluginAsync, FastifyInstance } from 'fastify';
-import mongoose, { Model } from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server'; // 1. Import
-import { type IUser, type IUserDocument, userSchema } from '../models/User.js';
-import { type IProduct, type IProductDocument, productSchema } from '../models/Product.js';
-import { type ICycle, type ICycleDocument, cycleSchema } from '../models/Cycle.js';
+import mongoose from 'mongoose';
+import { User } from '../models/User';
+import { Product } from '../models/Product';
+import { Cycle } from '../models/Cycle';
 
 const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
-  // 2. Declare mongod variable
-  let mongod: MongoMemoryServer | undefined;
-
   try {
-    let mongoUri = server.config.MONGO_URI as string;
-
-    // 3. Conditionally start in-memory server
-    if (process.env.NODE_ENV === 'development') {
-      server.log.info('Development mode. Starting in-memory MongoDB server...');
-      mongod = await MongoMemoryServer.create();
-      mongoUri = mongod.getUri(); // Override the URI
-      server.log.info(`In-memory server running at: ${mongoUri}`);
-    }
+    const mongoUri = server.config.MONGO_URI;
+    const adminUserSeed = server.config.ADMIN_USER_SEED;
+    const adminEmailSeed = server.config.ADMIN_EMAIL_SEED;
+    const adminPassSeed = server.config.ADMIN_PASS_SEED;
 
     server.log.info('Starting database connection...');
     
-    // --- PASSO A: CONECTA AO BANCO DE DADOS ---
     mongoose.set('strictQuery', false);
-    // 4. Use the dynamic mongoUri
+    
     const connection = await mongoose.connect(mongoUri);
     server.log.info('Mongoose connected successfully.');
     
     server.decorate('mongoose', connection);
 
-    // --- PASSO B: CRIA OS MODELOS (SÓ ACONTECE APÓS A CONEXÃO) ---
     const models = {
-      User: connection.model<IUserDocument>('User', userSchema),
-      Product: connection.model<IProductDocument>('Product', productSchema),
-      Cycle: connection.model<ICycleDocument>('Cycle', cycleSchema),
+      User,
+      Product,
+      Cycle,
     };
-    server.log.info('Mongoose models registered.');
 
     server.decorate('models', models);
+    server.log.info('Mongoose models decorated.');
 
-    // --- PASSO C: EXECUTA LÓGICA DE INICIALIZAÇÃO ---
-    const { User } = server.models;
     const userCount = await User.countDocuments();
     if (userCount === 0) {
       server.log.info('No users found. Creating default admin...');
       const defaultAdmin = new User({
-        email: 'admin@admin.com',
-        username: 'admin',
-        password: 'admin',
+        email: adminEmailSeed,
+        username: adminUserSeed,
+        password: adminPassSeed,
         role: 'admin',
         icon: 'graxaim'
       });
@@ -57,24 +44,13 @@ const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       server.log.info('Default admin created.');
     }
 
-    // --- PASSO D: CONFIGURA O HOOK DE ENCERRAMENTO ---
     server.addHook('onClose', async (instance) => {
-      await instance.mongoose.disconnect();
+      await mongoose.disconnect();
       instance.log.info('Mongoose disconnected.');
-
-      // 5. Stop the in-memory server if it exists
-      if (mongod) {
-        await mongod.stop();
-        instance.log.info('In-memory MongoDB server stopped.');
-      }
     });
 
   } catch (err) {
     server.log.error(err, 'Database plugin initialization error');
-    // Stop the in-memory server on a failed startup
-    if (mongod) {
-      await mongod.stop();
-    }
     process.exit(1);
   }
 };

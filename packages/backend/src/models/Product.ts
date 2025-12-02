@@ -1,8 +1,6 @@
 import { Schema, Document, model } from 'mongoose';
-export type { IProduct } from '@sharedType/db-models.js';
-import type { IProduct } from '@sharedType/db-models.js';
+import type { IProduct } from '@elo-organico/shared';
 
-// Apenas '_id' precisa ser omitido aqui.
 export type IProductDocument = Omit<IProduct, '_id'> & Document;
 
 export const productSchema = new Schema<IProductDocument>({
@@ -18,3 +16,5 @@ export const productSchema = new Schema<IProductDocument>({
   },
   available: { type: Boolean, default: false },
 }, { timestamps: true });
+
+export const Product = model<IProductDocument>('Product', productSchema);

@@ -1,11 +1,7 @@
 import { Schema, Document, model } from 'mongoose';
 import bcrypt from 'bcrypt';
+import type { IUser } from '@elo-organico/shared';
 
-export type { IUser } from '@sharedType/db-models.js'; 
-import type { IUser } from '@sharedType/db-models.js';
-
-// Use Omit para remover a propriedade '_id' conflitante da interface IUser
-// antes de estendê-la com Document.
 export interface IUserDocument extends Omit<IUser, '_id'>, Document {
   password?: string;
 }
@@ -19,7 +15,6 @@ export const userSchema = new Schema<IUserDocument>({
 }, { timestamps: true });
 
 userSchema.pre<IUserDocument>('save', async function (next) {
-  // ... (o restante do código permanece o mesmo) ...
   if (!this.isModified('password') || !this.password) {
     return next();
   }
@@ -31,3 +26,6 @@ userSchema.pre<IUserDocument>('save', async function (next) {
     next(err);
   }
 });
+
+// Exportamos o Model tipado
+export const User = model<IUserDocument>('User', userSchema);

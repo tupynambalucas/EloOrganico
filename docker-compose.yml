@@ -1,61 +1,63 @@
 version: '3.8'
 
 services:
-  # --- MySQL DB ---
   db:
-    image: mysql:8.0
-    container_name: geek_mysql
+    image: mongo:latest
+    container_name: elo_mongo
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: geek_management
-      MYSQL_USER: user_dev
-      MYSQL_PASSWORD: pass_dev
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: elo_organico
     ports:
-      - "3306:3306"
+      - "27017:27017"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mongo_data:/data/db
     networks:
-      - geek_network
+      - elo_network
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
-  # --- Backend Java ---
   backend:
-    build: ./packages/backend # Caminho para o Dockerfile do backend
-    container_name: geek_backend
-    restart: on-failure 
-    depends_on: # Depende do MySQL estar rodando
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    container_name: elo_backend
+    restart: on-failure
+    depends_on:
       db:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/geek_management?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: user_dev
-      SPRING_DATASOURCE_PASSWORD: pass_dev
-    # Observação do maluco: Não precisamos expor a porta 8080 para fora se usarmos o Nginx,
-    # mas é bom para testes locais e depuração.
+      NODE_ENV: production
+      SERVER_PORT: 3000
+      SERVER_HOST: 0.0.0.0
+      MONGO_URI: mongodb://root:rootpassword@db:27017/elo_organico?authSource=admin
+      JWT_SECRET: "troque_isso_por_um_segredo_forte_em_producao"
+      SESSION_SECRET: "troque_isso_por_um_segredo_de_sessao_forte_em_producao"
     ports:
-      - "8080:8080"
+      - "3000:3000"
     networks:
-      - geek_network
+      - elo_network
 
-  # --- Frontend (Nginx) ---
   frontend:
-    build: ./packages/frontend  # Caminho para o Dockerfile do frontend
-    container_name: geek_frontend
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    container_name: elo_frontend
     restart: always
     depends_on:
-      - backend # Depende do backend estar rodando
+      - backend
     ports:
-      - "80:80" # Mapeia a porta 80 do container para a porta 80 do host
+      - "80:80"
     networks:
-      - geek_network
+      - elo_network
 
 volumes:
-  mysql_data:
+  mongo_data:
 
 networks:
-  geek_network:
+  elo_network:
     driver: bridge

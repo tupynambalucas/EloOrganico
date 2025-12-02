@@ -16,7 +16,6 @@ import { resolve } from 'node:path';
 */
 
 const envPlugin: FastifyPluginAsync = async (server) => {
-  const rootPath = server.getProjectRoot(); // Await the path in case it's async
 
   // The JSON schema defines the required environment variables.
   // Using 'as const' provides stricter type inference.
@@ -27,14 +26,20 @@ const envPlugin: FastifyPluginAsync = async (server) => {
       'SERVER_PORT',
       'JWT_SECRET',
       'SESSION_SECRET',
-      'MONGO_URI'
+      'MONGO_URI',
+      'ADMIN_USER_SEED',
+      'ADMIN_EMAIL_SEED',
+      'ADMIN_PASS_SEED'
     ],
     properties: {
       SERVER_HOST: { type: 'string' },
       SERVER_PORT: { type: 'number' },
       JWT_SECRET: { type: 'string' },
       SESSION_SECRET: { type: 'string' },
-      MONGO_URI: { type: 'string' }
+      MONGO_URI: { type: 'string' },
+      ADMIN_USER_SEED: { type: 'string' },
+      ADMIN_EMAIL_SEED: { type: 'string' },
+      ADMIN_PASS_SEED: { type: 'string' }
     },
   } as const;
 
@@ -43,7 +48,7 @@ const envPlugin: FastifyPluginAsync = async (server) => {
     confKey: 'config', // Attaches config to `server.config`
     schema: schema,
     dotenv: {
-      path: resolve(rootPath, '.env'), // Load .env file from the project root
+      path: resolve(__dirname, '../../.env'), // Load .env file from the project root
     },
   };
 

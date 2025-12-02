@@ -2,7 +2,7 @@ import { useState, type FC } from 'react';
 
 import CurrentSharingStyles from '@cssComponents/admin-panel/panels/sharing/current-sharing.module.css';
 import SharingPanelStyles from '@cssComponents/admin-panel/panels/sharing/main.module.css';
-import SharingForm from './sharing/SharingForm';
+import SharingForm from '../../../../features/admin/components/panel/screens/sharing/SharingForm';
 import { useRouteContext } from '@tupynamba/fastifyreact-ts/client'; 
 
 type Product = {

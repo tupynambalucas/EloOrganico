@@ -6,7 +6,7 @@ import { ptBR } from 'date-fns/locale/pt-BR';
 registerLocale('pt-BR', ptBR);
 import 'react-datepicker/dist/react-datepicker.css';
 import { set } from 'date-fns';
-import type { SharingFormData } from '../sharing';
+import type { SharingFormData } from '../../../../../../components/react/admin-panel/panels/sharing';
 // Type definitions remain the same
 
 // This helper component is fine as is

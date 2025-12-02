@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuthStore } from './AuthStore';
-import UserIconsList from '@/assets/components/UserIconsList';
+import UserIconsList from '@/constants/userIconList';
 import EloOrganicoLogo from '@/assets/midia/svg/logo/logo-negative.svg?react';
 import styles from './auth.module.css';
 

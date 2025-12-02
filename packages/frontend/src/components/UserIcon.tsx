@@ -1,5 +1,5 @@
 import { type FC, useEffect, useState  } from 'react';
-import UserIconsList from '@assets/components/UserIconsList'
+import userIconList from '@/constants/userIconList'
 
 
 interface UserIconProps {}
@@ -8,7 +8,7 @@ const UserIcon: FC<UserIconProps> = (iconinput) => {
     const [icon, setIcon] = useState(null);
 
     useEffect(() => {
-        setIcon(UserIconsList.find(i => i.name === iconinput));
+        setIcon(userIconList.find(i => i.name === iconinput));
     }, [iconinput]);
 
     return (

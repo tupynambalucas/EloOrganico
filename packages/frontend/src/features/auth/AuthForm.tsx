@@ -3,6 +3,7 @@ import { useAuthStore } from './auth.store';
 import UserIconsList from '@/constants/userIconList';
 import EloOrganicoLogo from '@/assets/midia/svg/logo/logo-negative.svg?react';
 import styles from './auth.module.css';
+import { AUTH_RULES } from '@elo-organico/shared';
 
 const AuthForm = () => {
   const { 
@@ -15,27 +16,51 @@ const AuthForm = () => {
   } = useAuthStore();
 
   const [isLogin, setIsLogin] = useState(true);
+  const [localError, setLocalError] = useState<string | null>(null);
+
   const [identifier, setIdentifier] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [icon, setUserIcon] = useState('graxaim');
 
+  const validateForm = () => {
+    if (isLogin) return true;
+
+    if (username.length < AUTH_RULES.USERNAME.MIN) {
+      setLocalError(`O usuário deve ter no mínimo ${AUTH_RULES.USERNAME.MIN} letras.`);
+      return false;
+    }
+    
+    if (password.length < AUTH_RULES.PASSWORD.MIN) {
+      setLocalError(`A senha deve ter no mínimo ${AUTH_RULES.PASSWORD.MIN} caracteres.`);
+      return false;
+    }
+
+    setLocalError(null);
+    return true;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(identifier, password);
+    setLocalError(null);
+    await login({ identifier, password });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+
     const success = await register({ email, username, password, icon });
     if (success) {
       setIsLogin(true);
+      setLocalError(null);
     }
   };
 
   const isLoading = isLogin ? loginLoading : registerLoading;
-  const currentError = isLogin ? loginError : registerError;
+  const currentError = localError || (isLogin ? loginError : registerError);
 
   return (
     <div className={styles.container}>
@@ -82,10 +107,14 @@ const AuthForm = () => {
               <input 
                   className='Inter-Regular' 
                   type="text" 
-                  placeholder="Username" 
+                  placeholder={`Username (min. ${AUTH_RULES.USERNAME.MIN})`}
                   value={username} 
-                  onChange={(e) => setUsername(e.target.value)} 
-                  required  
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (localError) setLocalError(null);
+                  }} 
+                  required
+                  minLength={AUTH_RULES.USERNAME.MIN}
                   autoComplete="username"
               />
               <input 
@@ -102,10 +131,14 @@ const AuthForm = () => {
 
           <input
             type="password"
-            placeholder="Senha"
+            placeholder={`Senha (min. ${AUTH_RULES.PASSWORD.MIN})`}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+               setPassword(e.target.value);
+               if (localError) setLocalError(null);
+            }}
             required
+            minLength={AUTH_RULES.PASSWORD.MIN}
             autoComplete={isLogin ? "current-password" : "new-password"} 
             className='Inter-Regular'
           />
@@ -114,10 +147,19 @@ const AuthForm = () => {
             {isLoading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Registrar')}
           </button>
 
-          {currentError && <p style={{ color: 'red', marginTop: '10px' }} className='Inter-Regular'>{currentError}</p>}
+          {currentError && (
+            <p style={{ color: '#ff6b6b', marginTop: '10px', fontSize: '0.9rem' }} className='Inter-Regular'>
+              {currentError}
+            </p>
+          )}
         </form>
 
-        <a onClick={() => setIsLogin(!isLogin)} className='Inter-Regular' style={{ cursor: 'pointer', display: 'block', marginTop: '15px' }}>
+        <a onClick={() => {
+            setIsLogin(!isLogin);
+            setLocalError(null);
+          }} 
+          className='Inter-Regular' 
+          style={{ cursor: 'pointer', display: 'block', marginTop: '15px', textDecoration: 'underline' }}>
           {isLogin ? 'Não tem uma conta? Registre-se' : 'Já tem uma conta? Faça o login'}
         </a>
       </div>

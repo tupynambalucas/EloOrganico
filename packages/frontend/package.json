@@ -1,10 +1,19 @@
 {
   "name": "@elo-organico/frontend",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "author": "Tupynambá Lucas Varela Rodrigues <tupynambalucas.dev>",
+  "license": "CC-BY-NC-4.0",
+  "homepage": "https://github.com/tupynambalucas/EloOrganico/tree/main/packages/frontend#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tupynambalucas/EloOrganico.git",
+    "directory": "packages/frontend"
+  },
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc && vite build", 
     "lint": "eslint .",
     "preview": "vite preview"
   },

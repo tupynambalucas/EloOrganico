@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { sendJSON } from '@/lib/fetch'; // Verifique se é Fetch.ts ou fetch.ts
-import type { IUser, IProduct, ICycle } from '@elo-organico/shared';
+import { sendJSON } from '@/lib/fetch';
+import type { IUser, IProduct, ICycle, LoginDTO, RegisterDTO } from '@elo-organico/shared';
 
 export type UserState = Omit<IUser, 'password'>;
 
@@ -15,7 +15,6 @@ interface LoginResponse {
   authenticated: boolean;
   token: string;
   user: UserState;
-  // O backend envia, mas a store ignora propositalmente para manter o foco em Auth
   products?: IProduct[]; 
   cycle?: ICycle;
 }
@@ -30,9 +29,9 @@ interface AuthState {
   registerLoading: boolean;
   registerError: string | null;
   registerSuccess: string | null;
-  login: (identifier: string, password: string) => Promise<void>;
+  login: (data: LoginDTO) => Promise<void>;
   logout: () => Promise<void>;
-  register: (data: { email: string, username: string, password: string, icon: string }) => Promise<boolean>;
+  register: (data: RegisterDTO) => Promise<boolean>;
   verifyAuth: () => Promise<void>;
 }
 
@@ -47,13 +46,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   registerError: null,
   registerSuccess: null,
 
-  login: async (identifier, password) => {
+  login: async (data) => {
     set({ loginLoading: true, loginError: null });
     try {
-      // Rota alinhada com o prefixo 'auth' definido no ApiPlugin.ts
       const response = await sendJSON<LoginResponse>('/api/auth/login', {
         method: 'POST',
-        json: { identifier, password },
+        json: data,
       });
 
       set({
@@ -81,12 +79,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  register: async ({ email, username, password, icon }) => {
+  register: async (data) => {
     set({ registerLoading: true, registerError: null, registerSuccess: null });
     try {
       await sendJSON('/api/auth/register', {
         method: 'POST',
-        json: { email, username, password, icon },
+        json: data,
       });
 
       set({

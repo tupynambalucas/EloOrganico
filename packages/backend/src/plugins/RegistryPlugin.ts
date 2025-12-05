@@ -5,22 +5,26 @@ import secureSession from './SessionPlugin'
 import MongoosePlugin from './MongoosePlugin';
 import fp from 'fastify-plugin'
 import ApiPlugin from './ApiPlugin';
-import { resolve } from 'node:path'
 import type { FastifyPluginAsync } from 'fastify'
+import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 
 const serverAutoRegistry: FastifyPluginAsync = async function (server) {
+  server.setValidatorCompiler(validatorCompiler);
+  server.setSerializerCompiler(serializerCompiler);
+
   await server.register(utils)
   await server.register(envConfig)
   await server.register(MongoosePlugin)
   await server.register(secureSession)
+  
+
   await server.register(ApiPlugin, { prefix: '/api' });
 
-  const viteDevServerUrl = 'http://localhost:8080';
-  const allowedOrigins = ['https://www.dropbox.com/', viteDevServerUrl];
+  const allowedOrigins = [ 'http://localhost:5173'];
 
   await server.register(cors, {
     origin: allowedOrigins,
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Adicionei métodos comuns de REST
     credentials: true,
   });
 }

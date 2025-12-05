@@ -1,48 +1,53 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import type { IProduct } from '@elo-organico/shared';
-import type { IProductDocument } from '../../../models/Product';
-
-interface CreateCycleBody {
-  products: IProduct[];
-  description: string;
-  openingDate: string;
-  closingDate: string;
-}
+import { CreateCycleDTO } from '@elo-organico/shared';
 
 export async function createCycleHandler(
-  request: FastifyRequest<{ Body: CreateCycleBody }>,
+  request: FastifyRequest<{ Body: CreateCycleDTO }>,
   reply: FastifyReply
 ) {
   const { Product, Cycle } = request.server.models;
+  const { mongoose } = request.server;
   const { products: incomingProducts, description, openingDate, closingDate } = request.body;
 
-  try {
-    const productProcessingPromises = incomingProducts.map(productData => {
-      return Product.findOneAndUpdate(
-        { name: productData.name },
-        { 
-          $set: {
-            category: productData.category, 
-            measure: productData.measure,
-            available: true,
-          } 
-        },
-        { new: true, upsert: true, runValidators: true }
-      );
-    });
+  const session = await mongoose.startSession();
 
-    const savedProducts = await Promise.all(productProcessingPromises);
-    
-    const productIds = savedProducts
-      .map((p) => (p as IProductDocument)?._id)
-      .filter(Boolean);
-    
+  try {
+    session.startTransaction();
+
+    const bulkOps = incomingProducts.map((p) => ({
+      updateOne: {
+        filter: { name: p.name },
+        update: {
+          $set: {
+            category: p.category,
+            measure: p.measure,
+            available: true,
+          }
+        },
+        upsert: true
+      }
+    }));
+
+    if (bulkOps.length > 0) {
+      await Product.bulkWrite(bulkOps, { session });
+    }
+
+    const productNames = incomingProducts.map(p => p.name);
+    const activeProducts = await Product.find({ name: { $in: productNames } })
+      .select('_id')
+      .session(session);
+
+    const productIds = activeProducts.map(p => p._id);
+
     await Product.updateMany(
       { _id: { $nin: productIds } },
       { $set: { available: false } }
-    );
+    ).session(session);
 
-    await Cycle.deleteMany({ isActive: true });
+    await Cycle.updateMany(
+      { isActive: true },
+      { $set: { isActive: false } }
+    ).session(session);
 
     const newCycle = new Cycle({
       description,
@@ -52,7 +57,9 @@ export async function createCycleHandler(
       isActive: true,
     });
 
-    await newCycle.save();
+    await newCycle.save({ session });
+
+    await session.commitTransaction();
 
     return reply.status(201).send({
       message: 'Ciclo criado com sucesso!',
@@ -61,7 +68,13 @@ export async function createCycleHandler(
     });
 
   } catch (error: any) {
-    request.log.error(error, 'Erro ao criar ciclo');
-    return reply.status(500).send({ message: 'Erro interno ao processar ciclo', error: error.message });
+    await session.abortTransaction();
+    request.log.error(error);
+    return reply.status(500).send({ 
+      message: 'Erro interno ao processar ciclo', 
+      error: error.message 
+    });
+  } finally {
+    await session.endSession();
   }
 }

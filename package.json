@@ -1,11 +1,18 @@
 {
   "name": "@elo-organico/monorepo",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "author": "Tupynambá Lucas Varela Rodrigues <tupynambalucas.dev>",
+  "license": "CC-BY-NC-4.0",
+  "homepage": "https://tupynambalucas.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tupynambalucas/EloOrganico.git"
+  },
   "private": true,
   "workspaces": [
     "packages/*"
   ],
-  "scripts": {
+"scripts": {
     "postinstall": "npm run build -w @elo-organico/shared",
     
     "dev:frontend": "npm run dev -w @elo-organico/frontend",
@@ -13,12 +20,17 @@
     "dev:stack": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     
     "build:all": "npm run build --workspaces --if-present",
+    
     "backend:build": "npm run build -w @elo-organico/backend",
     "frontend:build": "npm run build -w @elo-organico/frontend",
     "shared:build": "npm run build -w @elo-organico/shared",
-
-    "frontend:preview": "npm run preview -w @elo-organico/frontend",
     
+    "// --- Scripts de Manutenção (Enterprise) ---": "",
+    "clean": "npm run clean --workspaces --if-present",
+    "lint:all": "npm run lint --workspaces --if-present",
+    "typecheck:all": "npm run typecheck --workspaces --if-present",
+    
+    "// --- Docker ---": "",
     "prod:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
@@ -28,6 +40,7 @@
     "db:reset": "npm run db:clean && npm run db:up"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "rimraf": "^6.1.2"
   }
 }

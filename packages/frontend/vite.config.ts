@@ -18,17 +18,21 @@ export default defineConfig(({ mode }) => {
       })
     ],
     
+    optimizeDeps: {
+      exclude: ['@elo-organico/shared'],
+    },
+    
     root: 'src', 
     base: '/',
 
     server: {
-      host: true, // Necessário para Docker, mas ok manter em dev local
-      port: 5173,
+      host: true,
+      port: 5174,
       open: true,
       cors: true,
       proxy: {
         '/api': {
-          target: 'http://localhost:3000', // Onde seu backend roda localmente
+          target: 'http://localhost:8080',
           changeOrigin: true,
           secure: false,
         }
@@ -36,11 +40,11 @@ export default defineConfig(({ mode }) => {
     },
 
     preview: {
-      port: 4173,
+      port: 4174,
       open: true,
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: 'http://localhost:8080',
           changeOrigin: true,
           secure: false,
         }

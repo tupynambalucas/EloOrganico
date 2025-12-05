@@ -1,20 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-
-// Tipos auxiliares para o Body
-interface RegisterBody {
-  email: string;
-  username: string;
-  password: string;
-  icon: string;
-}
-
-interface LoginBody {
-  identifier: string;
-  password: string;
-}
+import { RegisterDTO, LoginDTO } from '@elo-organico/shared';
 
 export async function registerHandler(
-  request: FastifyRequest<{ Body: RegisterBody }>,
+  request: FastifyRequest<{ Body: RegisterDTO }>,
   reply: FastifyReply
 ) {
   const { User } = request.server.models;
@@ -36,7 +24,7 @@ export async function registerHandler(
 }
 
 export async function loginHandler(
-  request: FastifyRequest<{ Body: LoginBody }>,
+  request: FastifyRequest<{ Body: LoginDTO }>,
   reply: FastifyReply
 ) {
   const server = request.server;
@@ -45,7 +33,7 @@ export async function loginHandler(
   
   const user = await User.findOne({ 
     $or: [{ email: identifier }, { username: identifier }] 
-  }).select('+password'); // Traz a senha para comparar
+  }).select('+password');
 
   if (!user || !(await server.compareHash(password, user.password!))) {
     return reply.status(401).send({ authenticated: false, message: 'Credenciais inválidas' });
@@ -61,7 +49,6 @@ export async function loginHandler(
   
   request.session.token = token;
   
-  // Dados iniciais
   const products = await Product.find({});
   const activeCycle = await Cycle.findOne({ isActive: true }).populate('products');
 

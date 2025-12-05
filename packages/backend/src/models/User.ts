@@ -9,7 +9,7 @@ export interface IUserDocument extends Omit<IUser, '_id'>, Document {
 export const userSchema = new Schema<IUserDocument>({
   email: { type: String, required: true, unique: true, trim: true, lowercase: true },
   username: { type: String, required: true, unique: true, trim: true },
-  icon: { type: String, required: true, unique: true, trim: true, lowercase: true },
+  icon: { type: String, required: true, trim: true, lowercase: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
 }, { timestamps: true });
@@ -27,5 +27,4 @@ userSchema.pre<IUserDocument>('save', async function (next) {
   }
 });
 
-// Exportamos o Model tipado
 export const User = model<IUserDocument>('User', userSchema);

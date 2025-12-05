@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { sendJSON } from '@/lib/fetch';
-import type { IProduct } from '@elo-organico/shared';
+import type { IProduct, CreateCycleDTO } from '@elo-organico/shared';
 
 export type CycleFormData = {
   products: IProduct[];
@@ -41,13 +41,16 @@ export const useCycleStore = create<CycleState>((set) => ({
     }
 
     try {
+      const payload: CreateCycleDTO = {
+        description: data.description,
+        products: data.products,
+        openingDate: data.openingDate.toISOString(),
+        closingDate: data.closingDate.toISOString(),
+      };
+
       await sendJSON('/api/admin/cycle', {
         method: 'POST',
-        json: {
-          ...data,
-          openingDate: data.openingDate.toISOString(),
-          closingDate: data.closingDate.toISOString(),
-        },
+        json: payload,
       });
 
       set({ isSubmitting: false, success: true });

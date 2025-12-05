@@ -18,13 +18,11 @@ export const parseProductList = (list: string): IProduct[] => {
   if (!list) return [];
 
   const lines = list.split('\n');
-  
-  const products: Omit<IProduct, '_id'>[] = []; 
+  const products: IProduct[] = []; 
   let currentCategory = "organicos"; 
 
   const complexProductRegex = /^(.*?)\s+(kg|uni|pct)\s*(.*?)\s*([$]?\s*[\d,.]+)\s*(?:\/(cx|saca)\s*(.*))?$/i;
   const simpleProductRegex = /^(.*?)\s+([$]?\s*[\d,.]+)$/i;
-
   const ignorePatterns = ['olá', 'segue previsão'];
 
   for (const line of lines) {
@@ -41,7 +39,6 @@ export const parseProductList = (list: string): IProduct[] => {
     if (complexMatch) {
       try {
         const [, productNameRaw, measureTypeRaw, , valueRaw, minimumOrderTypeRaw, minimumOrderValueRaw] = complexMatch;
-        
         const value = parseFloat(valueRaw.replace(/[$\s]/g, '').replace(',', '.')).toFixed(2);
         
         const minimumOrder = minimumOrderTypeRaw && minimumOrderValueRaw
@@ -86,5 +83,5 @@ export const parseProductList = (list: string): IProduct[] => {
     }
   }
   
-  return products as IProduct[];
+  return products;
 };

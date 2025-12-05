@@ -1,104 +1,90 @@
+import type { IProduct } from '@elo-organico/shared';
+
 const normalizeMeasureType = (unitString: string) => {
   const type = unitString.toLowerCase();
   if (type === 'pct') return 'pacote';
   if (type === 'uni') return 'unidade';
-  return type; // Retorna 'kg' ou qualquer outro como está
+  return type;
 };
 
 const normalizeMinimumOrderType = (typeString: string) => {
   if (!typeString) return '';
   const type = typeString.toLowerCase();
   if (type === 'cx') return 'caixa';
-  return type; // retorna 'saca' como está
+  return type;
 };
 
-export const parseProductList = (list: string) => {
+export const parseProductList = (list: string): IProduct[] => {
   if (!list) return [];
 
   const lines = list.split('\n');
-  const products = [];
-  let currentCategory = "organicos"; // Categoria padrão
+  
+  const products: Omit<IProduct, '_id'>[] = []; 
+  let currentCategory = "organicos"; 
 
   const complexProductRegex = /^(.*?)\s+(kg|uni|pct)\s*(.*?)\s*([$]?\s*[\d,.]+)\s*(?:\/(cx|saca)\s*(.*))?$/i;
   const simpleProductRegex = /^(.*?)\s+([$]?\s*[\d,.]+)$/i;
 
-  const ignorePatterns = [
-    'olá',
-    'segue previsão'
-  ];
+  const ignorePatterns = ['olá', 'segue previsão'];
 
   for (const line of lines) {
     const trimmedLine = line.trim();
 
-    if (!trimmedLine) {
-      continue;
-    }
-
-    if (ignorePatterns.some(pattern => trimmedLine.toLowerCase().startsWith(pattern))) {
+    if (!trimmedLine || ignorePatterns.some(pattern => trimmedLine.toLowerCase().startsWith(pattern))) {
       continue;
     }
 
     const cleanedLine = trimmedLine.replace(/^\s*/, '').trim();
-
     const complexMatch = cleanedLine.match(complexProductRegex);
     const simpleMatch = cleanedLine.match(simpleProductRegex);
 
     if (complexMatch) {
       try {
-        const [, productNameRaw, measureTypeRaw, contentRaw, valueRaw, minimumOrderTypeRaw, minimumOrderValueRaw] = complexMatch;
+        const [, productNameRaw, measureTypeRaw, , valueRaw, minimumOrderTypeRaw, minimumOrderValueRaw] = complexMatch;
         
-        const productName = productNameRaw.trim();
-        const measureType = normalizeMeasureType(measureTypeRaw);
-        const content = [measureTypeRaw, contentRaw].join(' ').trim();
-        
-        // LINHA CORRIGIDA com .toFixed(2)
         const value = parseFloat(valueRaw.replace(/[$\s]/g, '').replace(',', '.')).toFixed(2);
-
+        
         const minimumOrder = minimumOrderTypeRaw && minimumOrderValueRaw
           ? {
               type: normalizeMinimumOrderType(minimumOrderTypeRaw),
               value: minimumOrderValueRaw.trim()
             }
-          : false;
+          : undefined;
 
         products.push({
-          name: productName,
+          name: productNameRaw.trim(),
           category: currentCategory,
+          available: true,
           measure: {
-            type: measureType,
-            value: value,
-            content: content,
+            type: normalizeMeasureType(measureTypeRaw),
+            value: Number(value) || value,
             minimumOrder: minimumOrder,
           },
         });
       } catch (error) {
-        console.error(`Erro ao formatar a linha complexa: "${cleanedLine}"`, error);
+        console.error(`Erro parse complexo: "${cleanedLine}"`, error);
       }
     } else if (simpleMatch) {
       try {
         const [, productNameRaw, valueRaw] = simpleMatch;
-        const productName = productNameRaw.trim();
-
-        // E AQUI com .toFixed(2)
         const value = parseFloat(valueRaw.replace(/[$\s]/g, '').replace(',', '.')).toFixed(2);
 
         products.push({
-          name: productName,
+          name: productNameRaw.trim(),
           category: currentCategory,
+          available: true,
           measure: {
             type: 'unidade',
-            value: value,
-            content: 'unidade',
-            minimumOrder: false,
+            value: Number(value) || value,
           },
         });
       } catch (error) {
-        console.error(`Erro ao formatar a linha simples: "${cleanedLine}"`, error);
+        console.error(`Erro parse simples: "${cleanedLine}"`, error);
       }
     } else {
       currentCategory = cleanedLine.replace(/[;:]$/, '').trim();
     }
   }
   
-  return products;
+  return products as IProduct[];
 };

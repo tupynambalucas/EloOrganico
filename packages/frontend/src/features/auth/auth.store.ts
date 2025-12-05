@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { sendJSON } from '@/lib/Fetch';
+import { sendJSON } from '@/lib/fetch'; // Verifique se é Fetch.ts ou fetch.ts
 import type { IUser, IProduct, ICycle } from '@elo-organico/shared';
 
 export type UserState = Omit<IUser, 'password'>;
@@ -15,7 +15,8 @@ interface LoginResponse {
   authenticated: boolean;
   token: string;
   user: UserState;
-  products?: IProduct[];
+  // O backend envia, mas a store ignora propositalmente para manter o foco em Auth
+  products?: IProduct[]; 
   cycle?: ICycle;
 }
 
@@ -49,6 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (identifier, password) => {
     set({ loginLoading: true, loginError: null });
     try {
+      // Rota alinhada com o prefixo 'auth' definido no ApiPlugin.ts
       const response = await sendJSON<LoginResponse>('/api/auth/login', {
         method: 'POST',
         json: { identifier, password },

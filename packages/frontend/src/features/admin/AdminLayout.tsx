@@ -1,7 +1,7 @@
 import { type FC, Suspense } from 'react';
-import AdminStyles from '@cssComponents/admin-panel/main.module.css';
+import styles from './admin.module.css';
 import ProductsView from '@features/admin/views/products/ProductsView';  
-import SharingView from '@features/admin/views/sharing/SharingView';
+import SharingView from '@/features/admin/views/cycle/CycleView';
 import CustomersView from '@features/admin/views/customers/CustomersView';
 import ReportsView from '@features/admin/views/reports/ReportsView';
 import ConfigView from '@features/admin/views/config/ConfigView';
@@ -33,11 +33,11 @@ const AdminLayout: FC = () => {
   };
 
   return (
-      <div className={AdminStyles.container}>
+      <div className={styles.container}>
         {/* A Sidebar agora gerencia seu próprio estado, não precisa passar props */}
         <SideBar />
         
-        <div className={AdminStyles.dashboard}>
+        <div className={styles.dashboard}>
            {/* Adicionei Suspense caso suas Views tenham lazy loading interno */}
            <Suspense fallback={<Loader />}>
               {renderActivePanel()}

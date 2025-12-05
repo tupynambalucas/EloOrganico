@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useAuthStore } from './AuthStore';
+import { useAuthStore } from './auth.store';
 import UserIconsList from '@/constants/userIconList';
 import EloOrganicoLogo from '@/assets/midia/svg/logo/logo-negative.svg?react';
 import styles from './auth.module.css';
 
-export const AuthForm = () => {
+const AuthForm = () => {
   const { 
     login, 
     register, 
@@ -124,3 +124,5 @@ export const AuthForm = () => {
     </div>
   );
 };
+
+export default AuthForm;

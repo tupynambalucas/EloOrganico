@@ -1,10 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { resolve } from 'node:path';
-import { networkInterfaces } from 'node:os';
-
-// Define the types for the new decorators.
-// This uses module augmentation to add them to the FastifyInstance interface.
 
 const utilsPlugin: FastifyPluginAsync = async (server) => {
   server.decorate(
@@ -18,7 +13,6 @@ const utilsPlugin: FastifyPluginAsync = async (server) => {
         case 'days':
           return time * 24 * 60 * 60;
         default:
-          // Returns undefined for invalid types.
           return undefined;
       }
     }

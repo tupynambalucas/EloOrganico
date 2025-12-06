@@ -27,12 +27,12 @@ export default defineConfig(({ mode }) => {
 
     server: {
       host: true,
-      port: 5174,
+      port: 5173,
       open: true,
       cors: true,
       proxy: {
         '/api': {
-          target: 'http://localhost:8080',
+          target: 'http://localhost:3000',
           changeOrigin: true,
           secure: false,
         }
@@ -40,11 +40,11 @@ export default defineConfig(({ mode }) => {
     },
 
     preview: {
-      port: 4174,
+      port: 4173,
       open: true,
       proxy: {
         '/api': {
-          target: 'http://localhost:8080',
+          target: 'http://localhost:3000',
           changeOrigin: true,
           secure: false,
         }

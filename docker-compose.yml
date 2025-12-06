@@ -4,13 +4,10 @@ services:
   db:
     image: mongo:latest
     container_name: elo_mongo
-    restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
-      MONGO_INITDB_DATABASE: elo_organico
-    ports:
-      - "27017:27017"
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
     volumes:
       - mongo_data:/data/db
     networks:
@@ -26,19 +23,14 @@ services:
       context: .
       dockerfile: packages/backend/Dockerfile
     container_name: elo_backend
-    restart: on-failure
     depends_on:
       db:
         condition: service_healthy
     environment:
-      NODE_ENV: production
-      SERVER_PORT: 3000
-      SERVER_HOST: 0.0.0.0
-      MONGO_URI: mongodb://root:rootpassword@db:27017/elo_organico?authSource=admin
-      JWT_SECRET: "troque_isso_por_um_segredo_forte_em_producao"
-      SESSION_SECRET: "troque_isso_por_um_segredo_de_sessao_forte_em_producao"
-    ports:
-      - "3000:3000"
+      NODE_ENV: ${NODE_ENV}
+      MONGO_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/${MONGO_DB_NAME}?authSource=admin
+      JWT_SECRET: ${JWT_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
     networks:
       - elo_network
 
@@ -47,11 +39,8 @@ services:
       context: .
       dockerfile: packages/frontend/Dockerfile
     container_name: elo_frontend
-    restart: always
     depends_on:
       - backend
-    ports:
-      - "80:80"
     networks:
       - elo_network
 

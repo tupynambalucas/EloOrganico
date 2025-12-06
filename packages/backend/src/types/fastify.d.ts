@@ -41,6 +41,8 @@ declare module 'fastify' {
             ADMIN_USER_SEED: string;
             ADMIN_EMAIL_SEED: string;
             ADMIN_PASS_SEED: string;
+            USER_SESSION_KEY: string;
+            ADMIN_SESSION_KEY: string;
         };
     }
 

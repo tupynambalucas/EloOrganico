@@ -8,16 +8,18 @@ import { Cycle } from '../models/Cycle';
 const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   try {
     const mongoUri = server.config.MONGO_URI;
+    
+    // Pegamos as variáveis de ambiente (Seed)
     const adminUserSeed = server.config.ADMIN_USER_SEED;
     const adminEmailSeed = server.config.ADMIN_EMAIL_SEED;
     const adminPassSeed = server.config.ADMIN_PASS_SEED;
 
-    server.log.info('Starting database connection...');
+    server.log.info('🔌 Starting database connection...');
     
     mongoose.set('strictQuery', false);
     
     const connection = await mongoose.connect(mongoUri);
-    server.log.info('Mongoose connected successfully.');
+    server.log.info('✅ Mongoose connected successfully.');
     
     server.decorate('mongoose', connection);
 
@@ -28,29 +30,38 @@ const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
     };
 
     server.decorate('models', models);
-    server.log.info('Mongoose models decorated.');
+    server.log.info('📚 Mongoose models decorated.');
 
+    // --- Lógica de Criação do Admin Padrão ---
     const userCount = await User.countDocuments();
+    
     if (userCount === 0) {
-      server.log.info('No users found. Creating default admin...');
+      server.log.info('👤 No users found. Creating default admin...');
+      
+      // Validação rápida de segurança para não quebrar o schema do Zod/Mongoose
+      if (adminPassSeed.length < 6) {
+        throw new Error('❌ ERRO CRÍTICO: ADMIN_PASS_SEED no .env deve ter no mínimo 6 caracteres.');
+      }
+
       const defaultAdmin = new User({
         email: adminEmailSeed,
         username: adminUserSeed,
-        password: adminPassSeed,
+        password: adminPassSeed, // O Hook pre-save do User.ts vai hashear isso automaticamente
         role: 'admin',
         icon: 'graxaim'
       });
+
       await defaultAdmin.save();
-      server.log.info('Default admin created.');
+      server.log.info(`🎉 Default admin created: ${adminEmailSeed}`);
     }
 
     server.addHook('onClose', async (instance) => {
       await mongoose.disconnect();
-      instance.log.info('Mongoose disconnected.');
+      instance.log.info('👋 Mongoose disconnected.');
     });
 
   } catch (err) {
-    server.log.error(err, 'Database plugin initialization error');
+    server.log.error(err, '❌ Database plugin initialization error');
     process.exit(1);
   }
 };

@@ -107,7 +107,7 @@ const AuthForm = () => {
               <input 
                   className='Inter-Regular' 
                   type="text" 
-                  placeholder={`Username (min. ${AUTH_RULES.USERNAME.MIN})`}
+                  placeholder={`Username`}
                   value={username} 
                   onChange={(e) => {
                     setUsername(e.target.value);
@@ -131,7 +131,7 @@ const AuthForm = () => {
 
           <input
             type="password"
-            placeholder={`Senha (min. ${AUTH_RULES.PASSWORD.MIN})`}
+            placeholder={`Senha`}
             value={password}
             onChange={(e) => {
                setPassword(e.target.value);

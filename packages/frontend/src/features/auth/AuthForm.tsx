@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useAuthStore } from './auth.store';
 import UserIconsList from '@/constants/userIconList';
-import EloOrganicoLogo from '@/assets/midia/svg/logo/logo-negative.svg?react';
+import BannerNegative from '@/assets/svg/identity/banner-negative.svg?react';
 import styles from './auth.module.css';
 import { AUTH_RULES } from '@elo-organico/shared';
+import UserIcon from '@/components/UserIcon';
 
 const AuthForm = () => {
   const { 
@@ -64,91 +65,97 @@ const AuthForm = () => {
 
   return (
     <div className={styles.container}>
+      {/* Wrapper principal (div:first-child do container) */}
       <div>
-        <div style={{ width: '150px', margin: '0 auto 20px' }}>
-             <EloOrganicoLogo />
+        
+        {/* Área do Logo (.banner) */}
+        <div className={styles.banner}>
+             <BannerNegative />
         </div>
         
-        <h2 className='Inter-Regular'>
+        <h2>
             {isLogin ? 'Bem-vindo de Volta!' : 'Crie sua Conta'}
         </h2>
         
         <form className={styles.form} onSubmit={isLogin ? handleLogin : handleRegister}>
-          {isLogin ? (
-            <input
-              type="text"
-              placeholder="Email ou Username"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              required
-              autoComplete="username" 
-              className='Inter-Regular'
-            />
-          ) : (
-            <>
-              <div className={styles.iconGrid} style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '15px' }}>
-                {UserIconsList.map((item) => (
-                  <div 
-                    key={item.name} 
-                    onClick={() => setUserIcon(item.name)}
-                    style={{ 
-                        cursor: 'pointer', 
-                        opacity: icon === item.name ? 1 : 0.5,
-                        border: icon === item.name ? '2px solid white' : 'none',
-                        borderRadius: '50%',
-                        padding: '2px'
-                    }}
-                  >
-                    <img src={item.base64} alt={item.name} width={40} />
-                  </div>
-                ))}
+          
+          {/* DIV 1: Grid de Ícones 
+              IMPORTANTE: Mantemos este div mesmo no Login (vazio) para preservar 
+              a ordem dos elementos (nth-of-type) exigida pelo CSS.
+          */}
+          <div>
+            {!isLogin && UserIconsList.map((item) => (
+              <div 
+                key={item.name} 
+                onClick={() => setUserIcon(item.name)}
+                style={{
+                    // Pequeno ajuste inline apenas para o estado "ativo" (borda),
+                    // já que o CSS base está no arquivo module.
+                    borderColor: icon === item.name ? '#333' : 'transparent'
+                }}
+              >
+                {/* Reutilizamos o componente UserIcon para consistência visual */}
+                <UserIcon forceIcon={item.name} />
               </div>
+            ))}
+          </div>
 
-              <input 
-                  className='Inter-Regular' 
-                  type="text" 
-                  placeholder={`Username`}
-                  value={username} 
-                  onChange={(e) => {
-                    setUsername(e.target.value);
+          {/* DIV 2: Inputs (Flex Column) */}
+          <div>
+            {isLogin ? (
+                <input
+                type="text"
+                placeholder="Email ou Username"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                required
+                autoComplete="username" 
+                />
+            ) : (
+                <>
+                <input 
+                    type="text" 
+                    placeholder={`Username (min. ${AUTH_RULES.USERNAME.MIN})`}
+                    value={username} 
+                    onChange={(e) => {
+                        setUsername(e.target.value);
+                        if (localError) setLocalError(null);
+                    }} 
+                    required
+                    minLength={AUTH_RULES.USERNAME.MIN}
+                    autoComplete="username"
+                />
+                <input 
+                    type="email" 
+                    placeholder="Email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    required 
+                    autoComplete="email" 
+                />
+                </>
+            )}
+
+            <input
+                type="password"
+                placeholder={ isLogin ? "Senha" :`Senha (min. ${AUTH_RULES.PASSWORD.MIN})`}
+                value={password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
                     if (localError) setLocalError(null);
-                  }} 
-                  required
-                  minLength={AUTH_RULES.USERNAME.MIN}
-                  autoComplete="username"
-              />
-              <input 
-                  className='Inter-Regular' 
-                  type="email" 
-                  placeholder="Email" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  required 
-                  autoComplete="email" 
-              />
-            </>
-          )}
+                }}
+                required
+                minLength={AUTH_RULES.PASSWORD.MIN}
+                autoComplete={isLogin ? "current-password" : "new-password"} 
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder={`Senha`}
-            value={password}
-            onChange={(e) => {
-               setPassword(e.target.value);
-               if (localError) setLocalError(null);
-            }}
-            required
-            minLength={AUTH_RULES.PASSWORD.MIN}
-            autoComplete={isLogin ? "current-password" : "new-password"} 
-            className='Inter-Regular'
-          />
-
-          <button className='Inter-Regular' type="submit" disabled={isLoading}>
+          <button type="submit" disabled={isLoading}>
             {isLoading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Registrar')}
           </button>
 
           {currentError && (
-            <p style={{ color: '#ff6b6b', marginTop: '10px', fontSize: '0.9rem' }} className='Inter-Regular'>
+            <p style={{ color: '#d32f2f', marginTop: '10px', fontSize: '0.9rem', textAlign: 'center' }}>
               {currentError}
             </p>
           )}
@@ -157,9 +164,7 @@ const AuthForm = () => {
         <a onClick={() => {
             setIsLogin(!isLogin);
             setLocalError(null);
-          }} 
-          className='Inter-Regular' 
-          style={{ cursor: 'pointer', display: 'block', marginTop: '15px', textDecoration: 'underline' }}>
+          }}>
           {isLogin ? 'Não tem uma conta? Registre-se' : 'Já tem uma conta? Faça o login'}
         </a>
       </div>

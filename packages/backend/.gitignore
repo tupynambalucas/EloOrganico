@@ -4,9 +4,9 @@ node_modules/
 # Build de produção
 dist/
 
-# Variáveis de Ambiente (CRÍTICO)
-.env/
-
+# (CRÍTICO)
+.env
+certs/*.p12
 
 # Logs e diagnósticos
 logs/

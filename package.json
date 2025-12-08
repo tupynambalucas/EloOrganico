@@ -32,6 +32,9 @@
     "lint:all": "npm run lint --workspaces --if-present",
     "typecheck:all": "npm run typecheck --workspaces --if-present",
 
+    "// --- 4. Docker (Development Mode) ---": "",
+    "docker:down": "docker compose down",
+
     "// --- 5. Database (Development Mode) ---": "",
     "db:up": "docker compose up -d db",
     "db:clean": "docker compose down --volumes",

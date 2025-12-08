@@ -12,7 +12,7 @@ node_modules
 
 # Build de Produção (SPA)
 # O Vite gera o bundle final apenas nesta pasta
-dist
+dist/
 *.local
 
 # Editor / IDE

@@ -1,10 +1,10 @@
 import cors from '@fastify/cors'
 import envConfig from '../config/env'
 import utils from '../config/utils'
-import secureSession from './SessionPlugin'
-import MongoosePlugin from './MongoosePlugin';
+import secureSession from './sessionPlugin'
+import MongoosePlugin from './mongoosePlugin';
 import fp from 'fastify-plugin'
-import ApiPlugin from './ApiPlugin';
+import ApiPlugin from './apiPlugin';
 import type { FastifyPluginAsync } from 'fastify'
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 

@@ -16,11 +16,20 @@
   align-items: center;
   flex-wrap: nowrap;
   gap: 1.25vh;
-  margin-top: 15vh;
 }
 
-.container > div:first-child > svg:first-child{
-  height: 8vh;
+.banner {
+    height: 15vh;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: end;
+}
+
+.banner > svg {
+    font-size: 8vh;
 }
 
 .container > div:first-child > h2{

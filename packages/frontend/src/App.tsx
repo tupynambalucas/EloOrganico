@@ -3,7 +3,7 @@ import { useAuthStore } from '@/features/auth/auth.store';
 import Loader from '@/components/Loader';
 
 const AdminApp = lazy(() => import('@/features/admin'));
-const UserApp = lazy(() => import('@/features/user'));
+const UserApp = lazy(() => import('@/features/shop'));
 const AuthScreen = lazy(() => import('@/features/auth'));
 
 function App() {

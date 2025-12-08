@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { sendJSON } from '@/lib/fetch';
-import type { IUser, IProduct, ICycle, LoginDTO, RegisterDTO } from '@elo-organico/shared';
+import type { IUser, LoginDTO, RegisterDTO } from '@elo-organico/shared';
 
 export type UserState = Omit<IUser, 'password'>;
 
@@ -15,8 +15,6 @@ interface LoginResponse {
   authenticated: boolean;
   token: string;
   user: UserState;
-  products?: IProduct[]; 
-  cycle?: ICycle;
 }
 
 interface AuthState {

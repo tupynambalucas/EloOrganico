@@ -1,12 +1,14 @@
 import type { FastifyPluginAsync, FastifyInstance, FastifyPluginOptions } from 'fastify';
-import authRoutes from '../modules/auth/auth.routes';
-import cycleRoutes from '../modules/admin/cycle/cycle.routes';
+import authRoutes from '../features/auth/auth.routes';
+import cycleRoutes from '../features/cycles/cycle.routes';
 
-const ApiPlugin: FastifyPluginAsync = async function (server: FastifyInstance, opts: FastifyPluginOptions) {
+const apiPlugin: FastifyPluginAsync = async function (server: FastifyInstance, opts: FastifyPluginOptions) {
   
   await server.register(authRoutes, { prefix: 'auth' });
   
-  await server.register(cycleRoutes, { prefix: 'admin' });
+  // Alteração: Removemos o prefixo 'admin' daqui. 
+  // O controle de rota será feito dentro do arquivo cycle.routes.ts
+  await server.register(cycleRoutes);
 }
 
-export default ApiPlugin;
+export default apiPlugin;

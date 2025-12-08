@@ -39,6 +39,7 @@
     "db:up": "docker compose up -d db",
     "db:clean": "docker compose down --volumes",
     "db:reset": "npm run db:clean && npm run db:up",
+    "db:gen-key": "echo \"CHAVE_FALSA_PARA_DEV_$(date +%s)\" > mongo-keyfile && echo \"✅ Keyfile gerado!\"",
 
     "// --- 6. Production (Docker Simulation) ---": "",
     "prod:up": "docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build",

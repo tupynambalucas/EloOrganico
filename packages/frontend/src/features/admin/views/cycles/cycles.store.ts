@@ -30,8 +30,8 @@ interface CycleState {
   isLoadingActive: boolean;
 
   isSubmitting: boolean;
-  createError: string | null;
-  createSuccess: boolean;
+  error: string | null;
+  success: boolean;
 
   historyCycles: ICycle[];
   historyPagination: HistoryResponse['pagination'] | null;
@@ -45,7 +45,9 @@ interface CycleState {
   fetchCycleDetails: (id: string) => Promise<void>;
   
   createCycle: (data: CycleFormData) => Promise<boolean>;
-  resetCreateStatus: () => void;
+  updateActiveCycleProducts: (products: IProduct[]) => Promise<boolean>;
+  
+  resetStatus: () => void;
   clearSelectedCycle: () => void;
 }
 
@@ -54,8 +56,8 @@ export const useCycleStore = create<CycleState>((set, get) => ({
   isLoadingActive: true,
   
   isSubmitting: false,
-  createError: null,
-  createSuccess: false,
+  error: null,
+  success: false,
 
   historyCycles: [],
   historyPagination: null,
@@ -64,7 +66,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
   selectedCycle: null,
   isLoadingDetails: false,
 
-  resetCreateStatus: () => set({ isSubmitting: false, createError: null, createSuccess: false }),
+  resetStatus: () => set({ isSubmitting: false, error: null, success: false }),
   clearSelectedCycle: () => set({ selectedCycle: null }),
 
   fetchActiveCycle: async () => {
@@ -93,8 +95,8 @@ export const useCycleStore = create<CycleState>((set, get) => ({
         historyPagination: response.pagination,
         isLoadingHistory: false 
       });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       set({ historyCycles: [], isLoadingHistory: false });
     }
   },
@@ -104,17 +106,17 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     try {
       const data = await sendJSON<ICycle>(`/api/admin/cycles/${id}`);
       set({ selectedCycle: data, isLoadingDetails: false });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       set({ isLoadingDetails: false });
     }
   },
 
   createCycle: async (data) => {
-    set({ isSubmitting: true, createError: null, createSuccess: false });
+    set({ isSubmitting: true, error: null, success: false });
 
     if (!data.openingDate || !data.closingDate) {
-      set({ isSubmitting: false, createError: 'Datas são obrigatórias.' });
+      set({ isSubmitting: false, error: 'Datas são obrigatórias.' });
       return false;
     }
 
@@ -131,16 +133,42 @@ export const useCycleStore = create<CycleState>((set, get) => ({
         json: payload,
       });
 
-      set({ isSubmitting: false, createSuccess: true });
+      set({ isSubmitting: false, success: true });
       get().fetchActiveCycle();
       return true;
 
     } catch (err: unknown) {
-      const error = err as ApiError; 
-      const message = error.body?.message || error.message || 'Falha ao criar ciclo';
-      
-      set({ isSubmitting: false, createError: message });
+      const errorObj = err as ApiError; 
+      const message = errorObj.body?.message || errorObj.message || 'Falha ao criar ciclo';
+      set({ isSubmitting: false, error: message });
       return false;
     }
   },
+
+  updateActiveCycleProducts: async (updatedProducts) => {
+    const currentCycle = get().activeCycle;
+    if (!currentCycle || !currentCycle._id) return false;
+
+    set({ isSubmitting: true, error: null });
+
+    try {
+      const updatedCycle = await sendJSON<ICycle>(`/api/admin/cycles/${currentCycle._id}`, {
+        method: 'PATCH',
+        json: { products: updatedProducts }
+      });
+
+      set({ 
+        activeCycle: updatedCycle,
+        isSubmitting: false, 
+        success: true
+      });
+      return true;
+
+    } catch (err: unknown) {
+        const errorObj = err as ApiError; 
+        const message = errorObj.body?.message || errorObj.message || 'Erro ao atualizar produtos';
+        set({ isSubmitting: false, error: message });
+        return false;
+    }
+  }
 }));

@@ -8,7 +8,7 @@ import { Cycle } from '../models/Cycle';
 const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   try {
     const mongoUri = server.config.MONGO_URI;
-    
+    console.log('MONGO_URI:', mongoUri); // Log para depuração
     // Pegamos as variáveis de ambiente (Seed)
     const adminUserSeed = server.config.ADMIN_USER_SEED;
     const adminEmailSeed = server.config.ADMIN_EMAIL_SEED;
@@ -16,9 +16,11 @@ const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
     server.log.info('🔌 Starting database connection...');
     
-    mongoose.set('strictQuery', false);
-    
-    const connection = await mongoose.connect(mongoUri);
+  
+    const connection = await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
+    });
     server.log.info('✅ Mongoose connected successfully.');
     
     server.decorate('mongoose', connection);

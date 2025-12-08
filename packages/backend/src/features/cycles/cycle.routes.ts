@@ -4,27 +4,29 @@ import {
   createCycleHandler, 
   getActiveCycleHandler, 
   getCycleHistoryHandler, 
-  getCycleByIdHandler 
+  getCycleByIdHandler,
+  updateCycleHandler
 } from './cycle.controller';
 import { 
   createCycleSchema, 
   getHistorySchema, 
-  getCycleByIdSchema 
+  getCycleByIdSchema,
+  updateCycleSchema
 } from './cycle.schema';
 
 const cycleRoutes: FastifyPluginAsync = async (server) => {
   const app = server.withTypeProvider<ZodTypeProvider>();
 
-  // PÚBLICO: Ciclo Ativo
+  // Público
   app.get('/cycles/active', getActiveCycleHandler);
 
-  // ADMIN: Criar Ciclo
+  // Admin
   app.post('/admin/cycles', { schema: createCycleSchema }, createCycleHandler);
+  
+  app.patch('/admin/cycles/:id', { schema: updateCycleSchema }, updateCycleHandler);
 
-  // ADMIN: Listar Histórico (Paginado)
   app.get('/admin/cycles/history', { schema: getHistorySchema }, getCycleHistoryHandler);
-
-  // ADMIN: Detalhes de um Ciclo Específico
+  
   app.get('/admin/cycles/:id', { schema: getCycleByIdSchema }, getCycleByIdHandler);
 };
 

@@ -1,32 +1,30 @@
 import { useEffect } from 'react';
 import styles from './Cycles.module.css';
-import CreateCycleForm from './create/CreateCycleForm';
-import CurrentCycle from './current/CurrentCycle'; // Assumindo que este componente exibe o activeCycle
-import CyclesHistory from './history/CyclesHistory'; // Seu componente de histórico
+import CreateCycle from './create/CreateCycle';
+import ActiveCycle from './active/ActiveCycle';
+import CyclesHistory from './history/CyclesHistory';
 import Loader from '@/components/Loader';
 import { useCycleStore } from './cycles.store';
 
-const CycleView = () => {
+const CyclesView = () => {
   const { 
     activeCycle, 
     fetchActiveCycle, 
     isLoadingActive,
-    createSuccess, // Para trocar a tela após criar
-    resetCreateStatus
+    success, 
+    resetStatus
   } = useCycleStore();
 
-  // Inicialização: Verifica se existe ciclo ativo ao carregar a página
   useEffect(() => {
     fetchActiveCycle();
-  }, []);
+  }, [fetchActiveCycle]); // Adicionada dependência correta
 
-  // Se acabou de criar com sucesso, reseta o form (O fetchActiveCycle já foi chamado na store)
   useEffect(() => {
-    if (createSuccess) {
-      const timer = setTimeout(() => resetCreateStatus(), 3000); // Feedback visual de 3s
+    if (success) {
+      const timer = setTimeout(() => resetStatus(), 3000);
       return () => clearTimeout(timer);
     }
-  }, [createSuccess]);
+  }, [success, resetStatus]); // Adicionadas dependências corretas
 
   if (isLoadingActive) {
     return <div className={styles.loadingContainer}><Loader /></div>;
@@ -34,25 +32,14 @@ const CycleView = () => {
 
   return (
     <div className={styles.container}>
-      {/* Área Principal: Mostra Ciclo Ativo OU Formulário de Criação */}
       <section className={styles.mainArea}>
         {activeCycle ? (
-          <CurrentCycle />
+          <ActiveCycle />
         ) : (
-          <div className={styles.createWrapper}>
-            {createSuccess ? (
-               <div className={styles.successMessage}>
-                 <h2>✅ Ciclo Criado!</h2>
-                 <p>O ciclo está no ar. Recarregando painel...</p>
-               </div>
-            ) : (
-               <CreateCycleForm />
-            )}
-          </div>
+          <CreateCycle />
         )}
       </section>
 
-      {/* Área Secundária: Histórico (Sempre visível ou abaixo) */}
       <section className={styles.historyArea}>
         <CyclesHistory />
       </section>
@@ -60,4 +47,4 @@ const CycleView = () => {
   );
 };
 
-export default CycleView;
+export default CyclesView;

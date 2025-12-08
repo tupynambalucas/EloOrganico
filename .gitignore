@@ -4,6 +4,7 @@
 .DS_Store
 Thumbs.db
 *.log
+mongo-keyfile
 node_modules/
 /package-lock.json
 .env

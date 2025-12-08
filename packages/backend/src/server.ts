@@ -1,4 +1,4 @@
-import server from './config/fastifyInstance';
+import server from './config/fastifyInstanceConfig';
 import RegistryPlugin from './plugins/registryPlugin';
 
 async function startServer() {

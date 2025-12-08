@@ -36,6 +36,7 @@ declare module 'fastify' {
             SERVER_HOST: string;
             SERVER_PORT: number;
             JWT_SECRET: string;
+            NODE_ENV: string;
             SESSION_SECRET: string;
             MONGO_URI: string;
             ADMIN_USER_SEED: string;

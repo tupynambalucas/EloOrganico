@@ -9,24 +9,27 @@ const schema = {
     'MONGO_URI', 
     'JWT_SECRET', 
     'SESSION_SECRET',
-    'ADMIN_PASS_SEED' // Obrigatório agora para validar tamanho
+    'ADMIN_USER_SEED',
+    'ADMIN_EMAIL_SEED',
+    'ADMIN_PASS_SEED',
+    'USER_SESSION_KEY',
+    'ADMIN_SESSION_KEY',
+    'NODE_ENV'
   ],
   properties: {
-    SERVER_PORT: { type: 'number', default: 3000 },
-    SERVER_HOST: { type: 'string', default: '0.0.0.0' },
-    NODE_ENV: { type: 'string', default: 'development' },
+    SERVER_PORT: { type: 'number' },
+    SERVER_HOST: { type: 'string' },
+    NODE_ENV: { type: 'string' },
     MONGO_URI: { type: 'string' },
     
-    // Seeds
-    ADMIN_USER_SEED: { type: 'string', default: 'admin' },
-    ADMIN_EMAIL_SEED: { type: 'string', default: 'admin@elo.com' },
+    ADMIN_USER_SEED: { type: 'string' },
+    ADMIN_EMAIL_SEED: { type: 'string' },
     ADMIN_PASS_SEED: { type: 'string' },
 
-    // Secrets
     JWT_SECRET: { type: 'string' },
     SESSION_SECRET: { type: 'string' },
-    USER_SESSION_KEY: { type: 'string' },  // Adicionado
-    ADMIN_SESSION_KEY: { type: 'string' }  // Adicionado
+    USER_SESSION_KEY: { type: 'string' }, 
+    ADMIN_SESSION_KEY: { type: 'string' }  
   }
 };
 

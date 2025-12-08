@@ -1,31 +1,43 @@
-import { FastifySchema } from 'fastify';
-import { CreateCycleDTOSchema } from '@elo-organico/shared';
+import { z } from 'zod';
+import { CreateCycleDTOSchema, ProductSchema } from '@elo-organico/shared';
 
-// Schema do Body para criação (Mantido)
+// --- SCHEMAS (ZOD) ---
+
+// 1. Create (Reusa do Shared)
 export const createCycleSchema = {
   body: CreateCycleDTOSchema,
 };
 
-// Schema para Query Params do Histórico (Novo)
-export const getHistorySchema: FastifySchema = {
-  querystring: {
-    type: 'object',
-    properties: {
-      page: { type: 'number', default: 1 },
-      limit: { type: 'number', default: 10 },
-      startDate: { type: 'string', format: 'date-time' },
-      endDate: { type: 'string', format: 'date-time' }
-    }
-  }
+// 2. History Query (Filtros)
+const HistoryQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(10),
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional()
+});
+
+export const getHistorySchema = {
+  querystring: HistoryQuerySchema
 };
 
-// Schema para buscar detalhes por ID (Novo)
-export const getCycleByIdSchema: FastifySchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string' }
-    }
-  }
+// 3. Params ID (Comum para GetById e Update)
+const CycleIdParamSchema = z.object({
+  id: z.string().min(1, "ID é obrigatório")
+});
+
+export const getCycleByIdSchema = {
+  params: CycleIdParamSchema
 };
+
+// 4. Update (Patch de Produtos)
+export const updateCycleSchema = {
+  params: CycleIdParamSchema,
+  body: z.object({
+    products: z.array(ProductSchema) // Lista completa de produtos
+  })
+};
+
+// --- TIPOS INFERIDOS (Single Source of Truth) ---
+export type HistoryQueryType = z.infer<typeof HistoryQuerySchema>;
+export type CycleIdParamType = z.infer<typeof CycleIdParamSchema>;
+export type UpdateCycleBodyType = z.infer<typeof updateCycleSchema.body>;

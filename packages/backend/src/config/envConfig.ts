@@ -1,5 +1,6 @@
 import fp from 'fastify-plugin';
 import fastifyEnv from '@fastify/env';
+import path from 'path';
 
 const schema = {
   type: 'object',
@@ -34,10 +35,12 @@ const schema = {
 };
 
 const envConfig = async (server: any) => {
+  const rootEnvPath = path.join(__dirname, '../../../../.env');
+
   await server.register(fastifyEnv, {
     confKey: 'config',
     schema: schema,
-    dotenv: true,
+    dotenv: process.env.NODE_ENV === 'production' ? false : { path: rootEnvPath },
     data: process.env 
   });
 };

@@ -8,23 +8,19 @@ import { Cycle } from '../models/Cycle';
 const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   try {
     const mongoUri = server.config.MONGO_URI;
-    console.log('MONGO_URI:', mongoUri); // Log para depuração
-    // Pegamos as variáveis de ambiente (Seed)
-    const adminUserSeed = server.config.ADMIN_USER_SEED;
-    const adminEmailSeed = server.config.ADMIN_EMAIL_SEED;
-    const adminPassSeed = server.config.ADMIN_PASS_SEED;
 
-    server.log.info('🔌 Starting database connection...');
-    
-  
+    // Configurações recomendadas para evitar timeouts em conexões instáveis
     const connection = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 45000,
     });
+    
     server.log.info('✅ Mongoose connected successfully.');
     
+    // Decora a instância do Fastify com a conexão do Mongoose
     server.decorate('mongoose', connection);
 
+    // Registra os Models para acesso rápido via server.models.*
     const models = {
       User,
       Product,
@@ -34,37 +30,18 @@ const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
     server.decorate('models', models);
     server.log.info('📚 Mongoose models decorated.');
 
-    // --- Lógica de Criação do Admin Padrão ---
-    const userCount = await User.countDocuments();
-    
-    if (userCount === 0) {
-      server.log.info('👤 No users found. Creating default admin...');
-      
-      // Validação rápida de segurança para não quebrar o schema do Zod/Mongoose
-      if (adminPassSeed.length < 6) {
-        throw new Error('❌ ERRO CRÍTICO: ADMIN_PASS_SEED no .env deve ter no mínimo 6 caracteres.');
-      }
+    // A LÓGICA DE SEED FOI REMOVIDA DAQUI E MOVIDA PARA src/scripts/seedAdmin.ts
 
-      const defaultAdmin = new User({
-        email: adminEmailSeed,
-        username: adminUserSeed,
-        password: adminPassSeed, // O Hook pre-save do User.ts vai hashear isso automaticamente
-        role: 'admin',
-        icon: 'graxaim'
-      });
-
-      await defaultAdmin.save();
-      server.log.info(`🎉 Default admin created: ${adminEmailSeed}`);
-    }
-
+    // Fecha conexão ao encerrar o servidor Fastify
     server.addHook('onClose', async (instance) => {
-      await mongoose.disconnect();
-      instance.log.info('👋 Mongoose disconnected.');
+      await instance.mongoose.connection.close();
+      instance.log.info('Mongoose connection closed.');
     });
 
   } catch (err) {
-    server.log.error(err, '❌ Database plugin initialization error');
-    process.exit(1);
+    server.log.error(err);
+    // É uma boa prática derrubar o processo se o banco não conectar na inicialização
+    process.exit(1); 
   }
 };
 

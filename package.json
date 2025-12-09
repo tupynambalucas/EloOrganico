@@ -20,6 +20,7 @@
     "dev:frontend": "npm run dev -w @elo-organico/frontend",
     "dev:backend": "npm run dev -w @elo-organico/backend",
     "dev:stack": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "backend:seed": "npm run seed -w @elo-organico/backend",
 
     "// --- 3. Build & Compilation ---": "",
     "build:all": "npm run build --workspaces --if-present",

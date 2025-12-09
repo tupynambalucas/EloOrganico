@@ -3,20 +3,33 @@ export interface HttpError extends Error {
   body?: unknown;
 }
 
+let csrfToken: string | null = null;
+
+export function setCsrfToken(token: string) {
+  csrfToken = token;
+}
+
 export async function sendJSON<T>(
   url: string, 
   options: RequestInit & { json?: unknown } = {} 
 ): Promise<T> {
-  const { json, ...fetchOptions } = options;
+  const { json, headers, ...fetchOptions } = options;
+
+  const reqHeaders = new Headers(headers);
+
+  if (json) {
+    reqHeaders.set('Content-Type', 'application/json');
+    fetchOptions.body = JSON.stringify(json);
+  }
+
+  if (csrfToken && options.method && !['GET', 'HEAD'].includes(options.method.toUpperCase())) {
+    reqHeaders.set('x-csrf-token', csrfToken);
+  }
+
+  fetchOptions.headers = reqHeaders;
 
   try {
-    if (json) {
-      fetchOptions.headers = {
-        ...fetchOptions.headers,
-        'Content-Type': 'application/json',
-      };
-      fetchOptions.body = JSON.stringify(json);
-    }
+    // try catch para preparacao
   } catch (err) {
     console.error(err);
     throw new Error("Falha ao preparar os dados para envio.");
@@ -26,15 +39,12 @@ export async function sendJSON<T>(
 
   if (!response.ok) {
     const error = new Error(`HTTP error! status: ${response.status}`) as HttpError;
-    
     error.response = response;
-
     try {
       error.body = await response.json();
     } catch {
       error.body = await response.text();
     }
-    
     throw error;
   }
 

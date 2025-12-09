@@ -1,13 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { 
-  createCycleHandler, 
-  getActiveCycleHandler, 
-  getCycleHistoryHandler, 
-  getCycleByIdHandler,
-  updateCycleHandler
-} from './cycle.controller';
-import { 
   createCycleSchema, 
   getHistorySchema, 
   getCycleByIdSchema,
@@ -16,18 +9,29 @@ import {
 
 const cycleRoutes: FastifyPluginAsync = async (server) => {
   const app = server.withTypeProvider<ZodTypeProvider>();
+  const controller = server.cycleController;
 
-  // Público
-  app.get('/cycles/active', getActiveCycleHandler);
+  app.get('/cycles/active', controller.getActiveCycleHandler);
 
-  // Admin
-  app.post('/admin/cycles', { schema: createCycleSchema }, createCycleHandler);
+  app.post('/admin/cycles', { 
+    schema: createCycleSchema,
+    preHandler: [server.authenticate, server.verifyAdmin]
+  }, controller.createCycleHandler);
   
-  app.patch('/admin/cycles/:id', { schema: updateCycleSchema }, updateCycleHandler);
+  app.patch('/admin/cycles/:id', { 
+    schema: updateCycleSchema,
+    preHandler: [server.authenticate, server.verifyAdmin]
+  }, controller.updateCycleHandler);
 
-  app.get('/admin/cycles/history', { schema: getHistorySchema }, getCycleHistoryHandler);
+  app.get('/admin/cycles/history', { 
+    schema: getHistorySchema,
+    preHandler: [server.authenticate, server.verifyAdmin]
+  }, controller.getCycleHistoryHandler);
   
-  app.get('/admin/cycles/:id', { schema: getCycleByIdSchema }, getCycleByIdHandler);
+  app.get('/admin/cycles/:id', { 
+    schema: getCycleByIdSchema,
+    preHandler: [server.authenticate, server.verifyAdmin]
+  }, controller.getCycleByIdHandler);
 };
 
 export default cycleRoutes;

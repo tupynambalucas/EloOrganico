@@ -1,18 +1,18 @@
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
 import fastifyJwt from '@fastify/jwt';
 import bcrypt from 'bcrypt';
+import { UserPayload } from '../types/fastify'; // Importamos o tipo para usar no Generic
 
 const SessionPlugin: FastifyPluginAsync = async (server) => {
 
-  // --- Decorators de Hash (Bcrypt) ---
   server.decorate('genHash', async (password: string) => {
     try {
       return await bcrypt.hash(password, 10);
     } catch (error) {
-      server.log.error(error, 'Bcrypt hash generation failed');
+      server.log.error(error);
       throw error;
     }
   });
@@ -21,56 +21,52 @@ const SessionPlugin: FastifyPluginAsync = async (server) => {
     try {
       return await bcrypt.compare(password, hashedPass);
     } catch (error) {
-      server.log.error(error, 'Bcrypt hash comparison failed');
+      server.log.error(error);
       return false;
     }
   });
 
-  // --- 1. Register Cookie ---
   await server.register(fastifyCookie);
 
-  // --- 2. Register Session ---
-  // Usa a SESSION_SECRET do .env para assinar o cookie de sessão do navegador
   await server.register(fastifySession, {
-    secret: server.config.SESSION_SECRET as string,
+    cookieName: server.config.USER_SESSION_KEY,
+    secret: server.config.SESSION_SECRET,
     cookie: { 
-      secure: server.config.NODE_ENV === 'production', // True em produção (HTTPS)
-      httpOnly: true, // Protege contra XSS
-      maxAge: 86400000 // 24 horas
+      secure: server.config.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 86400000 
     }, 
     saveUninitialized: false,
   });
 
-
   await server.register(fastifyJwt, {
-    secret: server.config.JWT_SECRET as string,
+    secret: server.config.JWT_SECRET,
   });
 
-  server.decorate('authenticate', async (request, reply) => {
+  server.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      await request.jwtVerify();
+      const token = request.session.token;
+
+      if (!token) {
+        return reply.status(401).send({ message: 'Não autenticado' });
+      }
+
+      const decoded = server.jwt.verify<UserPayload>(token);
+      
+      request.user = decoded;
+
     } catch (err) {
-      reply.status(401).send({ message: 'Token inválido ou expirado' });
+      return reply.status(401).send({ message: 'Sessão inválida ou expirada' });
     }
   });
 
-  server.addHook('preHandler', async (request, reply) => {
-    if (request.url.startsWith('/api/admin') || request.url.startsWith('/admin')) {
-      
-      if (!request.session.token) {
-        return reply.status(401).send({ message: 'Acesso não autorizado. Faça login.' });
+  server.decorate('verifyAdmin', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      if (!request.user || request.user.role !== 'admin') {
+        return reply.status(403).send({ message: 'Acesso negado' });
       }
-
-      try {
-        const user = server.jwt.verify(request.session.token) as { role: string };
-        
-        if (user.role !== 'admin') {
-          server.log.warn(`Usuário ${JSON.stringify(user)} tentou acessar área admin.`);
-          return reply.status(403).send({ message: 'Acesso proibido. Requer privilégios de administrador.' });
-        }
-      } catch (err) {
-        return reply.status(401).send({ authenticated: false, message: 'Sessão inválida.' });
-      }
+    } catch (err) {
+      return reply.status(401).send({ message: 'Erro de verificação' });
     }
   });
 };

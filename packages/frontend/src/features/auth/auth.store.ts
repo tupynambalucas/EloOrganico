@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { sendJSON } from '@/lib/fetch';
+import { sendJSON, setCsrfToken } from '@/lib/fetch';
 import type { IUser, LoginDTO, RegisterDTO } from '@elo-organico/shared';
 
 export type UserState = Omit<IUser, 'password'>;
@@ -27,6 +27,7 @@ interface AuthState {
   registerLoading: boolean;
   registerError: string | null;
   registerSuccess: string | null;
+  
   login: (data: LoginDTO) => Promise<void>;
   logout: () => Promise<void>;
   register: (data: RegisterDTO) => Promise<boolean>;
@@ -104,6 +105,16 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   verifyAuth: async () => {
     set({ isAuthLoading: true });
+    
+    // 1. Inicializa CSRF antes de verificar autenticação
+    try {
+      const csrfRes = await sendJSON<{ token: string }>('/api/csrf-token', { method: 'GET' });
+      setCsrfToken(csrfRes.token);
+    } catch (e) {
+      console.error('Falha ao obter CSRF', e);
+    }
+
+    // 2. Verifica sessão
     try {
       const response = await sendJSON<LoginResponse>('/api/auth/verify', {
         method: 'GET',

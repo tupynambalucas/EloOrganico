@@ -41,10 +41,28 @@ services:
       db:
         condition: service_healthy
     environment:
-      NODE_ENV: ${NODE_ENV}
-      MONGO_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/${MONGO_DB_NAME}?authSource=admin&replicaSet=rs0
-      JWT_SECRET: ${JWT_SECRET}
-      SESSION_SECRET: ${SESSION_SECRET}
+      # --- Configurações de Rede e Ambiente ---
+      - NODE_ENV=${NODE_ENV}
+      - SERVER_PORT=${SERVER_PORT}
+      # Essencial para Docker: 0.0.0.0 permite acesso externo (do Nginx)
+      - SERVER_HOST=0.0.0.0 
+
+      # --- Banco de Dados (Conexão Interna Docker) ---
+      # Aqui montamos a URI apontando para o serviço 'db' na porta 27017
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/${MONGO_DB_NAME}?authSource=admin&replicaSet=rs0
+      
+      # --- Segredos de Autenticação e Sessão ---
+      # O container precisa receber esses valores explicitamente
+      - JWT_SECRET=${JWT_SECRET}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - USER_SESSION_KEY=${USER_SESSION_KEY}
+      - ADMIN_SESSION_KEY=${ADMIN_SESSION_KEY}
+
+      # --- Variáveis para o Seed do Admin (Produção) ---
+      # Necessário para o script 'npm run seed:prod' criar o admin inicial
+      - ADMIN_USER_SEED=${ADMIN_USER_SEED}
+      - ADMIN_EMAIL_SEED=${ADMIN_EMAIL_SEED}
+      - ADMIN_PASS_SEED=${ADMIN_PASS_SEED}
     networks:
       - elo_network
 

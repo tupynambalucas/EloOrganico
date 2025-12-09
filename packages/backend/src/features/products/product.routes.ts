@@ -1,13 +1,15 @@
 import { FastifyPluginAsync } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { listProductsHandler } from './products.controller';
-import { listProductsSchema } from './products.schema';
+import { listProductsSchema } from './product.schema';
 
 const productRoutes: FastifyPluginAsync = async (server) => {
   const app = server.withTypeProvider<ZodTypeProvider>();
+  const controller = server.productController;
 
-  // ADMIN: Listar todos os produtos (Inventário)
-  app.get('/admin/products', { schema: listProductsSchema }, listProductsHandler);
+  app.get('/admin/products', { 
+    schema: listProductsSchema,
+    preHandler: [server.authenticate, server.verifyAdmin]
+  }, controller.listHandler);
 };
 
 export default productRoutes;

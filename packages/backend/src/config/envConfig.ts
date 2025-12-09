@@ -14,7 +14,6 @@ const schema = {
     'ADMIN_EMAIL_SEED',
     'ADMIN_PASS_SEED',
     'USER_SESSION_KEY',
-    'ADMIN_SESSION_KEY',
     'NODE_ENV'
   ],
   properties: {
@@ -29,8 +28,7 @@ const schema = {
 
     JWT_SECRET: { type: 'string' },
     SESSION_SECRET: { type: 'string' },
-    USER_SESSION_KEY: { type: 'string' }, 
-    ADMIN_SESSION_KEY: { type: 'string' }  
+    USER_SESSION_KEY: { type: 'string' },
   }
 };
 

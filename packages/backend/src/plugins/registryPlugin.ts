@@ -1,30 +1,62 @@
-import cors from '@fastify/cors'
-import envConfig from '../config/envConfig'
-import utils from '../config/utilsConfig'
-import secureSession from './sessionPlugin'
-import MongoosePlugin from './mongoosePlugin';
-import fp from 'fastify-plugin'
-import ApiPlugin from './apiPlugin';
-import type { FastifyPluginAsync } from 'fastify'
+import cors from '@fastify/cors';
+import fp from 'fastify-plugin';
+import type { FastifyPluginAsync } from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+
+import envConfig from '../config/envConfig';
+import utils from '../config/utilsConfig';
+import secureSession from './sessionPlugin';
+import MongoosePlugin from './mongoosePlugin';
+import SecurityPlugin from './securityPlugin';
+import ApiPlugin from './apiPlugin';
+
+import { AuthRepository } from '../features/auth/auth.repository';
+import { AuthService } from '../features/auth/auth.service';
+import { AuthController } from '../features/auth/auth.controller';
+
+import { ProductRepository } from '../features/products/product.repository';
+import { ProductService } from '../features/products/product.service';
+import { ProductController } from '../features/products/product.controller';
+
+import { CycleRepository } from '../features/cycles/cycle.repository';
+import { CycleService } from '../features/cycles/cycle.service';
+import { CycleController } from '../features/cycles/cycle.controller';
 
 const serverAutoRegistry: FastifyPluginAsync = async function (server) {
   server.setValidatorCompiler(validatorCompiler);
   server.setSerializerCompiler(serializerCompiler);
 
-  await server.register(utils)
-  await server.register(envConfig)
-  await server.register(MongoosePlugin)
-  await server.register(secureSession)
-  
+  await server.register(utils);
+  await server.register(envConfig);
+  await server.register(MongoosePlugin);
+  await server.register(secureSession);
+  await server.register(SecurityPlugin);
+
+  const { User, Product, Cycle } = server.models;
+
+  const authRepo = new AuthRepository(User);
+  const authService = new AuthService(authRepo, server);
+  const authController = new AuthController(authService);
+
+  const productRepo = new ProductRepository(Product);
+  const productService = new ProductService(productRepo);
+  const productController = new ProductController(productService);
+
+  const cycleRepo = new CycleRepository(Cycle);
+  const cycleService = new CycleService(cycleRepo, productRepo, server.mongoose);
+  const cycleController = new CycleController(cycleService);
+
+  server.decorate('authController', authController);
+  server.decorate('productController', productController);
+  server.decorate('cycleController', cycleController);
 
   await server.register(ApiPlugin, { prefix: '/api' });
 
-  const allowedOrigins = [ 'http://localhost:5173'];
+  const allowedOrigins = ['http://localhost:5173'];
 
   await server.register(cors, {
     origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Adicionei métodos comuns de REST
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
   });
 }

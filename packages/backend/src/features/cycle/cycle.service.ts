@@ -1,7 +1,7 @@
 import { Mongoose } from 'mongoose';
 import { CreateCycleDTO } from '@elo-organico/shared';
 import { CycleRepository } from './cycle.repository';
-import { ProductRepository } from '../products/product.repository';
+import { ProductRepository } from '../product/product.repository';
 import { UpdateCycleBodyType } from './cycle.schema'; // Import correto
 
 export class CycleService {
@@ -84,7 +84,6 @@ export class CycleService {
     }
   }
 
-  // Agora usa o tipo correto UpdateCycleBodyType
   async updateCycle(id: string, data: UpdateCycleBodyType) {
     const session = await this.mongoose.startSession();
     session.startTransaction();

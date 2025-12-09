@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import styles from './Cycles.module.css';
-import CreateCycle from './create/CreateCycle';
+import styles from './Cycle.module.css';
+import CreateCycle from './create/CycleCreate';
 import ActiveCycle from './active/ActiveCycle';
-import CyclesHistory from './history/CyclesHistory';
+import CyclesHistory from './history/CycleHistory';
 import Loader from '@/components/Loader';
-import { useCycleStore } from './cycles.store';
+import { useCycleStore } from './cycle.store';
 
 const CyclesView = () => {
   const { 

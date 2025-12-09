@@ -2,6 +2,7 @@ import cors from '@fastify/cors';
 import fp from 'fastify-plugin';
 import type { FastifyPluginAsync } from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import fastifyCookie from '@fastify/cookie'; // <--- Importe isto
 
 import envConfig from '../config/envConfig';
 import utils from '../config/utilsConfig';
@@ -14,13 +15,13 @@ import { AuthRepository } from '../features/auth/auth.repository';
 import { AuthService } from '../features/auth/auth.service';
 import { AuthController } from '../features/auth/auth.controller';
 
-import { ProductRepository } from '../features/products/product.repository';
-import { ProductService } from '../features/products/product.service';
-import { ProductController } from '../features/products/product.controller';
+import { ProductRepository } from '../features/product/product.repository';
+import { ProductService } from '../features/product/product.service';
+import { ProductController } from '../features/product/product.controller';
 
-import { CycleRepository } from '../features/cycles/cycle.repository';
-import { CycleService } from '../features/cycles/cycle.service';
-import { CycleController } from '../features/cycles/cycle.controller';
+import { CycleRepository } from '../features/cycle/cycle.repository';
+import { CycleService } from '../features/cycle/cycle.service';
+import { CycleController } from '../features/cycle/cycle.controller';
 
 const serverAutoRegistry: FastifyPluginAsync = async function (server) {
   server.setValidatorCompiler(validatorCompiler);
@@ -28,6 +29,14 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server) {
 
   await server.register(utils);
   await server.register(envConfig);
+  
+  // --- MUDANÇA CRÍTICA ---
+  // Registramos o cookie parser AQUI, no nível raiz, com o segredo.
+  // Isso disponibiliza 'unsignCookie' para todo o app (Session e CSRF).
+  await server.register(fastifyCookie, {
+    secret: server.config.SESSION_SECRET, // Usa o mesmo segredo da sessão ou crie um COOKIE_SECRET
+  });
+
   await server.register(MongoosePlugin);
   await server.register(secureSession);
   await server.register(SecurityPlugin);

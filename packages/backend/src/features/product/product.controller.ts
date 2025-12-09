@@ -1,14 +1,11 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { ListProductsQueryType } from './product.schema';
 import { ProductService } from './product.service';
+import { FastifyZodHandler } from '../../types/fastify';
+import { ListProductsRoute } from './product.schema';
 
 export class ProductController {
   constructor(private service: ProductService) {}
 
-  listHandler = async (
-    request: FastifyRequest<{ Querystring: ListProductsQueryType }>,
-    reply: FastifyReply
-  ) => {
+  listHandler: FastifyZodHandler<ListProductsRoute> = async (request, reply) => {
     const products = await this.service.listProducts(request.query);
     return reply.send(products);
   }

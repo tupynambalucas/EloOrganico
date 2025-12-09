@@ -54,8 +54,11 @@ export class AuthService {
   }
 
   async verify(token: string) {
-    const payload = this.server.jwt.verify(token) as { _id: string };
-    const user = await this.authRepo.findById(payload._id);
+    const payload = this.server.jwt.verify(token); 
+    
+    const userId = (payload as any)._id;
+
+    const user = await this.authRepo.findById(userId);
     
     if (!user) {
       throw new Error('Usuário não encontrado.');

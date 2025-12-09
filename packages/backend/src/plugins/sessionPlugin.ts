@@ -1,10 +1,9 @@
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
-import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
 import fastifyJwt from '@fastify/jwt';
 import bcrypt from 'bcrypt';
-import { UserPayload } from '../types/fastify'; // Importamos o tipo para usar no Generic
+import { UserPayload } from '../types/fastify';
 
 const SessionPlugin: FastifyPluginAsync = async (server) => {
 
@@ -25,8 +24,6 @@ const SessionPlugin: FastifyPluginAsync = async (server) => {
       return false;
     }
   });
-
-  await server.register(fastifyCookie);
 
   await server.register(fastifySession, {
     cookieName: server.config.USER_SESSION_KEY,
@@ -52,7 +49,6 @@ const SessionPlugin: FastifyPluginAsync = async (server) => {
       }
 
       const decoded = server.jwt.verify<UserPayload>(token);
-      
       request.user = decoded;
 
     } catch (err) {

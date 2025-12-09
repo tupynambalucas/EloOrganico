@@ -5,8 +5,11 @@ import {
   FastifyInstance, 
   RawServerDefault, 
   FastifySchema,
-  RouteGenericInterface,
-  RouteHandler // Importante
+  RouteHandlerMethod, 
+  FastifyBaseLogger,
+  RawRequestDefaultExpression,
+  RawReplyDefaultExpression,
+  ContextConfigDefault
 } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { IncomingMessage, ServerResponse } from 'http';
@@ -14,8 +17,8 @@ import '@fastify/session';
 import '@fastify/jwt'; 
 import { type IUser, type IProduct, type ICycle } from '@elo-organico/shared';
 import { AuthController } from '../features/auth/auth.controller';
-import { CycleController } from '../features/cycles/cycle.controller';
-import { ProductController } from '../features/products/product.controller';
+import { CycleController } from '../features/cycle/cycle.controller';
+import { ProductController } from '../features/product/product.controller';
 
 export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & { 
     _id: string;
@@ -23,16 +26,15 @@ export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & 
     exp?: number;
 };
 
-// --- TIPO UTILITÁRIO PARA HANDLERS (A SOLUÇÃO DO ERRO) ---
-// Em vez de tipar o 'req', tipamos a função inteira.
-export type FastifyZodHandler<
-  RouteGeneric extends RouteGenericInterface
-> = RouteHandler<
-  RouteGeneric,
+// --- A CORREÇÃO DEFINITIVA (Schema-Based Handler) ---
+// Este tipo aceita o TSchema (o objeto Zod) e gera a assinatura exata que o Router espera.
+export type FastifyZodHandler<TSchema extends FastifySchema> = RouteHandlerMethod<
   RawServerDefault,
-  IncomingMessage,
-  ServerResponse,
-  FastifySchema,
+  RawRequestDefaultExpression,
+  RawReplyDefaultExpression,
+  never, // RouteGenericInterface é ignorado quando usamos TypeProvider
+  ContextConfigDefault,
+  TSchema, // O Schema entra aqui
   ZodTypeProvider
 >;
 

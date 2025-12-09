@@ -7,8 +7,11 @@ const authRoutes: FastifyPluginAsync = async (server) => {
   const controller = server.authController;
 
   app.post('/register', { schema: registerSchema }, controller.registerHandler);
+
   app.post('/login', { schema: loginSchema }, controller.loginHandler);
+
   app.post('/logout', controller.logoutHandler);
+  
   app.get('/verify', controller.verifyHandler);
 };
 

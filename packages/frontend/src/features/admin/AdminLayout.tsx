@@ -1,9 +1,9 @@
 import { type FC, Suspense } from 'react';
 import styles from './admin.module.css';
-import ProductsView from '@/features/admin/views/products/ProductsView';  
-import SharingView from '@/features/admin/views/cycles/CyclesView';
-import CustomersView from '@/features/admin/views/customers/CustomersView';
-import ReportsView from '@/features/admin/views/reports/ReportsView';
+import ProductsView from '@/features/admin/views/product/ProductsView';  
+import SharingView from '@/features/admin/views/cycle/CycleView';
+import CustomersView from '@/features/admin/views/customer/CustomersView';
+import ReportsView from '@/features/admin/views/report/ReportsView';
 import ConfigView from '@/features/admin/views/config/ConfigView';
 import SideBar from '@/features/admin/sidebar/SideBar';
 import Loader from '@/components/Loader'; // Seu loader global

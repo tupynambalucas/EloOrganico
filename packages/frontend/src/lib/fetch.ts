@@ -13,23 +13,29 @@ export async function sendJSON<T>(
   url: string, 
   options: RequestInit & { json?: unknown } = {} 
 ): Promise<T> {
-  const { json, headers, ...fetchOptions } = options;
+  const { json, headers, ...restOptions } = options;
 
+  // Prepara Headers
   const reqHeaders = new Headers(headers);
 
   if (json) {
     reqHeaders.set('Content-Type', 'application/json');
-    fetchOptions.body = JSON.stringify(json);
   }
 
+  // Injeção Automática de CSRF
   if (csrfToken && options.method && !['GET', 'HEAD'].includes(options.method.toUpperCase())) {
     reqHeaders.set('x-csrf-token', csrfToken);
   }
 
-  fetchOptions.headers = reqHeaders;
+  // Recria o objeto de opções com tipagem correta (RequestInit)
+  const fetchOptions: RequestInit = {
+    ...restOptions,
+    headers: reqHeaders,
+    body: json ? JSON.stringify(json) : undefined,
+  };
 
   try {
-    // try catch para preparacao
+    // Validação ou logs pré-envio podem ser feitos aqui
   } catch (err) {
     console.error(err);
     throw new Error("Falha ao preparar os dados para envio.");

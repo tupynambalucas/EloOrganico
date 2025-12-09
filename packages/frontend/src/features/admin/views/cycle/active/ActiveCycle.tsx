@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCycleStore } from '../cycles.store';
+import { useCycleStore } from '../cycle.store';
 import styles from './ActiveCycle.module.css';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

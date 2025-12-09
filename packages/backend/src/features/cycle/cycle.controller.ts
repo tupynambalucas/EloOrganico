@@ -1,27 +1,25 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { CycleService } from './cycle.service';
-import { FastifyZodHandler } from '../../types/fastify'; // Importe o novo tipo
+import { FastifyZodHandler } from '../../types/fastify';
 import { 
-  CreateCycleBodyType,
-  HistoryQueryType, 
-  CycleIdParamType, 
-  UpdateCycleBodyType,
-  UpdateCycleParamsType
+  CreateCycleRoute,
+  GetHistoryRoute,
+  GetByIdRoute,
+  UpdateCycleRoute
 } from './cycle.schema';
 
 export class CycleController {
   constructor(private service: CycleService) {}
 
-  // Handler simples não precisa de Zod generics
-  getActiveCycleHandler: FastifyZodHandler<{}> = async (req, reply) => {
+  getActiveCycleHandler = async (req: FastifyRequest, reply: FastifyReply) => {
     const activeCycle = await this.service.getActive();
     if (!activeCycle) return reply.status(204).send();
     return reply.send(activeCycle);
   }
 
-  // Agora tipamos a VARIÁVEL, e o (req, reply) é inferido automaticamente
-  getCycleHistoryHandler: FastifyZodHandler<{ Querystring: HistoryQueryType }> = async (req, reply) => {
+  getCycleHistoryHandler: FastifyZodHandler<GetHistoryRoute> = async (req, reply) => {
     const { page, limit, startDate, endDate } = req.query;
+    
     const result = await this.service.getHistory(page, limit, startDate, endDate);
     
     return reply.send({
@@ -34,7 +32,7 @@ export class CycleController {
     });
   }
 
-  getCycleByIdHandler: FastifyZodHandler<{ Params: CycleIdParamType }> = async (req, reply) => {
+  getCycleByIdHandler: FastifyZodHandler<GetByIdRoute> = async (req, reply) => {
     try {
       const cycle = await this.service.getById(req.params.id);
       return reply.send(cycle);
@@ -43,7 +41,7 @@ export class CycleController {
     }
   }
 
-  createCycleHandler: FastifyZodHandler<{ Body: CreateCycleBodyType }> = async (req, reply) => {
+  createCycleHandler: FastifyZodHandler<CreateCycleRoute> = async (req, reply) => {
     try {
       const result = await this.service.createCycle(req.body);
       return reply.status(201).send(result);
@@ -56,10 +54,7 @@ export class CycleController {
     }
   }
 
-  updateCycleHandler: FastifyZodHandler<{ 
-    Params: UpdateCycleParamsType, 
-    Body: UpdateCycleBodyType 
-  }> = async (req, reply) => {
+  updateCycleHandler: FastifyZodHandler<UpdateCycleRoute> = async (req, reply) => {
     try {
       const result = await this.service.updateCycle(req.params.id, req.body);
       return reply.send(result);

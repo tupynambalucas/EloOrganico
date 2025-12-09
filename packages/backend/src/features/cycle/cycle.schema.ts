@@ -1,9 +1,6 @@
 import { z } from 'zod';
 import { CreateCycleDTOSchema, ProductSchema } from '@elo-organico/shared';
 
-// --- SCHEMAS (ZOD) ---
-
-// Importante: 'as const' ajuda o Fastify a inferir tipos literais corretamente
 export const createCycleSchema = {
   body: CreateCycleDTOSchema,
 } as const;
@@ -34,17 +31,13 @@ export const updateCycleSchema = {
   })
 } as const;
 
-// --- TIPOS INFERIDOS (Single Source of Truth) ---
-// O Controller DEVE usar estes tipos para casar com a rota
 export type CreateCycleRoute = typeof createCycleSchema;
-export type CreateCycleBodyType = z.infer<typeof createCycleSchema.body>;
-
 export type UpdateCycleRoute = typeof updateCycleSchema;
+export type GetHistoryRoute = typeof getHistorySchema;
+export type GetByIdRoute = typeof getCycleByIdSchema;
+
+export type CreateCycleBodyType = z.infer<typeof createCycleSchema.body>;
 export type UpdateCycleBodyType = z.infer<typeof updateCycleSchema.body>;
 export type UpdateCycleParamsType = z.infer<typeof updateCycleSchema.params>;
-
-export type GetHistoryRoute = typeof getHistorySchema;
 export type HistoryQueryType = z.infer<typeof getHistorySchema.querystring>;
-
-export type GetByIdRoute = typeof getCycleByIdSchema;
 export type CycleIdParamType = z.infer<typeof getCycleByIdSchema.params>;

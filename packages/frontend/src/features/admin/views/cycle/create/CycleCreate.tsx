@@ -4,9 +4,9 @@ import { ptBR } from 'date-fns/locale/pt-BR';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { parseProductList } from './parseProductList';
-import { useCycleStore } from '../cycles.store';
-import { useCyclesNavigation } from '../cycles.navigation';
-import styles from './CreateCycle.module.css';
+import { useCycleStore } from '../cycle.store';
+import { useCyclesNavigation } from '../cycle.navigation';
+import styles from './CycleCreate.module.css';
 import { IProduct } from '@elo-organico/shared';
 
 registerLocale('pt-BR', ptBR);
@@ -20,7 +20,7 @@ const CustomDataButton = forwardRef<HTMLButtonElement, { value?: string; onClick
 );
 CustomDataButton.displayName = 'CustomDataButton';
 
-const CreateCycle = () => {
+const CycleCreate = () => {
   const { createCycle, isSubmitting, error } = useCycleStore();
   const { currentStep, setStep } = useCyclesNavigation();
 
@@ -161,4 +161,4 @@ const CreateCycle = () => {
   );
 };
 
-export default CreateCycle;
+export default CycleCreate;

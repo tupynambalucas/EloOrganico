@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Sub-schema auxiliar
 export const MeasureSchema = z.object({
   value: z.union([z.string(), z.number()]),
   type: z.string(),
@@ -20,6 +19,5 @@ export const ProductSchema = z.object({
   updatedAt: z.string().optional()
 });
 
-// Inferência de Tipos
 export type IMeasure = z.infer<typeof MeasureSchema>;
 export type IProduct = z.infer<typeof ProductSchema>;

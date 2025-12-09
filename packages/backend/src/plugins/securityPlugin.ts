@@ -1,17 +1,20 @@
 import fp from 'fastify-plugin';
 import csrf from '@fastify/csrf-protection';
+import type { FastifyPluginAsync } from 'fastify';
 
-export default fp(async (server) => {
+const securityPlugin: FastifyPluginAsync = async function (server) {
   await server.register(csrf, {
     cookieOpts: { 
-      signed: true, // Correção: de '_signed' para 'signed'
+      signed: true,
       httpOnly: true, 
       secure: server.config.NODE_ENV === 'production' 
     }
   });
 
   server.get('/api/csrf-token', async (req, reply) => {
-    const token = await reply.generateCsrf();
+    const token = reply.generateCsrf();
     return { token };
   });
-});
+};
+
+export default fp(securityPlugin);

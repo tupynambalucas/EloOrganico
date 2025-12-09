@@ -26,15 +26,13 @@ export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & 
     exp?: number;
 };
 
-// --- A CORREÇÃO DEFINITIVA (Schema-Based Handler) ---
-// Este tipo aceita o TSchema (o objeto Zod) e gera a assinatura exata que o Router espera.
 export type FastifyZodHandler<TSchema extends FastifySchema> = RouteHandlerMethod<
   RawServerDefault,
   RawRequestDefaultExpression,
   RawReplyDefaultExpression,
-  never, // RouteGenericInterface é ignorado quando usamos TypeProvider
+  never,
   ContextConfigDefault,
-  TSchema, // O Schema entra aqui
+  TSchema,
   ZodTypeProvider
 >;
 

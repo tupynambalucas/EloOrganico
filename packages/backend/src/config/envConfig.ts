@@ -37,8 +37,8 @@ const envConfig = async (server: any) => {
   await server.register(fastifyEnv, {
     confKey: 'config',
     schema: schema,
-    dotenv: true, // Lê do arquivo .env localmente
-    data: process.env // Lê das variáveis injetadas pelo Docker em produção
+    dotenv: true,
+    data: process.env 
   });
 };
 

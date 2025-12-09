@@ -20,7 +20,6 @@ export const getHistorySchema = {
   querystring: HistoryQuerySchema
 };
 
-// 3. Params ID (Comum para GetById e Update)
 const CycleIdParamSchema = z.object({
   id: z.string().min(1, "ID é obrigatório")
 });
@@ -29,7 +28,6 @@ export const getCycleByIdSchema = {
   params: CycleIdParamSchema
 };
 
-// 4. Update (Patch de Produtos)
 export const updateCycleSchema = {
   params: CycleIdParamSchema,
   body: z.object({
@@ -37,7 +35,6 @@ export const updateCycleSchema = {
   })
 };
 
-// --- TIPOS INFERIDOS (Single Source of Truth) ---
 export type HistoryQueryType = z.infer<typeof HistoryQuerySchema>;
 export type CycleIdParamType = z.infer<typeof CycleIdParamSchema>;
 export type UpdateCycleBodyType = z.infer<typeof updateCycleSchema.body>;

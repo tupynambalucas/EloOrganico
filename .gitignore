@@ -9,6 +9,7 @@ node_modules/
 /package-lock.json
 .env
 .env.prod.template
+
 # Se usar IDEs como IntelliJ ou VS Code
 .idea/
 .vscode/

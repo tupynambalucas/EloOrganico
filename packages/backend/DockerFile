@@ -3,56 +3,42 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# 1. Copia os arquivos de dependência da RAIZ e de TODOS os pacotes
-# Isso é necessário para o 'npm ci' funcionar corretamente no monorepo
 COPY package.json package-lock.json ./
 COPY packages/backend/package.json ./packages/backend/
 COPY packages/frontend/package.json ./packages/frontend/
 COPY packages/shared/package.json ./packages/shared/
 
-# 2. Instala todas as dependências (incluindo devDependencies para rodar o tsc)
 RUN npm ci
 
-# 3. Copia o código fonte do Shared e do Backend
 COPY packages/shared ./packages/shared
 COPY packages/backend ./packages/backend
 
-# 4. Compila o Shared PRIMEIRO (o backend depende dele)
+
 WORKDIR /app/packages/shared
 RUN npm run build
 
-# 5. Compila o Backend DEPOIS
 WORKDIR /app/packages/backend
 RUN npm run build
 
-# --- Estágio Runner (Produção) ---
+# Estágio 2: Runner (Produção)
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Adiciona usuário não-root por segurança (Best Practice)
 USER node
 
-# Copia as dependências instaladas (node_modules mantendo os symlinks dos workspaces)
-# Nota: Copiamos tudo do builder para garantir que os links simbólicos funcionem
 COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 
-# Copia os artefatos compilados do Shared
 COPY --from=builder --chown=node:node /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder --chown=node:node /app/packages/shared/package.json ./packages/shared/
 
-# Copia os artefatos compilados do Backend
 COPY --from=builder --chown=node:node /app/packages/backend/dist ./packages/backend/dist
 COPY --from=builder --chown=node:node /app/packages/backend/package.json ./packages/backend/
 
-# Variável auxiliar caso precise resolver caminhos manualmente, 
-# mas os symlinks em node_modules devem cuidar disso.
 ENV NODE_PATH=./packages
 
-# Expõe a porta definida no seu .env (padrão 3000)
 EXPOSE 3000
 
-# Comando para iniciar o servidor compilado
 CMD ["node", "packages/backend/dist/server.js"]

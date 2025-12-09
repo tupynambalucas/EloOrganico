@@ -8,7 +8,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      // Isso força o TS a olhar para o código fonte em DEV
       "@elo-organico/shared": ["packages/shared/src/index.ts"]
     }
   }

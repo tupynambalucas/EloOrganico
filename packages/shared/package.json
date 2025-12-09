@@ -1,0 +1,24 @@
+{
+  "name": "@elo-organico/shared",
+  "version": "0.1.0",
+  "author": "Tupynambá Lucas Varela Rodrigues <tupynambalucas.dev>",
+  "license": "CC-BY-NC-4.0",
+  "homepage": "https://github.com/tupynambalucas/EloOrganico/tree/main/packages/shared#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tupynambalucas/EloOrganico.git",
+    "directory": "packages/shared"
+  },
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc", 
+    "dev": "npm run clean && tsc -w",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  }
+}

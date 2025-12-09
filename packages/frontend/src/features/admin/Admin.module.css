@@ -1,0 +1,19 @@
+.container{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.container > main{
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background: #E4E4E4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

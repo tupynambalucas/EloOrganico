@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   db:
     image: mongo:7.0
-    container_name: elo_mongo
+    container_name: elo_mongo_cluster
     restart: always
     entrypoint:
       - bash

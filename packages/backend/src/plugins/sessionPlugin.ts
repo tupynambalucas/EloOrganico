@@ -31,6 +31,7 @@ const SessionPlugin: FastifyPluginAsync = async (server) => {
     cookie: { 
       secure: server.config.NODE_ENV === 'production',
       httpOnly: true,
+      path: '/api',
       maxAge: 86400000 
     }, 
     saveUninitialized: false,

@@ -7,7 +7,9 @@ const securityPlugin: FastifyPluginAsync = async function (server) {
     cookieOpts: { 
       signed: true,
       httpOnly: true, 
-      secure: server.config.NODE_ENV === 'production' 
+      path: '/api',
+      secure: server.config.NODE_ENV === 'production',
+      sameSite: 'strict'
     }
   });
 

@@ -53,19 +53,18 @@ export const useAuthStore = create<AuthState>((set) => ({
         json: data,
       });
 
-      set({
-        user: response.user,
-        token: response.token,
-        isAuthenticated: true,
-        loginLoading: false,
+      set({ 
+        user: response.user, 
+        token: response.token, 
+        isAuthenticated: true, 
+        loginLoading: false 
       });
-
     } catch (err: unknown) {
       const error = err as ApiError;
-      const message = error.body?.message || error.message || 'Erro ao entrar.';
-      set({
-        loginLoading: false,
-        loginError: message,
+      const message = error.body?.message || error.message || 'Erro ao fazer login.';
+      set({ 
+        loginLoading: false, 
+        loginError: message 
       });
     }
   },
@@ -106,33 +105,25 @@ export const useAuthStore = create<AuthState>((set) => ({
   verifyAuth: async () => {
     set({ isAuthLoading: true });
     
-    // 1. Inicializa CSRF antes de verificar autenticação
     try {
       const csrfRes = await sendJSON<{ token: string }>('/api/csrf-token', { method: 'GET' });
       setCsrfToken(csrfRes.token);
-    } catch (e) {
-      console.error('Falha ao obter CSRF', e);
-    }
 
-    // 2. Verifica sessão
-    try {
       const response = await sendJSON<LoginResponse>('/api/auth/verify', {
         method: 'GET',
       });
 
-      set({
-        user: response.user,
-        token: response.token,
-        isAuthenticated: true,
-        isAuthLoading: false,
+      set({ 
+        user: response.user, 
+        isAuthenticated: true, 
+        isAuthLoading: false 
       });
 
     } catch {
-      set({
-        user: null,
-        token: null,
-        isAuthenticated: false,
-        isAuthLoading: false,
+      set({ 
+        user: null, 
+        isAuthenticated: false, 
+        isAuthLoading: false 
       });
     }
   },

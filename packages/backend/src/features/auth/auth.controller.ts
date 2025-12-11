@@ -5,31 +5,39 @@ import { RegisterRoute, LoginRoute } from './auth.schema';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  private mapUserResponse(user: any) {
+    if (!user) return undefined;
+
+    const obj = typeof user.toObject === 'function' ? user.toObject() : user;
+    
+    const { password, __v, ...safeUser } = obj;
+
+    return {
+      ...safeUser,
+      _id: safeUser._id?.toString(),
+      createdAt: safeUser.createdAt ? new Date(safeUser.createdAt).toISOString() : undefined,
+      updatedAt: safeUser.updatedAt ? new Date(safeUser.updatedAt).toISOString() : undefined,
+    };
+  }
+
   registerHandler: FastifyZodHandler<RegisterRoute> = async (req, reply) => {
-    try {
-      await this.authService.register(req.body);
-      return reply.status(201).send({ message: 'Usuário criado com sucesso' });
-    } catch (error: any) {
-      return reply.status(409).send({ message: error.message });
-    }
+    await this.authService.register(req.body);
+    return reply.status(201).send({ message: 'Usuário criado com sucesso' });
   }
 
   loginHandler: FastifyZodHandler<LoginRoute> = async (req, reply) => {
-    try {
-      const result = await this.authService.login(req.body);
-      
-      // Salva o token na sessão (httpOnly cookie)
-      if (req.session) {
-        req.session.token = result.token;
-      }
-      
-      return reply.send(result);
-    } catch (error: any) {
-      return reply.status(401).send({ authenticated: false, message: error.message });
+    const result = await this.authService.login(req.body);
+    
+    if (req.session) {
+      req.session.token = result.token;
     }
+    
+    return reply.send({
+      ...result,
+      user: this.mapUserResponse(result.user)
+    });
   }
 
-  // Handler sem schema específico (apenas tipo vazio ou genérico)
   logoutHandler: FastifyZodHandler<{}> = async (req, reply) => {
     if (req.session) {
       await req.session.destroy();
@@ -38,15 +46,15 @@ export class AuthController {
   }
 
   verifyHandler: FastifyZodHandler<{}> = async (req, reply) => {
-    if (!req.session.token) {
-      return reply.status(401).send({ message: "Sessão não encontrada." });
+    if (!req.session?.token) {
+      return reply.status(401).send({ authenticated: false, message: 'Não autenticado' });
     }
 
-    try {
-      const result = await this.authService.verify(req.session.token);
-      return reply.send(result);
-    } catch (err) {
-      return reply.status(401).send({ message: "Token inválido ou expirado." });
-    }
+    const result = await this.authService.verify(req.session.token);
+    
+    return reply.send({
+      ...result,
+      user: this.mapUserResponse(result.user)
+    });
   }
 }

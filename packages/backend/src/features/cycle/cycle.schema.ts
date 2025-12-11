@@ -1,8 +1,11 @@
 import { z } from 'zod';
-import { CreateCycleDTOSchema, ProductSchema } from '@elo-organico/shared';
+import { CreateCycleDTOSchema, ProductSchema, CycleResponseSchema } from '@elo-organico/shared';
 
 export const createCycleSchema = {
   body: CreateCycleDTOSchema,
+  response: {
+    201: CycleResponseSchema
+  }
 } as const;
 
 const HistoryQuerySchema = z.object({
@@ -12,32 +15,44 @@ const HistoryQuerySchema = z.object({
   endDate: z.string().datetime().optional()
 });
 
+const HistoryResponseSchema = z.object({
+  data: z.array(CycleResponseSchema),
+  pagination: z.object({
+    total: z.number(),
+    page: z.number(),
+    pages: z.number()
+  })
+});
+
 export const getHistorySchema = {
-  querystring: HistoryQuerySchema
+  querystring: HistoryQuerySchema,
+  response: {
+    200: HistoryResponseSchema
+  }
 } as const;
 
 const CycleIdParamSchema = z.object({
-  id: z.string().min(1, "ID é obrigatório")
+  id: z.string().min(1)
 });
 
 export const getCycleByIdSchema = {
-  params: CycleIdParamSchema
+  params: CycleIdParamSchema,
+  response: {
+    200: CycleResponseSchema
+  }
 } as const;
 
 export const updateCycleSchema = {
   params: CycleIdParamSchema,
   body: z.object({
     products: z.array(ProductSchema)
-  })
+  }),
+  response: {
+    200: CycleResponseSchema
+  }
 } as const;
 
 export type CreateCycleRoute = typeof createCycleSchema;
 export type UpdateCycleRoute = typeof updateCycleSchema;
 export type GetHistoryRoute = typeof getHistorySchema;
 export type GetByIdRoute = typeof getCycleByIdSchema;
-
-export type CreateCycleBodyType = z.infer<typeof createCycleSchema.body>;
-export type UpdateCycleBodyType = z.infer<typeof updateCycleSchema.body>;
-export type UpdateCycleParamsType = z.infer<typeof updateCycleSchema.params>;
-export type HistoryQueryType = z.infer<typeof getHistorySchema.querystring>;
-export type CycleIdParamType = z.infer<typeof getCycleByIdSchema.params>;

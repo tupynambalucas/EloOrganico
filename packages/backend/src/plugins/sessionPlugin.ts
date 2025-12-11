@@ -1,11 +1,11 @@
-import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyPluginAsync, FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
 import fastifySession from '@fastify/session';
 import fastifyJwt from '@fastify/jwt';
 import bcrypt from 'bcrypt';
 import { UserPayload } from '../types/fastify';
 
-const SessionPlugin: FastifyPluginAsync = async (server) => {
+const SessionPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
   server.decorate('genHash', async (password: string) => {
     try {

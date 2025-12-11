@@ -1,8 +1,8 @@
 import fp from 'fastify-plugin';
 import csrf from '@fastify/csrf-protection';
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 
-const securityPlugin: FastifyPluginAsync = async function (server) {
+const securityPlugin: FastifyPluginAsync = async function (server: FastifyInstance) {
   await server.register(csrf, {
     cookieOpts: { 
       signed: true,

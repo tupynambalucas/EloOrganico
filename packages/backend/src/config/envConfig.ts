@@ -29,6 +29,7 @@ const schema = {
     JWT_SECRET: { type: 'string' },
     SESSION_SECRET: { type: 'string' },
     USER_SESSION_KEY: { type: 'string' },
+    SENTRY_DSN: { type: 'string' }
   }
 };
 

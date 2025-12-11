@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuthStore } from './auth.store';
 import UserIconsList from '@/constants/userIconList';
 import BannerNegative from '@/assets/svg/identity/banner-negative.svg?react';
-import styles from './auth.module.css';
+import styles from './Auth.module.css';
 import { AUTH_RULES } from '@elo-organico/shared';
 import UserIcon from '@/components/UserIcon';
 
@@ -44,84 +44,69 @@ const AuthForm = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError(null);
+    if (!identifier || !password) return;
     await login({ identifier, password });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-
-    const success = await register({ email, username, password, icon });
+    
+    const success = await register({ username, email, password, icon });
     if (success) {
       setIsLogin(true);
-      setLocalError(null);
+      setIdentifier(username || email);
+      setPassword('');
     }
   };
 
-  const isLoading = isLogin ? loginLoading : registerLoading;
   const currentError = localError || (isLogin ? loginError : registerError);
+  const isLoading = isLogin ? loginLoading : registerLoading;
 
   return (
-    <div className={styles.container}>
-      {/* Wrapper principal (div:first-child do container) */}
-      <div>
-        
-        {/* Área do Logo (.banner) */}
-        <div className={styles.banner}>
-             <BannerNegative />
+    <div className={styles.authContainer}>
+      <div className={styles.leftPanel}>
+        <div className={styles.bannerContainer}>
+           <BannerNegative style={{ width: '100%', height: 'auto' }} />
         </div>
-        
-        <h2>
-            {isLogin ? 'Bem-vindo de Volta!' : 'Crie sua Conta'}
-        </h2>
-        
-        <form className={styles.form} onSubmit={isLogin ? handleLogin : handleRegister}>
+      </div>
+      
+      <div className={styles.rightPanel}>
+        <form className={styles.formContainer} onSubmit={isLogin ? handleLogin : handleRegister}>
+          <h2>{isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta'}</h2>
           
-          {/* DIV 1: Grid de Ícones 
-              IMPORTANTE: Mantemos este div mesmo no Login (vazio) para preservar 
-              a ordem dos elementos (nth-of-type) exigida pelo CSS.
-          */}
-          <div>
-            {!isLogin && UserIconsList.map((item) => (
-              <div 
-                key={item.name} 
-                onClick={() => setUserIcon(item.name)}
-                style={{
-                    // Pequeno ajuste inline apenas para o estado "ativo" (borda),
-                    // já que o CSS base está no arquivo module.
-                    borderColor: icon === item.name ? '#333' : 'transparent'
-                }}
-              >
-                {/* Reutilizamos o componente UserIcon para consistência visual */}
-                <UserIcon forceIcon={item.name} />
-              </div>
-            ))}
-          </div>
-
-          {/* DIV 2: Inputs (Flex Column) */}
-          <div>
+          <div className={styles.inputGroup}>
             {isLogin ? (
-                <input
-                type="text"
-                placeholder="Email ou Username"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                required
-                autoComplete="username" 
+                <input 
+                    type="text" 
+                    placeholder="Email ou Usuário" 
+                    value={identifier} 
+                    onChange={(e) => setIdentifier(e.target.value)} 
+                    required 
+                    autoComplete="username"
                 />
             ) : (
                 <>
+                <div className={styles.iconSelector}>
+                    <label>Escolha seu ícone:</label>
+                    <div className={styles.iconsGrid}>
+                        {UserIconsList.map((item) => (
+                            <div 
+                                key={item.name} 
+                                className={`${styles.iconOption} ${icon === item.name ? styles.selected : ''}`}
+                                onClick={() => setUserIcon(item.name)}
+                            >
+                                <UserIcon forceIcon={item.name} size={30} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
                 <input 
                     type="text" 
-                    placeholder={`Username (min. ${AUTH_RULES.USERNAME.MIN})`}
+                    placeholder={`Usuário (min. ${AUTH_RULES.USERNAME.MIN})`}
                     value={username} 
-                    onChange={(e) => {
-                        setUsername(e.target.value);
-                        if (localError) setLocalError(null);
-                    }} 
-                    required
+                    onChange={(e) => setUsername(e.target.value)} 
+                    required 
                     minLength={AUTH_RULES.USERNAME.MIN}
                     autoComplete="username"
                 />

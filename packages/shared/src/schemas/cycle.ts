@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ProductSchema } from './product';
+import { ProductSchema, ProductResponseSchema } from './product';
 
 export const CycleSchema = z.object({
   _id: z.string().optional(),
@@ -8,6 +8,8 @@ export const CycleSchema = z.object({
   closingDate: z.string().datetime(),
   isActive: z.boolean().default(true),
   products: z.array(z.union([z.string(), ProductSchema])),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional()
 });
 
 export const CreateCycleDTOSchema = z.object({
@@ -17,5 +19,10 @@ export const CreateCycleDTOSchema = z.object({
   products: z.array(ProductSchema) 
 });
 
+export const CycleResponseSchema = CycleSchema.extend({
+  products: z.array(z.union([z.string(), ProductResponseSchema])) 
+});
+
 export type ICycle = z.infer<typeof CycleSchema>;
 export type CreateCycleDTO = z.infer<typeof CreateCycleDTOSchema>;
+export type CycleResponse = z.infer<typeof CycleResponseSchema>;

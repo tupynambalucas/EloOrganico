@@ -6,13 +6,9 @@ import {
   RawServerDefault, 
   FastifySchema,
   RouteHandlerMethod, 
-  FastifyBaseLogger,
-  RawRequestDefaultExpression,
-  RawReplyDefaultExpression,
   ContextConfigDefault
 } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { IncomingMessage, ServerResponse } from 'http';
 import '@fastify/session'; 
 import '@fastify/jwt'; 
 import { type IUser, type IProduct, type ICycle } from '@elo-organico/shared';
@@ -28,8 +24,8 @@ export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & 
 
 export type FastifyZodHandler<TSchema extends FastifySchema> = RouteHandlerMethod<
   RawServerDefault,
-  RawRequestDefaultExpression,
-  RawReplyDefaultExpression,
+  import('fastify').RawRequestDefaultExpression,
+  import('fastify').RawReplyDefaultExpression,
   never,
   ContextConfigDefault,
   TSchema,
@@ -38,24 +34,20 @@ export type FastifyZodHandler<TSchema extends FastifySchema> = RouteHandlerMetho
 
 declare module '@fastify/jwt' {
   interface FastifyJWT {
+    payload: UserPayload;
     user: UserPayload;
   }
 }
 
 declare module 'fastify' {
     interface Session {
-        token?: string;
-        user?: UserPayload;
+      token?: string;
     }
 
     interface FastifyInstance {
         authController: AuthController;
         cycleController: CycleController;
         productController: ProductController;
-
-        getNetworkInterface(): Promise<string | undefined>;
-        getProjectRoot(): string;
-        getServerRoot(): string;
         
         models: {
             User: Model<Omit<IUser, '_id'> & Document & { password?: string }>;
@@ -94,10 +86,7 @@ declare module 'fastify' {
             ADMIN_EMAIL_SEED: string;
             ADMIN_PASS_SEED: string;
             USER_SESSION_KEY: string;
+            SENTRY_DSN?: string;
         };
-    }
-
-    interface FastifyRequest {
-        user: UserPayload;
     }
 }

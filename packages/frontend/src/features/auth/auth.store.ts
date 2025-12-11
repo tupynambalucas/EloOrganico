@@ -1,8 +1,6 @@
 import { create } from 'zustand';
-import { sendJSON, setCsrfToken } from '@/lib/fetch';
-import type { IUser, LoginDTO, RegisterDTO } from '@elo-organico/shared';
-
-export type UserState = Omit<IUser, 'password'>;
+import { sendJSON, setCsrfToken, HttpError } from '@/lib/fetch';
+import type { LoginDTO, RegisterDTO, UserResponse, LoginResponse } from '@elo-organico/shared';
 
 interface ApiError {
   message?: string;
@@ -11,14 +9,8 @@ interface ApiError {
   };
 }
 
-interface LoginResponse {
-  authenticated: boolean;
-  token: string;
-  user: UserState;
-}
-
 interface AuthState {
-  user: UserState | null;
+  user: UserResponse | null;
   token: string | null;
   isAuthenticated: boolean;
   isAuthLoading: boolean;
@@ -61,7 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
     } catch (err: unknown) {
       const error = err as ApiError;
-      const message = error.body?.message || error.message || 'Erro ao fazer login.';
+      const message = error.body?.message || error.message || 'Erro ao realizar login.';
       set({ 
         loginLoading: false, 
         loginError: message 
@@ -119,7 +111,18 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthLoading: false 
       });
 
-    } catch {
+    } catch (err: unknown) {
+      const httpError = err as HttpError;
+      if (httpError.response && httpError.response.status === 401) {
+        set({ 
+          user: null, 
+          isAuthenticated: false, 
+          isAuthLoading: false 
+        });
+        return;
+      }
+
+      console.error('Falha na verificação de autenticação:', err);
       set({ 
         user: null, 
         isAuthenticated: false, 

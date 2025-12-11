@@ -1,8 +1,9 @@
 import cors from '@fastify/cors';
 import fp from 'fastify-plugin';
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
-import fastifyCookie from '@fastify/cookie'; // <--- Importe isto
+import fastifyCookie from '@fastify/cookie';
+import fastifyMetrics from 'fastify-metrics';
 
 import envConfig from '../config/envConfig';
 import utils from '../config/utilsConfig';
@@ -10,6 +11,8 @@ import secureSession from './sessionPlugin';
 import MongoosePlugin from './mongoosePlugin';
 import SecurityPlugin from './securityPlugin';
 import ApiPlugin from './apiPlugin';
+import sentryPlugin from './sentryPlugin';
+import errorHandlerPlugin from './errorHandlerPlugin';
 
 import { AuthRepository } from '../features/auth/auth.repository';
 import { AuthService } from '../features/auth/auth.service';
@@ -23,18 +26,20 @@ import { CycleRepository } from '../features/cycle/cycle.repository';
 import { CycleService } from '../features/cycle/cycle.service';
 import { CycleController } from '../features/cycle/cycle.controller';
 
-const serverAutoRegistry: FastifyPluginAsync = async function (server) {
+const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyInstance) {
   server.setValidatorCompiler(validatorCompiler);
   server.setSerializerCompiler(serializerCompiler);
 
   await server.register(utils);
   await server.register(envConfig);
+  await server.register(sentryPlugin);
   
-  // --- MUDANÇA CRÍTICA ---
-  // Registramos o cookie parser AQUI, no nível raiz, com o segredo.
-  // Isso disponibiliza 'unsignCookie' para todo o app (Session e CSRF).
+  await server.register(fastifyMetrics, { endpoint: '/metrics' });
+
+  await server.register(errorHandlerPlugin);
+
   await server.register(fastifyCookie, {
-    secret: server.config.SESSION_SECRET, // Usa o mesmo segredo da sessão ou crie um COOKIE_SECRET
+    secret: server.config.SESSION_SECRET,
   });
 
   await server.register(MongoosePlugin);
@@ -65,8 +70,10 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server) {
 
   await server.register(cors, {
     origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'CSRF-Token'],
+    exposedHeaders: ['CSRF-Token']
   });
 }
 

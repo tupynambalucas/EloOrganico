@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { RegisterDTO, LoginDTO } from '@elo-organico/shared';
 import { AuthRepository } from './auth.repository';
+import { AppError } from '../../utils/AppError';
 
 export class AuthService {
   constructor(
@@ -13,9 +14,9 @@ export class AuthService {
 
     if (existingUser) {
       const message = existingUser.email === data.email 
-        ? 'Email já cadastrado.' 
-        : 'Nome de usuário já existe.';
-      throw new Error(message);
+        ? 'Este endereço de e-mail já está sendo utilizado.' 
+        : 'Este nome de usuário já está em uso.';
+      throw new AppError(message, 409);
     }
 
     return this.authRepo.create(data);
@@ -25,12 +26,12 @@ export class AuthService {
     const user = await this.authRepo.findByIdentifier(data.identifier);
 
     if (!user || !user.password) {
-      throw new Error('Credenciais inválidas');
+      throw new AppError('Credenciais de acesso inválidas.', 401);
     }
 
     const isValid = await this.server.compareHash(data.password, user.password);
     if (!isValid) {
-      throw new Error('Credenciais inválidas');
+      throw new AppError('Credenciais de acesso inválidas.', 401);
     }
 
     const token = this.server.jwt.sign({ 
@@ -44,35 +45,16 @@ export class AuthService {
     return {
       authenticated: true,
       token,
-      user: {
-        email: user.email,
-        username: user.username,
-        role: user.role,
-        icon: user.icon
-      }
+      user
     };
   }
 
   async verify(token: string) {
-    const payload = this.server.jwt.verify(token); 
-    
-    const userId = (payload as any)._id;
-
-    const user = await this.authRepo.findById(userId);
-    
-    if (!user) {
-      throw new Error('Usuário não encontrado.');
+    try {
+      const payload = this.server.jwt.verify(token); 
+      return { authenticated: true, user: payload };
+    } catch (err) {
+      throw new AppError('Sessão inválida ou expirada.', 401);
     }
-
-    return {
-      authenticated: true,
-      token,
-      user: {
-        email: user.email,
-        username: user.username,
-        role: user.role,
-        icon: user.icon
-      }
-    };
   }
 }

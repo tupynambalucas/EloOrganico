@@ -3,7 +3,7 @@ import authRoutes from '../features/auth/auth.routes';
 import cycleRoutes from '../features/cycle/cycle.routes';
 import productRoutes from '../features/product/product.routes';
 
-const apiPlugin: FastifyPluginAsync = async function (server: FastifyInstance, opts: FastifyPluginOptions) {
+const apiPlugin: FastifyPluginAsync = async function (server: FastifyInstance) {
   
   await server.register(authRoutes, { prefix: 'auth' });
   await server.register(cycleRoutes);

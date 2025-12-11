@@ -1,8 +1,7 @@
 import { z } from 'zod';
-import { UserSchema } from './user';
+import { UserSchema, UserResponseSchema } from './user';
 import { AUTH_RULES } from '../constants';
 
-// Registro: Pegamos campos do User e tornamos password obrigatório
 export const RegisterDTOSchema = UserSchema.pick({ 
   email: true, 
   username: true, 
@@ -11,11 +10,17 @@ export const RegisterDTOSchema = UserSchema.pick({
   password: z.string().min(AUTH_RULES.PASSWORD.MIN)
 });
 
-// Login: Apenas identificador e senha
 export const LoginDTOSchema = z.object({
   identifier: z.string(),
   password: z.string()
 });
 
+export const LoginResponseSchema = z.object({
+  authenticated: z.boolean(),
+  token: z.string(),
+  user: UserResponseSchema
+});
+
 export type RegisterDTO = z.infer<typeof RegisterDTOSchema>;
 export type LoginDTO = z.infer<typeof LoginDTOSchema>;
+export type LoginResponse = z.infer<typeof LoginResponseSchema>;

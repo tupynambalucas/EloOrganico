@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ProductResponseSchema } from '@elo-organico/shared';
 
 const ListProductsQuerySchema = z.object({
   search: z.string().optional(),
@@ -7,7 +8,10 @@ const ListProductsQuerySchema = z.object({
 });
 
 export const listProductsSchema = {
-  querystring: ListProductsQuerySchema
+  querystring: ListProductsQuerySchema,
+  response: {
+    200: z.array(ProductResponseSchema)
+  }
 } as const; 
 
 export type ListProductsRoute = typeof listProductsSchema;

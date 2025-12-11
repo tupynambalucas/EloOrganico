@@ -2,6 +2,7 @@ import { Mongoose } from 'mongoose';
 import { CreateCycleDTO, IProduct } from '@elo-organico/shared';
 import { CycleRepository } from './cycle.repository';
 import { ProductService } from '../product/product.service';
+import { AppError } from '../../utils/AppError';
 
 export class CycleService {
   constructor(
@@ -26,7 +27,9 @@ export class CycleService {
 
   async getById(id: string) {
     const cycle = await this.cycleRepo.findById(id);
-    if (!cycle) throw new Error('Ciclo não encontrado');
+    if (!cycle) {
+      throw new AppError('O ciclo solicitado não foi encontrado.', 404);
+    }
     return cycle;
   }
 
@@ -54,7 +57,8 @@ export class CycleService {
 
     } catch (error) {
       await session.abortTransaction();
-      throw error;
+      if (error instanceof AppError) throw error;
+      throw new AppError('Não foi possível iniciar o ciclo. Verifique os dados enviados.', 400);
     } finally {
       session.endSession();
     }
@@ -66,7 +70,9 @@ export class CycleService {
 
     try {
       const cycle = await this.cycleRepo.findByIdWithSession(id, session);
-      if (!cycle) throw new Error('Ciclo não encontrado');
+      if (!cycle) {
+        throw new AppError('Ciclo não encontrado para atualização.', 404);
+      }
 
       const productIds = await this.productService.syncCycleProducts(products, session);
 
@@ -75,12 +81,11 @@ export class CycleService {
 
       await session.commitTransaction();
       
-      const updatedCycle = await this.cycleRepo.findById(id);
-      return updatedCycle;
-
+      return await this.cycleRepo.findById(id);
     } catch (error) {
       await session.abortTransaction();
-      throw error;
+      if (error instanceof AppError) throw error;
+      throw new AppError('Erro ao atualizar o ciclo.', 400);
     } finally {
       session.endSession();
     }

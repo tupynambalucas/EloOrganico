@@ -56,12 +56,15 @@ export class CycleController {
 
   updateCycleHandler: FastifyZodHandler<UpdateCycleRoute> = async (req, reply) => {
     try {
-      const result = await this.service.updateCycle(req.params.id, req.body);
+      // CORREÇÃO AQUI: req.body é { products: [...] }, extraímos products.
+      const { products } = req.body;
+      
+      const result = await this.service.updateCycle(req.params.id, products);
       return reply.send(result);
     } catch (error: any) {
       req.log.error(error);
       return reply.status(500).send({ 
-        message: 'Erro ao atualizar ciclo e produtos', 
+        message: 'Erro ao atualizar ciclo', 
         error: error.message 
       });
     }

@@ -1,3 +1,5 @@
+import { ClientSession } from 'mongoose';
+import { IProduct } from '@elo-organico/shared';
 import { ProductRepository } from './product.repository';
 import { ListProductsQueryType } from './product.schema';
 
@@ -20,5 +22,65 @@ export class ProductService {
     }
 
     return this.repo.findAll(query);
+  }
+
+  async syncCycleProducts(products: IProduct[], session: ClientSession): Promise<string[]> {
+    if (!products || products.length === 0) return [];
+
+    // 1. Bulk Upsert com Filtro de Unicidade Profunda
+    const bulkOps = products.map((p) => {
+      // Define a chave única do produto
+      const filter: any = { 
+        name: p.name, 
+        category: p.category,
+        'measure.type': p.measure.type 
+      };
+
+      // Diferencia produtos com peso/volume (500g) dos sem peso
+      if (p.content) {
+        filter['content.value'] = p.content.value;
+        filter['content.unit'] = p.content.unit;
+      } else {
+        // Importante: força a busca por documentos onde content é nulo
+        filter['content'] = null; 
+      }
+
+      return {
+        updateOne: {
+          filter: filter,
+          update: {
+            $set: {
+              name: p.name,
+              category: p.category,
+              measure: p.measure,
+              content: p.content,
+              available: true,
+            }
+          },
+          upsert: true
+        }
+      };
+    });
+
+    if (bulkOps.length > 0) {
+      await this.repo.bulkUpsert(bulkOps, session);
+    }
+
+    // 2. Recuperar IDs usando a mesma lógica de chaves
+    const keys = products.map(p => ({ 
+      name: p.name, 
+      category: p.category,
+      measureType: p.measure.type,
+      contentValue: p.content?.value,
+      contentUnit: p.content?.unit
+    }));
+    
+    const activeProducts = await this.repo.findByKeys(keys, session);
+    const activeIds = activeProducts.map(p => p._id.toString());
+
+    // 3. Desativar produtos que não vieram nesta lista
+    await this.repo.deactivateOthers(activeIds, session);
+
+    return activeIds;
   }
 }

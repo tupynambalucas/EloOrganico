@@ -52,7 +52,7 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server) {
   const productController = new ProductController(productService);
 
   const cycleRepo = new CycleRepository(Cycle);
-  const cycleService = new CycleService(cycleRepo, productRepo, server.mongoose);
+  const cycleService = new CycleService(cycleRepo, productService, server.mongoose);
   const cycleController = new CycleController(cycleService);
 
   server.decorate('authController', authController);

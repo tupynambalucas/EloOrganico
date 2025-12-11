@@ -9,12 +9,23 @@
     flex-direction: column;
 }
 
+.errorMessage {
+    background-color: #fee2e2;
+    color: #991b1b;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    border: 1px solid #fecaca;
+}
+
 .stepContainer {
-    height: 100%;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     animation: fadeIn 0.3s ease;
+    min-height: 0; 
 }
 
 @keyframes fadeIn {
@@ -33,7 +44,6 @@
     color: #777;
 }
 
-/* Inputs */
 .listInput, .descriptionInput {
     flex: 1;
     width: 100%;
@@ -47,27 +57,71 @@
 
 .listInput:focus, .descriptionInput:focus {
     outline: none;
-    border-color: #2ecc71;
+    border-color: #4CAF50;
 }
 
-/* Products List (Step 2) */
-.productsList {
-    flex: 1;
-    overflow-y: auto;
-    border: 1px solid #eee;
-    border-radius: 6px;
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.productRow {
-    padding: 0.8rem;
-    border-bottom: 1px solid #f0f0f0;
+.headerStep {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.previewList {
+    flex: 1; 
+    overflow-y: auto; 
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 0.5rem;
+    background: #fafafa;
+    min-height: 0;
+}
+
+.productRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.pInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.pInfo strong {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.pInfo small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.pMeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+.price {
+    font-weight: 600;
+    color: #2e7d32;
     font-size: 0.9rem;
 }
 
-.productRow:last-child { border-bottom: none; }
+.productRow:last-child { margin-bottom: 0; border-bottom: none; }
 
 .badge {
     background: #e0f2fe;
@@ -78,7 +132,130 @@
     text-transform: uppercase;
 }
 
-/* Date Grid (Step 3) */
+.dangerZone {
+    margin-top: auto;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff1f2;
+}
+
+.dangerHeader {
+    background-color: #fee2e2;
+    padding: 0.8rem 1rem;
+    color: #991b1b;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.dangerContent {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.failedPreview {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #7f1d1d;
+    background: rgba(255,255,255,0.6);
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.failedPreview div {
+    margin-bottom: 2px;
+}
+
+.dangerFooter {
+    font-size: 0.85rem;
+    color: #991b1b;
+}
+
+.fixButton {
+    background-color: #dc2626;
+    color: white;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.fixButton:hover {
+    background-color: #b91c1c;
+}
+
+.fixList {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.fixCard {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #dc2626;
+    border-radius: 6px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.fixCardTitle {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-family: monospace;
+    background: #f3f4f6;
+    padding: 0.4rem;
+    border-radius: 4px;
+    word-break: break-all;
+}
+
+.fixGrid {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.fixField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 100px;
+}
+
+.fixField label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.fixInput {
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.fixInput:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
 .dateGrid {
     display: flex;
     gap: 1rem;
@@ -106,30 +283,31 @@
     text-align: left;
 }
 
-/* Actions Footer */
 .actions {
     display: flex;
     gap: 1rem;
     justify-content: space-between;
+    margin-top: auto; 
+    padding-top: 1rem;
 }
 
 .primaryBtn, .secondaryBtn {
     padding: 0.8rem 1.5rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
     border: none;
-    transition: all 0.2s;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
 }
 
 .primaryBtn {
-    background: #2ecc71;
+    background: #4CAF50;
     color: white;
     flex: 1;
 }
 
-.primaryBtn:hover:not(:disabled) {
-    background: #27ae60;
+.primaryBtn:hover {
+    background: #43a047;
 }
 
 .primaryBtn:disabled {
@@ -138,20 +316,10 @@
 }
 
 .secondaryBtn {
-    background: transparent;
-    border: 1px solid #ddd;
-    color: #666;
+    background: #f1f1f1;
+    color: #333;
 }
 
 .secondaryBtn:hover {
-    background: #f5f5f5;
-}
-
-.errorBanner {
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 0.8rem;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+    background: #e0e0e0;
 }

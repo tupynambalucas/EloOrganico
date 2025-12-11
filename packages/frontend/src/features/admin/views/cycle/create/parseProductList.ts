@@ -1,161 +1,181 @@
 import type { IProduct } from '@elo-organico/shared';
 
-// Mapa de Normalização (De -> Para)
-const CATEGORY_MAP: Record<string, string> = {
-  'ALIMENTOS ORGÂNICOS': 'Hortifruti', // Caso apareça no texto
-  'MERCEARIA': 'Mercearia',
-  'Geleias 320 g': 'Geleias e Doces',
-  'GELEIAS SEM AÇÚCAR': 'Geleias e Doces',
-  'Vinhos em garrafas;': 'Bebidas e Vinhos'
-};
+// Alterada a interface para incluir a categoria na falha
+export interface FailedLine {
+  text: string;
+  category: string;
+}
 
-// Mapa de Contexto (Adiciona sufixo ao nome se necessário)
-const CONTEXT_SUFFIX_MAP: Record<string, string> = {
-  'GELEIAS SEM AÇÚCAR': ' (Sem Açúcar)',
-  'Geleias 320 g': ' (320g)'
+export interface ParseResult {
+  products: IProduct[];
+  failedLines: FailedLine[];
+  totalLinesProcessed: number;
+}
+
+const CATEGORY_NORMALIZATION: Record<string, string> = {
+  'ALIMENTOS ORGÂNICOS': 'Hortifruti',
+  'HORTIFRUTI': 'Hortifruti',
+  'MERCEARIA': 'Mercearia',
+  'GELEIAS': 'Geleias e Doces',
+  'GELEIAS SEM AÇÚCAR': 'Geleias e Doces',
+  'DOCES': 'Geleias e Doces',
+  'VINHOS': 'Bebidas e Vinhos',
+  'BEBIDAS': 'Bebidas e Vinhos',
+  'VINHOS EM GARRAFAS': 'Bebidas e Vinhos'
 };
 
 const normalizeMeasureType = (unitString: string) => {
-  const type = unitString.toLowerCase().trim();
-  if (['pct', 'pcte'].includes(type)) return 'pacote';
-  if (['uni', 'un'].includes(type)) return 'unidade';
-  if (['l', 'litro'].includes(type)) return 'litro';
-  if (type === 'ml') return 'ml';
+  if (!unitString) return 'unidade';
+  const type = unitString.toLowerCase().trim().replace('.', '');
+  
+  if (['pct', 'pcte', 'pacote'].includes(type)) return 'pacote';
+  if (['uni', 'un', 'unidade'].includes(type)) return 'unidade';
+  if (['l', 'litro', 'lt', 'garrafa'].includes(type)) return 'litro';
+  if (['kg', 'quilo', 'kilo'].includes(type)) return 'kg';
+  if (['maço', 'maco'].includes(type)) return 'maço';
+  if (['bandeja', 'bdj'].includes(type)) return 'bandeja';
+  
   return type; 
 };
 
-const normalizeMinimumOrderType = (typeString: string) => {
-  if (!typeString) return '';
-  const type = typeString.toLowerCase().trim();
-  if (type === 'cx') return 'caixa';
-  if (type === 'saca') return 'saca';
-  return type;
+const normalizeContentUnit = (unit: string): 'g' | 'kg' | 'ml' | 'L' => {
+  const u = unit.toLowerCase().trim().replace('.', '');
+  if (['g', 'gr', 'gramas'].includes(u)) return 'g';
+  if (['kg', 'kilo'].includes(u)) return 'kg';
+  if (['ml'].includes(u)) return 'ml';
+  if (['l', 'lt', 'litro', 'litros'].includes(u)) return 'L';
+  return 'g';
 };
 
-const parsePrice = (raw: string): number => {
-  return parseFloat(raw.replace(/[$\s]/g, '').replace(',', '.'));
+const parsePrice = (priceStr: string): number => {
+  return parseFloat(priceStr.replace(/[R$\s]/g, '').replace(',', '.').trim());
 };
 
-export const parseProductList = (list: string): IProduct[] => {
-  if (!list) return [];
-
-  const lines = list.split('\n');
+export const parseProductList = (text: string): ParseResult => {
+  const lines = text.split('\n').filter(line => line.trim() !== '');
   const products: IProduct[] = [];
+  const failedLines: FailedLine[] = []; // Array de objetos agora
   
-  // Estado Inicial: Começa assumindo Hortifruti para os primeiros itens
-  let currentNormalizedCategory = "Hortifruti";
-  let currentNameSuffix = "";
+  let currentCategory = 'Hortifruti';
 
-  // Regex para linha de produto completa
-  // Ex:  Abobrinha italiana kg $ 8,90/cx 20 kg
-  const productLineRegex = /^(?:\s*)?(.+?)\s+(kg|uni|pct|l|ml|g|und)\s+(?:.*?)([$]?\s*[\d,.]+)(?:\s*\/\s*(.*))?$/i;
-  
-  // Regex para linha simples (ex: Vinho tinto garrafão $ 60,00)
-  const simpleLineRegex = /^(?:\s*)?(.+?)\s+([$]?\s*[\d,.]+)$/i;
-
-  // Termos para ignorar (Saudações e textos informativos)
-  const ignorePatterns = ['olá', 'segue', 'previsão', 'disponibilidade', 'ecoterra', 'semana'];
+  const contentRegex = /(?:\(|^|\s)(\d+(?:[.,]\d+)?)\s*(g|gr|kg|ml|l|lt|litros?)(?:\)|$|\s)/im;
 
   for (const line of lines) {
-    const trimmedLine = line.trim();
-
-    if (!trimmedLine) continue;
+    let cleanedLine = line.trim();
     
-    // Verifica se é uma linha de ignorar
-    if (ignorePatterns.some(p => trimmedLine.toLowerCase().startsWith(p))) continue;
+    const hasBullet = /^[\-*•]/.test(cleanedLine);
+    cleanedLine = cleanedLine.replace(/^[\-*•]\s*/, '').trim();
 
-    // Tenta dar match de produto
-    const complexMatch = trimmedLine.match(productLineRegex);
-    const simpleMatch = trimmedLine.match(simpleLineRegex);
-
-    // Se NÃO for produto e NÃO começa com a seta típica '', assumimos que é Categoria
-    const isProductLine = trimmedLine.startsWith('') || complexMatch || simpleMatch;
+    // 1. Detecção de Categoria
+    const numbersCount = (cleanedLine.match(/\d/g) || []).length;
+    const isCategoryCandidate = numbersCount < 2 && cleanedLine.length < 50;
     
-    if (!isProductLine) {
-      // Nova Categoria Detectada
-      const rawCat = trimmedLine.replace(/[:;]$/, '').trim(); // Remove pontuação final
+    if (isCategoryCandidate) {
+      const headerText = cleanedLine.replace(/[;:]$/, '').toUpperCase().trim();
+      let detectedCategory = null;
       
-      // Lógica de Normalização
-      if (CATEGORY_MAP[rawCat]) {
-        currentNormalizedCategory = CATEGORY_MAP[rawCat];
-      } else {
-        // Heurísticas de fallback
-        if (rawCat.toLowerCase().includes('geleia')) currentNormalizedCategory = 'Geleias e Doces';
-        else if (rawCat.toLowerCase().includes('vinho')) currentNormalizedCategory = 'Bebidas e Vinhos';
-        else currentNormalizedCategory = rawCat; // Usa o texto original se não conhecer
+      for (const [key, value] of Object.entries(CATEGORY_NORMALIZATION)) {
+        if (headerText.includes(key)) {
+          detectedCategory = value;
+          break;
+        }
       }
 
-      // Define sufixo de contexto (ex: Sem Açúcar)
-      currentNameSuffix = CONTEXT_SUFFIX_MAP[rawCat] || "";
-      continue;
+      if (!detectedCategory && /^[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\s]+$/.test(headerText) && headerText.length > 3) {
+         detectedCategory = cleanedLine.charAt(0).toUpperCase() + cleanedLine.slice(1).toLowerCase().replace(/[;:]$/, '');
+      }
+
+      if (detectedCategory) {
+        currentCategory = detectedCategory;
+        continue; 
+      }
+      continue; // Lixo/Saudação
     }
 
-    // Processamento do Produto
-    if (complexMatch) {
-      try {
-        const [, nameRaw, unitRaw, priceRaw, minOrderRaw] = complexMatch;
-        
-        let finalName = nameRaw.trim();
-        // Evita duplicação do sufixo se o nome já tiver
-        if (currentNameSuffix && !finalName.includes(currentNameSuffix.trim())) {
-           finalName += currentNameSuffix;
+    // 2. Extração de Preço
+    const priceRegex = /(?:[R$]\s*)?(\d+[.,]\d{2})\s*(\/.*)?$/i;
+    const priceMatch = cleanedLine.match(priceRegex);
+
+    if (!priceMatch) {
+        // Se tinha bullet, é quase certeza que era pra ser um produto
+        if (hasBullet) {
+            failedLines.push({
+                text: line.trim(),
+                category: currentCategory // Salva a categoria atual para o contexto da correção
+            });
         }
-
-        let minimumOrder = undefined;
-        if (minOrderRaw) {
-            const minOrderParts = minOrderRaw.trim().split(/\s+/);
-            if (minOrderParts.length >= 1) {
-                minimumOrder = {
-                    type: normalizeMinimumOrderType(minOrderParts[0]),
-                    value: minOrderParts.slice(1).join(' ') || '1'
-                };
-            }
-        }
-
-        products.push({
-          name: finalName,
-          category: currentNormalizedCategory,
-          available: true,
-          measure: {
-            type: normalizeMeasureType(unitRaw),
-            value: parsePrice(priceRaw),
-            minimumOrder
-          }
-        });
-      } catch (error) {
-        console.warn('Erro ao processar linha complexa:', trimmedLine, error);
-      }
-    } else if (simpleMatch) {
-      try {
-        const [, nameRaw, priceRaw] = simpleMatch;
-        
-        let finalName = nameRaw.trim();
-        if (currentNameSuffix && !finalName.includes(currentNameSuffix.trim())) {
-            finalName += currentNameSuffix;
-        }
-
-        // Inferência de unidade para linhas simples
-        let unit = 'unidade';
-        if (finalName.toLowerCase().includes('garrafão')) unit = 'garrafão';
-        else if (finalName.toLowerCase().includes('kg')) unit = 'kg';
-
-        products.push({
-          name: finalName,
-          category: currentNormalizedCategory,
-          available: true,
-          measure: {
-            type: unit,
-            value: parsePrice(priceRaw)
-          }
-        });
-      } catch (error) {
-        console.warn('Erro ao processar linha simples:', trimmedLine, error);
-      }
+        continue; 
     }
+
+    // --- Processamento de Sucesso ---
+    const priceRaw = priceMatch[1];
+    const priceValue = parsePrice(priceRaw);
+    const extraInfo = priceMatch[2] ? priceMatch[2].trim() : '';
+
+    let nameAndUnit = cleanedLine.substring(0, priceMatch.index).trim();
+
+    let saleUnit = 'unidade';
+    const unitMatch = nameAndUnit.match(/\s(kg|un|uni|unidade|pct|pcte|maço|bandeja|litro|l)\s*$/i);
+    
+    if (unitMatch) {
+      saleUnit = normalizeMeasureType(unitMatch[1]);
+      nameAndUnit = nameAndUnit.substring(0, unitMatch.index).trim();
+    } else {
+      if (nameAndUnit.toLowerCase().includes('garrafão')) saleUnit = 'garrafão';
+      else if (nameAndUnit.toLowerCase().includes('pote')) saleUnit = 'unidade';
+      else if (nameAndUnit.toLowerCase().includes('vinho')) saleUnit = 'garrafa';
+    }
+
+    let contentData = undefined;
+    const contentMatch = nameAndUnit.match(contentRegex);
+
+    if (contentMatch) {
+      const contentValue = parseFloat(contentMatch[1].replace(',', '.'));
+      const contentUnitRaw = contentMatch[2];
+      
+      contentData = {
+        value: contentValue,
+        unit: normalizeContentUnit(contentUnitRaw)
+      };
+
+      nameAndUnit = nameAndUnit.replace(contentMatch[0], '').trim();
+      nameAndUnit = nameAndUnit.replace(/\(\)/g, '').trim();
+    }
+
+    let finalName = nameAndUnit
+      .replace(/[;.,-]$/, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+
+    finalName = finalName.charAt(0).toUpperCase() + finalName.slice(1);
+
+    let minimumOrder = undefined;
+    if (extraInfo) {
+       const minOrderMatch = extraInfo.match(/\/\s*(cx|saca|fardo)\s*([\d.,]+)\s*(kg|un)?/i);
+       if (minOrderMatch) {
+         minimumOrder = {
+           type: minOrderMatch[1].toLowerCase(),
+           value: parseFloat(minOrderMatch[2].replace(',', '.'))
+         };
+       }
+    }
+
+    products.push({
+      name: finalName,
+      category: currentCategory,
+      available: true,
+      measure: {
+        type: saleUnit,
+        value: priceValue,
+        minimumOrder
+      },
+      content: contentData
+    });
   }
-
-  // Deduplicação por nome (Enterprise Standard)
-  const uniqueProducts = Array.from(new Map(products.map(item => [item.name, item])).values());
-
-  return uniqueProducts;
+  
+  return {
+    products,
+    failedLines,
+    totalLinesProcessed: lines.length
+  };
 };

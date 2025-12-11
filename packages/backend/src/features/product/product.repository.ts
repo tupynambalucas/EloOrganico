@@ -12,8 +12,31 @@ export class ProductRepository {
     return this.model.bulkWrite(ops, { session });
   }
 
-  async findByNames(names: string[], session: ClientSession) {
-    return this.model.find({ name: { $in: names } }).select('_id').session(session);
+  // NOVO MÉTODO: Busca precisa por chaves compostas
+  // Localiza produtos que batem exatamente com a assinatura do frontend
+  async findByKeys(keys: any[], session: ClientSession) {
+    if (keys.length === 0) return [];
+    
+    // Constrói uma query OR complexa
+    const criteria = keys.map(k => {
+      const filter: any = { 
+        name: k.name, 
+        category: k.category,
+        'measure.type': k.measureType 
+      };
+
+      // Se o produto tem conteúdo (ex: 500g), busca exato.
+      // Se não tem (null), busca onde o campo é null no banco.
+      if (k.contentValue !== undefined && k.contentUnit !== undefined) {
+        filter['content.value'] = k.contentValue;
+        filter['content.unit'] = k.contentUnit;
+      } else {
+        filter['content'] = null; 
+      }
+      return filter;
+    });
+
+    return this.model.find({ $or: criteria }).select('_id').session(session);
   }
 
   async deactivateOthers(activeIds: string[], session: ClientSession) {

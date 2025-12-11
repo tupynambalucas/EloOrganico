@@ -3,7 +3,7 @@ import styles from './Cycle.module.css';
 import CreateCycle from './create/CycleCreate';
 import ActiveCycle from './active/ActiveCycle';
 import CyclesHistory from './history/CycleHistory';
-import Loader from '@/components/Loader';
+import ContainerLoader from '../../components/ContainerLoader';
 import { useCycleStore } from './cycle.store';
 
 const CyclesView = () => {
@@ -17,30 +17,29 @@ const CyclesView = () => {
 
   useEffect(() => {
     fetchActiveCycle();
-  }, [fetchActiveCycle]); // Adicionada dependência correta
+  }, [fetchActiveCycle]);
 
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => resetStatus(), 3000);
       return () => clearTimeout(timer);
     }
-  }, [success, resetStatus]); // Adicionadas dependências corretas
-
-  if (isLoadingActive) {
-    return <div className={styles.loadingContainer}><Loader /></div>;
-  }
+  }, [success, resetStatus]);
 
   return (
     <div className={styles.container}>
-      <section className={styles.mainArea}>
-        {activeCycle ? (
+      <section>
+        {isLoadingActive ? (
+          <ContainerLoader />
+        ) : activeCycle ? (
           <ActiveCycle />
         ) : (
           <CreateCycle />
         )}
       </section>
 
-      <section className={styles.historyArea}>
+      {/* Seção Direita: Histórico */}
+      <section>
         <CyclesHistory />
       </section>
     </div>

@@ -1,13 +1,12 @@
 import { Mongoose } from 'mongoose';
-import { CreateCycleDTO } from '@elo-organico/shared';
+import { CreateCycleDTO, IProduct } from '@elo-organico/shared';
 import { CycleRepository } from './cycle.repository';
-import { ProductRepository } from '../product/product.repository';
-import { UpdateCycleBodyType } from './cycle.schema'; // Import correto
+import { ProductService } from '../product/product.service';
 
 export class CycleService {
   constructor(
     private cycleRepo: CycleRepository,
-    private productRepo: ProductRepository,
+    private productService: ProductService,
     private mongoose: Mongoose
   ) {}
 
@@ -36,109 +35,54 @@ export class CycleService {
     session.startTransaction();
 
     try {
-      const bulkOps = data.products.map((p) => ({
-        updateOne: {
-          filter: { name: p.name },
-          update: {
-            $set: {
-              category: p.category,
-              measure: p.measure,
-              available: true,
-            }
-          },
-          upsert: true
-        }
-      }));
-
-      if (bulkOps.length > 0) {
-        await this.productRepo.bulkUpsert(bulkOps, session);
-      }
-
-      const productNames = data.products.map(p => p.name);
-      const activeProducts = await this.productRepo.findByNames(productNames, session);
-      const productIds = activeProducts.map(p => p._id);
-
-      await this.productRepo.deactivateOthers(productIds as any[], session);
       await this.cycleRepo.deactivateAll(session);
 
-      const newCycle = await this.cycleRepo.create({
+      const productIds = await this.productService.syncCycleProducts(data.products, session);
+
+      const newCycleData = {
         description: data.description,
-        openingDate: new Date(data.openingDate),
-        closingDate: new Date(data.closingDate),
+        openingDate: data.openingDate,
+        closingDate: data.closingDate,
         products: productIds,
-        isActive: true,
-      }, session);
+        isActive: true
+      };
+
+      const createdCycle = await this.cycleRepo.create(newCycleData, session);
 
       await session.commitTransaction();
-      return {
-        message: 'Ciclo criado com sucesso!',
-        cycleId: newCycle._id,
-        productsCount: productIds.length,
-      };
+      return createdCycle;
 
     } catch (error) {
       await session.abortTransaction();
       throw error;
     } finally {
-      await session.endSession();
+      session.endSession();
     }
   }
 
-  async updateCycle(id: string, data: UpdateCycleBodyType) {
+  async updateCycle(id: string, products: IProduct[]) {
     const session = await this.mongoose.startSession();
     session.startTransaction();
 
     try {
-      const currentCycle = await this.cycleRepo.findByIdWithSession(id, session);
-      if (!currentCycle) throw new Error('Ciclo não encontrado');
+      const cycle = await this.cycleRepo.findByIdWithSession(id, session);
+      if (!cycle) throw new Error('Ciclo não encontrado');
 
-      const updatedProductsList = data.products || [];
+      const productIds = await this.productService.syncCycleProducts(products, session);
 
-      const newProductIds = updatedProductsList
-        .map(p => p._id)
-        .filter((pid): pid is string => !!pid);
-      
-      const removedProductIds = currentCycle.products.filter(
-          oldId => !newProductIds.includes(oldId.toString())
-      );
-
-      if (removedProductIds.length > 0) {
-          await this.productRepo.updateMany(
-              { _id: { $in: removedProductIds } },
-              { $set: { available: false } },
-              session
-          );
-      }
-
-      const bulkOps = updatedProductsList.map((p) => ({
-        updateOne: {
-          filter: { _id: p._id },
-          update: {
-            $set: {
-              name: p.name,
-              category: p.category,
-              measure: p.measure,
-              available: true,
-            }
-          }
-        }
-      }));
-
-      if (bulkOps.length > 0) {
-        await this.productRepo.bulkUpsert(bulkOps, session);
-      }
-
-      currentCycle.products = newProductIds as any;
-      await this.cycleRepo.save(currentCycle, session);
+      cycle.products = productIds as any;
+      await this.cycleRepo.save(cycle, session);
 
       await session.commitTransaction();
-      return this.cycleRepo.findById(id);
+      
+      const updatedCycle = await this.cycleRepo.findById(id);
+      return updatedCycle;
 
     } catch (error) {
       await session.abortTransaction();
       throw error;
     } finally {
-      await session.endSession();
+      session.endSession();
     }
   }
 }

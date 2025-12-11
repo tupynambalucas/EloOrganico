@@ -10,14 +10,14 @@
     "directory": "packages/backend"
   },
   "private": true,
-  "main": "dist/server.js",
+  "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/index.ts",
     "build": "npm run clean && tsc -p tsconfig.build.json",
     "seed": "tsx src/scripts/seedAdmin.ts",
     "seed:prod": "node dist/scripts/seedAdmin.js",
-    "start": "npm run seed:prod && node dist/server.js",
+    "start": "npm run seed:prod && node dist/index.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

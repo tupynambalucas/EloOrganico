@@ -1,6 +1,5 @@
 import type { IProduct } from '@elo-organico/shared';
 
-// Alterada a interface para incluir a categoria na falha
 export interface FailedLine {
   text: string;
   category: string;
@@ -66,7 +65,6 @@ export const parseProductList = (text: string): ParseResult => {
     const hasBullet = /^[\-*•]/.test(cleanedLine);
     cleanedLine = cleanedLine.replace(/^[\-*•]\s*/, '').trim();
 
-    // 1. Detecção de Categoria
     const numbersCount = (cleanedLine.match(/\d/g) || []).length;
     const isCategoryCandidate = numbersCount < 2 && cleanedLine.length < 50;
     
@@ -89,7 +87,7 @@ export const parseProductList = (text: string): ParseResult => {
         currentCategory = detectedCategory;
         continue; 
       }
-      continue; // Lixo/Saudação
+      continue;
     }
 
     // 2. Extração de Preço

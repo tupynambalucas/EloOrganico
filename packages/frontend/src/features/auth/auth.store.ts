@@ -1,13 +1,12 @@
 import { create } from 'zustand';
 import { sendJSON, setCsrfToken, HttpError } from '@/lib/fetch';
-import type { LoginDTO, RegisterDTO, UserResponse, LoginResponse } from '@elo-organico/shared';
-
-interface ApiError {
-  message?: string;
-  body?: {
-    message?: string;
-  };
-}
+import { 
+  type LoginDTO, 
+  type RegisterDTO, 
+  type UserResponse, 
+  type LoginResponse,
+  UserResponseSchema
+} from '@elo-organico/shared';
 
 interface AuthState {
   user: UserResponse | null;
@@ -45,18 +44,24 @@ export const useAuthStore = create<AuthState>((set) => ({
         json: data,
       });
 
+      const validatedUser = UserResponseSchema.parse(response.user);
+
       set({ 
-        user: response.user, 
-        token: response.token, 
+        user: validatedUser, 
         isAuthenticated: true, 
         loginLoading: false 
       });
+
     } catch (err: unknown) {
-      const error = err as ApiError;
-      const message = error.body?.message || error.message || 'Erro ao realizar login.';
+      const error = err as HttpError;
+      const body = error.body as { message?: string } | undefined;
+      const message = body?.message || error.message || 'Erro ao realizar login.';
+      
       set({ 
         loginLoading: false, 
-        loginError: message 
+        loginError: message,
+        isAuthenticated: false,
+        user: null
       });
     }
   },
@@ -64,8 +69,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     try {
       await sendJSON('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error(error);
     } finally {
-      set({ user: null, token: null, isAuthenticated: false });
+      set({ user: null, isAuthenticated: false, token: null });
+      setCsrfToken('');
     }
   },
 
@@ -84,8 +92,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       return true;
 
     } catch (err: unknown) {
-      const error = err as ApiError;
-      const message = error.body?.message || error.message || 'Erro ao registrar.';
+      const error = err as HttpError;
+      const body = error.body as { message?: string } | undefined;
+      const message = body?.message || error.message || 'Erro ao registrar.';
+      
       set({
         registerLoading: false,
         registerError: message,
@@ -105,8 +115,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         method: 'GET',
       });
 
+      const validatedUser = UserResponseSchema.parse(response.user);
+
       set({ 
-        user: response.user, 
+        user: validatedUser, 
         isAuthenticated: true, 
         isAuthLoading: false 
       });
@@ -119,15 +131,13 @@ export const useAuthStore = create<AuthState>((set) => ({
           isAuthenticated: false, 
           isAuthLoading: false 
         });
-        return;
+      } else {
+        set({ 
+          user: null, 
+          isAuthenticated: false, 
+          isAuthLoading: false 
+        });
       }
-
-      console.error('Falha na verificação de autenticação:', err);
-      set({ 
-        user: null, 
-        isAuthenticated: false, 
-        isAuthLoading: false 
-      });
     }
   },
 }));

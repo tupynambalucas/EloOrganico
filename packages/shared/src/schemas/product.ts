@@ -6,7 +6,7 @@ export const MeasureSchema = z.object({
   minimumOrder: z.object({
     type: z.string(),
     value: z.union([z.string(), z.number()])
-  }).optional()
+  }).nullish() // Alterado para .nullish() para aceitar null vindo do banco
 });
 
 export const ContentSchema = z.object({
@@ -19,7 +19,7 @@ export const ProductSchema = z.object({
   name: z.string().min(1),
   category: z.string().min(1),
   measure: MeasureSchema,
-  content: ContentSchema.optional(),
+  content: ContentSchema.nullish(), // CORREÇÃO: Aceita null ou undefined
   available: z.boolean().default(false),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional()

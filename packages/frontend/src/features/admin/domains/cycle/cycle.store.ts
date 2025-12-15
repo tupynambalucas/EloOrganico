@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { cycleApi } from './cycle.api';
-import i18n from '@/i18n';
-import { AxiosError } from 'axios';
+import { adminCyclesApi } from './cycle.api';
+import { useCycleStore as usePublicCycleStore } from '@/domains/cycle';
+import { getErrorMessage } from '@/utils/errorHelper';
 import { 
   type IProduct, 
   type ICycle, 
@@ -9,7 +9,6 @@ import {
 } from '@elo-organico/shared';
 import { z } from 'zod';
 
-// ... (Tipos CycleFormData, HistoryResponse, CycleState mantêm-se iguais) ...
 export type CycleFormData = {
   products: IProduct[];
   description: string;
@@ -26,10 +25,7 @@ interface HistoryResponse {
   }
 }
 
-interface CycleState {
-  activeCycle: ICycle | null;
-  isLoadingActive: boolean;
-
+interface AdminCycleState {
   isSubmitting: boolean;
   error: string | null;
   success: boolean;
@@ -41,7 +37,6 @@ interface CycleState {
   selectedCycle: ICycle | null; 
   isLoadingDetails: boolean;
 
-  fetchActiveCycle: () => Promise<void>;
   fetchHistory: (filters?: { page?: number; startDate?: Date; endDate?: Date }) => Promise<void>;
   fetchCycleDetails: (id: string) => Promise<void>;
   
@@ -54,24 +49,7 @@ interface CycleState {
 
 const CycleListSchema = z.array(CycleResponseSchema);
 
-// Helper tipado duplicado (idealmente extrair para utils)
-interface ApiErrorData {
-  code?: string;
-  message?: string;
-}
-
-const getErrorMessage = (err: unknown) => {
-  if (err instanceof AxiosError) {
-    const data = err.response?.data as ApiErrorData;
-    // Se tiver código usa tradução, senão fallback
-    return data?.code ? i18n.t(`errors.${data.code}`) : i18n.t('errors.UNKNOWN_ERROR');
-  }
-  return i18n.t('errors.UNKNOWN_ERROR');
-};
-
-export const useCycleStore = create<CycleState>((set, get) => ({
-  activeCycle: null,
-  isLoadingActive: false,
+export const useAdminCycleStore = create<AdminCycleState>((set) => ({
   isSubmitting: false,
   error: null,
   success: false,
@@ -80,24 +58,6 @@ export const useCycleStore = create<CycleState>((set, get) => ({
   isLoadingHistory: false,
   selectedCycle: null,
   isLoadingDetails: false,
-
-  fetchActiveCycle: async () => {
-    set({ isLoadingActive: true });
-    try {
-      const data = await cycleApi.getActive();
-      if (data) {
-        const validated = CycleResponseSchema.parse(data);
-        set({ activeCycle: validated });
-      } else {
-        set({ activeCycle: null });
-      }
-    } catch (error) {
-      console.error('Falha ao buscar ciclo', error);
-      set({ activeCycle: null });
-    } finally {
-      set({ isLoadingActive: false });
-    }
-  },
 
   fetchHistory: async (filters = {}) => {
     set({ isLoadingHistory: true });
@@ -108,7 +68,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
         endDate: filters.endDate?.toISOString()
       };
       
-      const response = await cycleApi.getHistory(params);
+      const response = await adminCyclesApi.getHistory(params);
       const validatedCycles = CycleListSchema.parse(response.data);
 
       set({ 
@@ -125,7 +85,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
   fetchCycleDetails: async (id) => {
     set({ isLoadingDetails: true, selectedCycle: null });
     try {
-      const data = await cycleApi.getById(id);
+      const data = await adminCyclesApi.getById(id);
       const validated = CycleResponseSchema.parse(data);
       set({ selectedCycle: validated, isLoadingDetails: false });
     } catch (error) {
@@ -146,10 +106,12 @@ export const useCycleStore = create<CycleState>((set, get) => ({
         products: data.products
       };
 
-      await cycleApi.create(payload);
+      await adminCyclesApi.create(payload);
 
       set({ isSubmitting: false, success: true });
-      get().fetchActiveCycle(); 
+      
+      usePublicCycleStore.getState().fetchActiveCycle();
+      
       return true;
 
     } catch (err: unknown) {
@@ -159,20 +121,20 @@ export const useCycleStore = create<CycleState>((set, get) => ({
   },
 
   updateActiveCycleProducts: async (updatedProducts) => {
-    const currentCycle = get().activeCycle;
-    if (!currentCycle || !currentCycle._id) return false;
+    const currentPublicCycle = usePublicCycleStore.getState().activeCycle;
+    
+    if (!currentPublicCycle || !currentPublicCycle._id) return false;
 
     set({ isSubmitting: true, error: null });
 
     try {
-      const updatedCycle = await cycleApi.updateProducts(currentCycle._id, updatedProducts);
-      const validatedCycle = CycleResponseSchema.parse(updatedCycle);
+      const updatedCycle = await adminCyclesApi.updateProducts(currentPublicCycle._id, updatedProducts);
+      CycleResponseSchema.parse(updatedCycle);
 
-      set({ 
-        activeCycle: validatedCycle,
-        isSubmitting: false, 
-        success: true
-      });
+      set({ isSubmitting: false, success: true });
+
+      usePublicCycleStore.getState().fetchActiveCycle();
+      
       return true;
 
     } catch (err: unknown) {

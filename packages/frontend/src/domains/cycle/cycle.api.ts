@@ -1,0 +1,14 @@
+import { api } from '@/lib/axios';
+import type { ICycle } from '@elo-organico/shared';
+
+export const cyclesApi = {
+  getActive: async () => {
+    const response = await api.get<ICycle | null>('/cycles/active');
+    return response.status === 204 ? null : response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await api.get<ICycle>(`/cycles/${id}`);
+    return response.data;
+  }
+};

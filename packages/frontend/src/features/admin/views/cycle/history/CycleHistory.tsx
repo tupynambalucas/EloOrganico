@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useCycleStore } from '../cycle.store';
+import { useCycleStore } from '../../../domains/cycle/cycle.store';
 import styles from './CycleHistory.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCalendarAlt, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';

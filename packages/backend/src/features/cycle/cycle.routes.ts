@@ -23,15 +23,16 @@ const cycleRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [server.authenticate, server.verifyAdmin]
   }, controller.updateCycleHandler);
 
+  app.get('/cycles/:id', {
+    schema: getCycleByIdSchema,
+    preHandler: [server.authenticate] 
+  }, controller.getCycleByIdHandler);
+  
   app.get('/admin/cycles/history', { 
     schema: getHistorySchema,
     preHandler: [server.authenticate, server.verifyAdmin]
   }, controller.getCycleHistoryHandler);
   
-  app.get('/admin/cycles/:id', { 
-    schema: getCycleByIdSchema,
-    preHandler: [server.authenticate, server.verifyAdmin]
-  }, controller.getCycleByIdHandler);
 };
 
 export default cycleRoutes;

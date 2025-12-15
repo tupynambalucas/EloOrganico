@@ -25,6 +25,10 @@
             "@assets/*": ["./src/assets/*"],
             "@components/*": ["./src/components/*"],
             "@features/*": ["./src/features/*"],
+
+            "@adminDomains/*": ["./src/features/admin/*"],
+            "@publicDomains/*": ["./src/features/*"],
+
             "@elo-organico/shared": ["../shared/src/index.ts"]
         }
     },

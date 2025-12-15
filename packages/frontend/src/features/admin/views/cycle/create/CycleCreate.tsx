@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faSync } from '@fortawesome/free-solid-svg-icons';
 
 import { parseProductList, FailedLine } from './parseProductList';
-import { useCycleStore } from '../cycle.store';
+import { useCycleStore } from '../../../domains/cycle/cycle.store';
 import { useCyclesNavigation } from '../cycle.navigation';
 import styles from './CycleCreate.module.css';
 import { IProduct } from '@elo-organico/shared';

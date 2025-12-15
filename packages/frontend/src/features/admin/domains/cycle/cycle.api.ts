@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios';
-import type { ICycle, CreateCycleDTO, IProduct } from '@elo-organico/shared'; // Adicionado IProduct
+import type { ICycle, CreateCycleDTO, IProduct } from '@elo-organico/shared';
 
 interface HistoryParams {
   page?: number;
@@ -17,12 +17,7 @@ interface HistoryResponse {
   }
 }
 
-export const cycleApi = {
-  getActive: async () => {
-    const response = await api.get<ICycle | null>('/cycles/active');
-    return response.status === 204 ? null : response.data;
-  },
-
+export const adminCyclesApi = {
   getHistory: async (params: HistoryParams) => {
     const response = await api.get<HistoryResponse>('/admin/cycles/history', { params });
     return response.data;
@@ -38,7 +33,6 @@ export const cycleApi = {
     return response.data;
   },
 
-  // Correção: products agora é tipado como IProduct[]
   updateProducts: async (id: string, products: IProduct[]) => {
     const response = await api.patch<ICycle>(`/admin/cycles/${id}`, { products });
     return response.data;

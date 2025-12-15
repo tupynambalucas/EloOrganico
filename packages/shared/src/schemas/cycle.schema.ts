@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ProductSchema, ProductResponseSchema } from './product';
+import { ProductSchema, ProductResponseSchema } from './product.schema';
 
 export const CycleStatusEnum = z.enum(['PENDING', 'OPEN', 'CLOSED']);
 

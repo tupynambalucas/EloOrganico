@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserSchema, UserResponseSchema } from './user';
+import { UserSchema, UserResponseSchema } from './user.schema';
 import { AUTH_RULES } from '../constants';
 
 export const RegisterDTOSchema = UserSchema.pick({ 

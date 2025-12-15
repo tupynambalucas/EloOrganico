@@ -2,10 +2,12 @@ import { faArrowRightFromBracket, faList, faUsers, faCarrot, faChartSimple, faGe
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAdminNavigation, type AdminViewType } from '../admin.navigation';
 import { LogoPositive } from '@/components/Icons';
-import styles from './sidebar.module.css'; // Corrigido para minúsculo conforme seu padrão de arquivo
+import styles from './Sidebar.module.css';
+import { useAuthStore } from '@/features/auth/auth.store';
 
 const SideBar = () => {
     const { setView, currentView } = useAdminNavigation();
+    const { logout } = useAuthStore();
 
     const handleNavigation = (view: AdminViewType) => {
         setView(view);
@@ -63,10 +65,10 @@ const SideBar = () => {
             
             <div className={styles.footer}>
                 <button 
-                    // onClick aqui para logout
+                    onClick={() => logout()}
+                    title="Sair do sistema"
                 >
                     <FontAwesomeIcon icon={faArrowRightFromBracket} size="xl" flip="horizontal" />
-                    {/* Sem tooltip aqui, conforme solicitado */}
                 </button>
             </div>
         </div>

@@ -15,6 +15,9 @@ out/
 coverage/
 *.tsbuildinfo
 
+# --- Arquivos (Frontend) ---
+*.module.css.d.ts
+
 # --- Ambiente e Segredos (CRÍTICO) ---
 # Ignora todos os arquivos de env
 .env

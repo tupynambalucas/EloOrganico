@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAuthStore } from '@/features/auth/auth.store';
+import { useAuthStore } from '@/domains/auth/auth.store';
 import userIconList from '@/constants/userIconList';
 
 // Props opcionais para flexibilidade (tamanho, classe extra)

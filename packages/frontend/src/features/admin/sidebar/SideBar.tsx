@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAdminNavigation, type AdminViewType } from '../admin.navigation';
 import { LogoPositive } from '@/components/Icons';
 import styles from './Sidebar.module.css';
-import { useAuthStore } from '@/features/auth/auth.store';
+import { useAuthStore } from '@/domains/auth/auth.store';
 
 const SideBar = () => {
     const { setView, currentView } = useAdminNavigation();

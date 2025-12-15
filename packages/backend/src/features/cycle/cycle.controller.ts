@@ -14,7 +14,7 @@ export class CycleController {
   private mapToResponse(cycle: any) {
     if (!cycle) return null;
     
-    const obj = typeof cycle.toObject === 'function' ? cycle.toObject() : cycle;
+    const obj = typeof cycle.toJSON === 'function' ? cycle.toJSON() : cycle;
 
     return {
       ...obj,
@@ -26,7 +26,7 @@ export class CycleController {
       products: Array.isArray(obj.products) ? obj.products.map((p: any) => {
         if (!p) return null;
         
-        if (p._id && typeof p._id.toString === 'function' && p.name) {
+        if (typeof p === 'object' && p._id) {
           return {
             ...p,
             _id: p._id.toString(),
@@ -70,10 +70,9 @@ export class CycleController {
     const result = await this.service.createCycle(req.body);
     return reply.status(201).send(this.mapToResponse(result));
   }
-
+  
   updateCycleHandler: FastifyZodHandler<UpdateCycleRoute> = async (req, reply) => {
-    const { products } = req.body;
-    const result = await this.service.updateCycle(req.params.id, products);
+    const result = await this.service.updateCycle(req.params.id, req.body.products);
     return reply.send(this.mapToResponse(result));
   }
 }

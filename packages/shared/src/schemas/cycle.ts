@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { ProductSchema, ProductResponseSchema } from './product';
 
+export const CycleStatusEnum = z.enum(['PENDING', 'OPEN', 'CLOSED']);
+
 export const CycleSchema = z.object({
   _id: z.string().optional(),
   description: z.string(),
@@ -20,9 +22,11 @@ export const CreateCycleDTOSchema = z.object({
 });
 
 export const CycleResponseSchema = CycleSchema.extend({
-  products: z.array(z.union([z.string(), ProductResponseSchema])) 
+  products: z.array(z.union([z.string(), ProductResponseSchema])),
+  status: CycleStatusEnum.optional()
 });
 
 export type ICycle = z.infer<typeof CycleSchema>;
 export type CreateCycleDTO = z.infer<typeof CreateCycleDTOSchema>;
 export type CycleResponse = z.infer<typeof CycleResponseSchema>;
+export type CycleStatus = z.infer<typeof CycleStatusEnum>;

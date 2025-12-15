@@ -5,6 +5,7 @@ export interface ICycleDocument extends Omit<ICycle, '_id' | 'products' | 'openi
   openingDate: Date;
   closingDate: Date;
   products: Types.ObjectId[];
+  status?: 'PENDING' | 'OPEN' | 'CLOSED';
 }
 
 export const cycleSchema = new Schema<ICycleDocument>({
@@ -27,7 +28,24 @@ export const cycleSchema = new Schema<ICycleDocument>({
   isActive: {
     type: Boolean,
     default: true,
+    index: true
   },
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+cycleSchema.virtual('status').get(function() {
+  const now = new Date();
+  if (now < this.openingDate) return 'PENDING';
+  if (now > this.closingDate) return 'CLOSED';
+  return 'OPEN';
+});
+
+cycleSchema.index({ isActive: 1 }, { 
+  unique: true, 
+  partialFilterExpression: { isActive: true } 
+});
 
 export const Cycle = model<ICycleDocument>('Cycle', cycleSchema);

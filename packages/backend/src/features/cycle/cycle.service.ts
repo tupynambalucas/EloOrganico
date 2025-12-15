@@ -12,7 +12,29 @@ export class CycleService {
   ) {}
 
   async getActive() {
-    return this.cycleRepo.findActive();
+    const activeCycle = await this.cycleRepo.findActive();
+
+    if (!activeCycle) return null;
+
+    if (activeCycle.status === 'CLOSED') {
+      const session = await this.mongoose.startSession();
+      try {
+        session.startTransaction();
+        
+        activeCycle.isActive = false;
+        await this.cycleRepo.save(activeCycle, session);
+        
+        await session.commitTransaction();
+      } catch (err) {
+        await session.abortTransaction();
+        console.error('Erro no auto-arquivamento do ciclo:', err);
+      } finally {
+        session.endSession();
+      }
+      return null;
+    }
+
+    return activeCycle;
   }
 
   async getHistory(page: number, limit: number, start?: string, end?: string) {
@@ -40,7 +62,11 @@ export class CycleService {
     try {
       await this.cycleRepo.deactivateAll(session);
 
-      const productIds = await this.productService.syncCycleProducts(data.products, session);
+      let productIds: string[] = [];
+      
+      if (data.products && data.products.length > 0) {
+        productIds = await this.productService.syncCycleProducts(data.products, session);
+      }
 
       const newCycleData = {
         description: data.description,
@@ -85,7 +111,7 @@ export class CycleService {
     } catch (error) {
       await session.abortTransaction();
       if (error instanceof AppError) throw error;
-      throw new AppError('Erro ao atualizar o ciclo.', 400);
+      throw new AppError('Erro ao atualizar ciclo.', 400);
     } finally {
       session.endSession();
     }

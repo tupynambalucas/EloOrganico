@@ -1,20 +1,22 @@
-import { Model, Mongoose, Document, Types } from 'mongoose';
+import { Model, Mongoose, Document } from 'mongoose';
 import { 
   FastifyRequest, 
   FastifyReply, 
-  FastifyInstance, 
-  RawServerDefault, 
   FastifySchema,
   RouteHandlerMethod, 
-  ContextConfigDefault
+  ContextConfigDefault,
+  RawServerDefault
 } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import '@fastify/session'; 
 import '@fastify/jwt'; 
-import { type IUser, type IProduct, type ICycle } from '@elo-organico/shared';
+import { type IUser, type IProduct } from '@elo-organico/shared';
 import { AuthController } from '../features/auth/auth.controller';
 import { CycleController } from '../features/cycle/cycle.controller';
 import { ProductController } from '../features/product/product.controller';
+
+// Importamos a interface oficial do documento Cycle que já contém os virtuals (status)
+import { ICycleDocument } from '../models/Cycle'; 
 
 export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & { 
     _id: string;
@@ -52,14 +54,8 @@ declare module 'fastify' {
         models: {
             User: Model<Omit<IUser, '_id'> & Document & { password?: string }>;
             Product: Model<Omit<IProduct, '_id'> & Document>;
-            Cycle: Model<
-                Omit<ICycle, '_id' | 'products' | 'openingDate' | 'closingDate'> & 
-                Document & { 
-                    products: Types.ObjectId[]; 
-                    openingDate: Date;
-                    closingDate: Date;
-                }
-            >; 
+            // Agora usa a interface correta com o virtual 'status'
+            Cycle: Model<ICycleDocument>; 
         };
         
         mongoose: Mongoose;

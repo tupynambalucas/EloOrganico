@@ -1,5 +1,5 @@
 import { useEffect, Suspense, lazy } from 'react';
-import { useAuthStore } from '@/domains/auth/auth.store';
+import { useAuthStore } from '@/domains/auth';
 import { initializeCsrf } from '@/lib/axios'; // Importe a função de inicialização
 import Loader from '@/components/Loader';
 import '@/i18n'; // Importa a configuração do i18n para registrar o pt-BR

@@ -18,7 +18,8 @@
     "seed": "tsx src/scripts/seedAdmin.ts",
     "seed:prod": "node dist/scripts/seedAdmin.js",
     "start": "npm run seed:prod && node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@elo-organico/shared": "*",

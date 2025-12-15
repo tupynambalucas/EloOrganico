@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuthStore } from '../../domains/auth/auth.store';
+import { useAuthStore } from '@domains/auth';
 import UserIconsList from '@/constants/userIconList';
 import BannerNegative from '@/assets/svg/identity/banner-negative.svg?react';
 import styles from './Auth.module.css';

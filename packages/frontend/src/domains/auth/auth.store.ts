@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { authApi } from './auth.api';
 import i18n from '@/i18n';
 import { setCsrfToken } from '@/lib/axios';
-import { AxiosError } from 'axios'; // Import necessário
+import { getErrorMessage } from '@/utils/errorHelper';
 import { 
   type LoginDTO, 
   type RegisterDTO, 
@@ -10,23 +10,6 @@ import {
   UserResponseSchema
 } from '@elo-organico/shared';
 
-// Interface para o formato de erro esperado do backend
-interface ApiErrorData {
-  code?: string;
-  message?: string;
-}
-
-// Helper fortemente tipado
-const getErrorMessage = (err: unknown) => {
-  if (err instanceof AxiosError) {
-    const data = err.response?.data as ApiErrorData;
-    const code = data?.code || 'UNKNOWN_ERROR';
-    return i18n.t(`errors.${code}`);
-  }
-  return i18n.t('errors.UNKNOWN_ERROR');
-};
-
-// ... Resto das interfaces (AuthState) mantém igual ...
 interface AuthState {
   user: UserResponse | null;
   isAuthenticated: boolean;
@@ -49,8 +32,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
   isAuthLoading: true,
+  
   loginLoading: false,
   loginError: null,
+  
   registerLoading: false,
   registerError: null,
   registerSuccess: null,
@@ -66,7 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true, 
         loginLoading: false 
       });
-    } catch (err: unknown) { // Correção: unknown
+    } catch (err: unknown) {
       set({ 
         loginLoading: false, 
         loginError: getErrorMessage(err),
@@ -96,7 +81,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         registerSuccess: i18n.t('success.USER_CREATED_SUCCESSFULLY'),
       });
       return true;
-    } catch (err: unknown) { // Correção: unknown
+    } catch (err: unknown) {
       set({
         registerLoading: false,
         registerError: getErrorMessage(err),
@@ -117,7 +102,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthLoading: false 
       });
     } catch {
-      // Catch sem variável quando ela não é usada (ES2019)
       set({ 
         user: null, 
         isAuthenticated: false, 

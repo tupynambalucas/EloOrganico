@@ -17,7 +17,7 @@ interface HistoryResponse {
   }
 }
 
-export const adminCyclesApi = {
+export const adminCycleApi = {
   getHistory: async (params: HistoryParams) => {
     const response = await api.get<HistoryResponse>('/admin/cycles/history', { params });
     return response.data;

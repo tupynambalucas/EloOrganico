@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { adminCyclesApi } from './cycle.api';
+import { adminCycleApi } from './cycle.api';
 import { useCycleStore as usePublicCycleStore } from '@/domains/cycle';
 import { getErrorMessage } from '@/utils/errorHelper';
 import { 
@@ -68,7 +68,7 @@ export const useAdminCycleStore = create<AdminCycleState>((set) => ({
         endDate: filters.endDate?.toISOString()
       };
       
-      const response = await adminCyclesApi.getHistory(params);
+      const response = await adminCycleApi.getHistory(params);
       const validatedCycles = CycleListSchema.parse(response.data);
 
       set({ 
@@ -85,7 +85,7 @@ export const useAdminCycleStore = create<AdminCycleState>((set) => ({
   fetchCycleDetails: async (id) => {
     set({ isLoadingDetails: true, selectedCycle: null });
     try {
-      const data = await adminCyclesApi.getById(id);
+      const data = await adminCycleApi.getById(id);
       const validated = CycleResponseSchema.parse(data);
       set({ selectedCycle: validated, isLoadingDetails: false });
     } catch (error) {
@@ -106,7 +106,7 @@ export const useAdminCycleStore = create<AdminCycleState>((set) => ({
         products: data.products
       };
 
-      await adminCyclesApi.create(payload);
+      await adminCycleApi.create(payload);
 
       set({ isSubmitting: false, success: true });
       
@@ -128,7 +128,7 @@ export const useAdminCycleStore = create<AdminCycleState>((set) => ({
     set({ isSubmitting: true, error: null });
 
     try {
-      const updatedCycle = await adminCyclesApi.updateProducts(currentPublicCycle._id, updatedProducts);
+      const updatedCycle = await adminCycleApi.updateProducts(currentPublicCycle._id, updatedProducts);
       CycleResponseSchema.parse(updatedCycle);
 
       set({ isSubmitting: false, success: true });

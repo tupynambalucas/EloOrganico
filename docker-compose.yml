@@ -7,11 +7,11 @@ services:
       - bash
       - -c
       - |
-        echo "🔧 Fixing keyfile permissions..."
+        echo "Fixing keyfile permissions..."
         cp /tmp/mongo-keyfile /data/mongo-keyfile
         chmod 400 /data/mongo-keyfile
         chown 999:999 /data/mongo-keyfile
-        echo "🚀 Starting MongoDB..."
+        echo "Starting MongoDB..."
         exec docker-entrypoint.sh $$@
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/mongo-keyfile"]
     environment:
@@ -27,10 +27,11 @@ services:
     healthcheck:
       test: |
         test $$(mongosh -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --quiet --eval "try { rs.status().ok } catch(e) { 0 }") -eq 1 \
-        || mongosh -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --quiet --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})"
+        || mongosh -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --quiet --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'db:27017'}]})"
       interval: 10s
       timeout: 10s
       retries: 5
+      start_period: 20s
 
   backend:
     build:
@@ -41,30 +42,27 @@ services:
       db:
         condition: service_healthy
     environment:
-      # --- Configurações de Rede e Ambiente ---
       - NODE_ENV=${NODE_ENV}
       - SERVER_PORT=${SERVER_PORT}
-      # Essencial para Docker: 0.0.0.0 permite acesso externo (do Nginx)
-      - SERVER_HOST=0.0.0.0 
-
-      # --- Banco de Dados (Conexão Interna Docker) ---
-      # Aqui montamos a URI apontando para o serviço 'db' na porta 27017
+      - SERVER_HOST=0.0.0.0
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/${MONGO_DB_NAME}?authSource=admin&replicaSet=rs0
-      
-      # --- Segredos de Autenticação e Sessão ---
-      # O container precisa receber esses valores explicitamente
       - JWT_SECRET=${JWT_SECRET}
       - SESSION_SECRET=${SESSION_SECRET}
       - USER_SESSION_KEY=${USER_SESSION_KEY}
       - ADMIN_SESSION_KEY=${ADMIN_SESSION_KEY}
-
-      # --- Variáveis para o Seed do Admin (Produção) ---
-      # Necessário para o script 'npm run seed:prod' criar o admin inicial
       - ADMIN_USER_SEED=${ADMIN_USER_SEED}
       - ADMIN_EMAIL_SEED=${ADMIN_EMAIL_SEED}
       - ADMIN_PASS_SEED=${ADMIN_PASS_SEED}
+    volumes:
+      - backend_logs:/app/packages/backend/logs
     networks:
       - elo_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   frontend:
     build:
@@ -72,12 +70,14 @@ services:
       dockerfile: packages/frontend/Dockerfile
     container_name: elo_frontend
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - elo_network
 
 volumes:
   mongo_data:
+  backend_logs:
 
 networks:
   elo_network:

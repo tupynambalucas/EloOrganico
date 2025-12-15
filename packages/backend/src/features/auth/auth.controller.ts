@@ -22,7 +22,7 @@ export class AuthController {
 
   registerHandler: FastifyZodHandler<RegisterRoute> = async (req, reply) => {
     await this.authService.register(req.body);
-    return reply.status(201).send({ message: 'Usuário criado com sucesso' });
+    return reply.status(201).send({ message: 'USER_CREATED_SUCCESSFULLY' });
   }
 
   loginHandler: FastifyZodHandler<LoginRoute> = async (req, reply) => {
@@ -42,12 +42,12 @@ export class AuthController {
     if (req.session) {
       await req.session.destroy();
     }
-    return reply.send({ message: 'Logout realizado com sucesso' });
+    return reply.send({ message: 'LOGOUT_SUCCESSFUL' });
   }
 
   verifyHandler: FastifyZodHandler<{}> = async (req, reply) => {
     if (!req.session?.token) {
-      return reply.status(401).send({ authenticated: false, message: 'Não autenticado' });
+      return reply.status(401).send({ authenticated: false, message: 'NOT_AUTHENTICATED' });
     }
 
     const result = await this.authService.verify(req.session.token);

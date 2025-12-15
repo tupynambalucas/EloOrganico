@@ -16,7 +16,7 @@ import { CycleController } from '../features/cycle/cycle.controller';
 import { ProductController } from '../features/product/product.controller';
 
 // Importamos a interface oficial do documento Cycle que já contém os virtuals (status)
-import { ICycleDocument } from '../models/Cycle'; 
+import { ICycleDocument } from '../models/cycle.model'; 
 
 export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & { 
     _id: string;

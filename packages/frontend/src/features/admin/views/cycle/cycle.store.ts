@@ -1,13 +1,15 @@
 import { create } from 'zustand';
-import { sendJSON, HttpError } from '@/lib/fetch';
+import { cycleApi } from './cycle.api';
+import i18n from '@/i18n';
+import { AxiosError } from 'axios';
 import { 
   type IProduct, 
   type ICycle, 
-  type CreateCycleDTO,
   CycleResponseSchema
 } from '@elo-organico/shared';
 import { z } from 'zod';
 
+// ... (Tipos CycleFormData, HistoryResponse, CycleState mantêm-se iguais) ...
 export type CycleFormData = {
   products: IProduct[];
   description: string;
@@ -52,6 +54,21 @@ interface CycleState {
 
 const CycleListSchema = z.array(CycleResponseSchema);
 
+// Helper tipado duplicado (idealmente extrair para utils)
+interface ApiErrorData {
+  code?: string;
+  message?: string;
+}
+
+const getErrorMessage = (err: unknown) => {
+  if (err instanceof AxiosError) {
+    const data = err.response?.data as ApiErrorData;
+    // Se tiver código usa tradução, senão fallback
+    return data?.code ? i18n.t(`errors.${data.code}`) : i18n.t('errors.UNKNOWN_ERROR');
+  }
+  return i18n.t('errors.UNKNOWN_ERROR');
+};
+
 export const useCycleStore = create<CycleState>((set, get) => ({
   activeCycle: null,
   isLoadingActive: false,
@@ -65,26 +82,17 @@ export const useCycleStore = create<CycleState>((set, get) => ({
   isLoadingDetails: false,
 
   fetchActiveCycle: async () => {
-    set({ isLoadingActive: true, error: null });
+    set({ isLoadingActive: true });
     try {
-      const data = await sendJSON<ICycle | null>('/api/cycles/active', { method: 'GET' });
-      
+      const data = await cycleApi.getActive();
       if (data) {
-        // Validação Zod
-        const validatedCycle = CycleResponseSchema.parse(data);
-        set({ activeCycle: validatedCycle });
+        const validated = CycleResponseSchema.parse(data);
+        set({ activeCycle: validated });
       } else {
         set({ activeCycle: null });
       }
-    } catch (err: unknown) {
-      // LOG DE ERRO ADICIONADO PARA DEBUG
-      console.error("❌ Erro ao processar ciclo ativo (Provável erro de Schema):", err);
-      
-      // Opcional: Se for erro de validação do Zod, logar detalhes
-      if (err instanceof z.ZodError) {
-        console.table(err.issues);
-      }
-      
+    } catch (error) {
+      console.error('Falha ao buscar ciclo', error);
       set({ activeCycle: null });
     } finally {
       set({ isLoadingActive: false });
@@ -92,78 +100,60 @@ export const useCycleStore = create<CycleState>((set, get) => ({
   },
 
   fetchHistory: async (filters = {}) => {
-    set({ isLoadingHistory: true, error: null });
+    set({ isLoadingHistory: true });
     try {
-      const params = new URLSearchParams();
-      if (filters.page) params.append('page', filters.page.toString());
-      if (filters.startDate) params.append('startDate', filters.startDate.toISOString());
-      if (filters.endDate) params.append('endDate', filters.endDate.toISOString());
-
-      const response = await sendJSON<HistoryResponse>(`/api/admin/cycles/history?${params.toString()}`, {
-        method: 'GET'
-      });
-
-      const validatedList = CycleListSchema.parse(response.data);
+      const params = {
+        page: filters.page || 1,
+        startDate: filters.startDate?.toISOString(),
+        endDate: filters.endDate?.toISOString()
+      };
+      
+      const response = await cycleApi.getHistory(params);
+      const validatedCycles = CycleListSchema.parse(response.data);
 
       set({ 
-        historyCycles: validatedList,
-        historyPagination: response.pagination
+        historyCycles: validatedCycles,
+        historyPagination: response.pagination,
+        isLoadingHistory: false 
       });
-    } catch (err: unknown) {
-      const error = err as HttpError;
-      const body = error.body as { message?: string } | undefined;
-      set({ error: body?.message || error.message || 'Erro ao buscar histórico' });
-    } finally {
+    } catch (error) {
+      console.error(error);
       set({ isLoadingHistory: false });
     }
   },
 
-  fetchCycleDetails: async (id: string) => {
-    set({ isLoadingDetails: true, error: null });
+  fetchCycleDetails: async (id) => {
+    set({ isLoadingDetails: true, selectedCycle: null });
     try {
-      const data = await sendJSON<ICycle>(`/api/admin/cycles/${id}`, { method: 'GET' });
-      const validatedCycle = CycleResponseSchema.parse(data);
-      set({ selectedCycle: validatedCycle });
-    } catch (err: unknown) {
-      const error = err as HttpError;
-      const body = error.body as { message?: string } | undefined;
-      set({ error: body?.message || error.message || 'Erro ao carregar detalhes' });
-    } finally {
+      const data = await cycleApi.getById(id);
+      const validated = CycleResponseSchema.parse(data);
+      set({ selectedCycle: validated, isLoadingDetails: false });
+    } catch (error) {
+      console.error(error);
       set({ isLoadingDetails: false });
     }
   },
 
-  createCycle: async (data: CycleFormData) => {
+  createCycle: async (data) => {
     set({ isSubmitting: true, error: null, success: false });
-
-    if (!data.openingDate || !data.closingDate) {
-      set({ isSubmitting: false, error: 'Datas são obrigatórias' });
-      return false;
-    }
-
     try {
-      const payload: CreateCycleDTO = {
+      if (!data.openingDate || !data.closingDate) throw new Error('Datas inválidas');
+
+      const payload = {
         description: data.description,
-        products: data.products,
         openingDate: data.openingDate.toISOString(),
         closingDate: data.closingDate.toISOString(),
+        products: data.products
       };
 
-      const response = await sendJSON<ICycle>('/api/admin/cycles', {
-        method: 'POST',
-        json: payload,
-      });
-
-      CycleResponseSchema.parse(response);
+      await cycleApi.create(payload);
 
       set({ isSubmitting: false, success: true });
-      get().fetchActiveCycle();
+      get().fetchActiveCycle(); 
       return true;
 
     } catch (err: unknown) {
-      const error = err as HttpError;
-      const body = error.body as { message?: string } | undefined;
-      set({ isSubmitting: false, error: body?.message || error.message || 'Falha ao criar ciclo' });
+      set({ isSubmitting: false, error: getErrorMessage(err) });
       return false;
     }
   },
@@ -175,11 +165,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
     set({ isSubmitting: true, error: null });
 
     try {
-      const updatedCycle = await sendJSON<ICycle>(`/api/admin/cycles/${currentCycle._id}`, {
-        method: 'PATCH',
-        json: { products: updatedProducts }
-      });
-
+      const updatedCycle = await cycleApi.updateProducts(currentCycle._id, updatedProducts);
       const validatedCycle = CycleResponseSchema.parse(updatedCycle);
 
       set({ 
@@ -190,9 +176,7 @@ export const useCycleStore = create<CycleState>((set, get) => ({
       return true;
 
     } catch (err: unknown) {
-      const error = err as HttpError;
-      const body = error.body as { message?: string } | undefined;
-      set({ isSubmitting: false, error: body?.message || error.message || 'Erro ao atualizar produtos' });
+      set({ isSubmitting: false, error: getErrorMessage(err) });
       return false;
     }
   },

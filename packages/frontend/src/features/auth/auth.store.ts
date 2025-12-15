@@ -1,20 +1,40 @@
 import { create } from 'zustand';
-import { sendJSON, setCsrfToken, HttpError } from '@/lib/fetch';
+import { authApi } from './auth.api';
+import i18n from '@/i18n';
+import { setCsrfToken } from '@/lib/axios';
+import { AxiosError } from 'axios'; // Import necessário
 import { 
   type LoginDTO, 
   type RegisterDTO, 
   type UserResponse, 
-  type LoginResponse,
   UserResponseSchema
 } from '@elo-organico/shared';
 
+// Interface para o formato de erro esperado do backend
+interface ApiErrorData {
+  code?: string;
+  message?: string;
+}
+
+// Helper fortemente tipado
+const getErrorMessage = (err: unknown) => {
+  if (err instanceof AxiosError) {
+    const data = err.response?.data as ApiErrorData;
+    const code = data?.code || 'UNKNOWN_ERROR';
+    return i18n.t(`errors.${code}`);
+  }
+  return i18n.t('errors.UNKNOWN_ERROR');
+};
+
+// ... Resto das interfaces (AuthState) mantém igual ...
 interface AuthState {
   user: UserResponse | null;
-  token: string | null;
   isAuthenticated: boolean;
   isAuthLoading: boolean;
+  
   loginLoading: boolean;
   loginError: string | null;
+  
   registerLoading: boolean;
   registerError: string | null;
   registerSuccess: string | null;
@@ -27,7 +47,6 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  token: null,
   isAuthenticated: false,
   isAuthLoading: true,
   loginLoading: false,
@@ -39,27 +58,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (data) => {
     set({ loginLoading: true, loginError: null });
     try {
-      const response = await sendJSON<LoginResponse>('/api/auth/login', {
-        method: 'POST',
-        json: data,
-      });
-
-      const validatedUser = UserResponseSchema.parse(response.user);
+      const result = await authApi.login(data);
+      const validatedUser = UserResponseSchema.parse(result.user);
 
       set({ 
         user: validatedUser, 
         isAuthenticated: true, 
         loginLoading: false 
       });
-
-    } catch (err: unknown) {
-      const error = err as HttpError;
-      const body = error.body as { message?: string } | undefined;
-      const message = body?.message || error.message || 'Erro ao realizar login.';
-      
+    } catch (err: unknown) { // Correção: unknown
       set({ 
         loginLoading: false, 
-        loginError: message,
+        loginError: getErrorMessage(err),
         isAuthenticated: false,
         user: null
       });
@@ -68,11 +78,11 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     try {
-      await sendJSON('/api/auth/logout', { method: 'POST' });
+      await authApi.logout();
     } catch (error) {
       console.error(error);
     } finally {
-      set({ user: null, isAuthenticated: false, token: null });
+      set({ user: null, isAuthenticated: false });
       setCsrfToken('');
     }
   },
@@ -80,25 +90,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (data) => {
     set({ registerLoading: true, registerError: null, registerSuccess: null });
     try {
-      await sendJSON('/api/auth/register', {
-        method: 'POST',
-        json: data,
-      });
-
+      await authApi.register(data);
       set({
         registerLoading: false,
-        registerSuccess: 'Conta criada com sucesso! Faça login.',
+        registerSuccess: i18n.t('success.USER_CREATED_SUCCESSFULLY'),
       });
       return true;
-
-    } catch (err: unknown) {
-      const error = err as HttpError;
-      const body = error.body as { message?: string } | undefined;
-      const message = body?.message || error.message || 'Erro ao registrar.';
-      
+    } catch (err: unknown) { // Correção: unknown
       set({
         registerLoading: false,
-        registerError: message,
+        registerError: getErrorMessage(err),
       });
       return false;
     }
@@ -106,38 +107,22 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   verifyAuth: async () => {
     set({ isAuthLoading: true });
-    
     try {
-      const csrfRes = await sendJSON<{ token: string }>('/api/csrf-token', { method: 'GET' });
-      setCsrfToken(csrfRes.token);
-
-      const response = await sendJSON<LoginResponse>('/api/auth/verify', {
-        method: 'GET',
-      });
-
-      const validatedUser = UserResponseSchema.parse(response.user);
+      const result = await authApi.verify();
+      const validatedUser = UserResponseSchema.parse(result.user);
 
       set({ 
         user: validatedUser, 
         isAuthenticated: true, 
         isAuthLoading: false 
       });
-
-    } catch (err: unknown) {
-      const httpError = err as HttpError;
-      if (httpError.response && httpError.response.status === 401) {
-        set({ 
-          user: null, 
-          isAuthenticated: false, 
-          isAuthLoading: false 
-        });
-      } else {
-        set({ 
-          user: null, 
-          isAuthenticated: false, 
-          isAuthLoading: false 
-        });
-      }
+    } catch {
+      // Catch sem variável quando ela não é usada (ES2019)
+      set({ 
+        user: null, 
+        isAuthenticated: false, 
+        isAuthLoading: false 
+      });
     }
   },
 }));

@@ -1,7 +1,8 @@
 import { Model, ClientSession } from 'mongoose';
-import { ICycleDocument } from '../../models/Cycle';
+import { ICycleDocument } from '../../models/cycle.model';
+import { ICycleRepository } from './cycle.repository.interface';
 
-export class CycleRepository {
+export class CycleRepository implements ICycleRepository {
   constructor(private model: Model<ICycleDocument>) {}
 
   async findActive() {

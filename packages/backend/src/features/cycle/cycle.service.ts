@@ -1,12 +1,12 @@
 import { Mongoose } from 'mongoose';
-import { CreateCycleDTO, IProduct } from '@elo-organico/shared';
-import { CycleRepository } from './cycle.repository';
+import { IProduct } from '@elo-organico/shared';
+import { ICycleRepository } from './cycle.repository.interface';
 import { ProductService } from '../product/product.service';
 import { AppError } from '../../utils/AppError';
 
 export class CycleService {
   constructor(
-    private cycleRepo: CycleRepository,
+    private cycleRepo: ICycleRepository,
     private productService: ProductService,
     private mongoose: Mongoose
   ) {}
@@ -27,7 +27,7 @@ export class CycleService {
         await session.commitTransaction();
       } catch (err) {
         await session.abortTransaction();
-        console.error('Erro no auto-arquivamento do ciclo:', err);
+        console.error('Auto-archive cycle error:', err);
       } finally {
         session.endSession();
       }
@@ -44,29 +44,30 @@ export class CycleService {
       if (start) query.createdAt.$gte = new Date(start);
       if (end) query.createdAt.$lte = new Date(end);
     }
-    return this.cycleRepo.findHistory(query, (page - 1) * limit, limit);
+
+    const skip = (page - 1) * limit;
+    return this.cycleRepo.findHistory(query, skip, limit);
   }
 
   async getById(id: string) {
     const cycle = await this.cycleRepo.findById(id);
     if (!cycle) {
-      throw new AppError('O ciclo solicitado não foi encontrado.', 404);
+      throw new AppError('CYCLE_NOT_FOUND', 404);
     }
     return cycle;
   }
 
-  async createCycle(data: CreateCycleDTO) {
+  async createCycle(data: any) {
+    const activeCycle = await this.cycleRepo.findActive();
+    if (activeCycle) {
+      throw new AppError('ACTIVE_CYCLE_ALREADY_EXISTS', 409);
+    }
+
     const session = await this.mongoose.startSession();
     session.startTransaction();
 
     try {
-      await this.cycleRepo.deactivateAll(session);
-
-      let productIds: string[] = [];
-      
-      if (data.products && data.products.length > 0) {
-        productIds = await this.productService.syncCycleProducts(data.products, session);
-      }
+      const productIds = await this.productService.syncCycleProducts(data.products, session);
 
       const newCycleData = {
         description: data.description,
@@ -84,7 +85,7 @@ export class CycleService {
     } catch (error) {
       await session.abortTransaction();
       if (error instanceof AppError) throw error;
-      throw new AppError('Não foi possível iniciar o ciclo. Verifique os dados enviados.', 400);
+      throw new AppError('CYCLE_CREATION_FAILED', 400);
     } finally {
       session.endSession();
     }
@@ -97,7 +98,7 @@ export class CycleService {
     try {
       const cycle = await this.cycleRepo.findByIdWithSession(id, session);
       if (!cycle) {
-        throw new AppError('Ciclo não encontrado para atualização.', 404);
+        throw new AppError('CYCLE_NOT_FOUND_FOR_UPDATE', 404);
       }
 
       const productIds = await this.productService.syncCycleProducts(products, session);
@@ -111,7 +112,7 @@ export class CycleService {
     } catch (error) {
       await session.abortTransaction();
       if (error instanceof AppError) throw error;
-      throw new AppError('Erro ao atualizar ciclo.', 400);
+      throw new AppError('CYCLE_UPDATE_FAILED', 400);
     } finally {
       session.endSession();
     }

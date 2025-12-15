@@ -1,11 +1,11 @@
 import { ClientSession } from 'mongoose';
 import { IProduct } from '@elo-organico/shared';
-import { ProductRepository } from './product.repository';
+import { IProductRepository } from './product.repository.interface';
 import { ListProductsQueryType } from './product.schema';
 import { AppError } from '../../utils/AppError';
 
 export class ProductService {
-  constructor(private repo: ProductRepository) {}
+  constructor(private repo: IProductRepository) {}
 
   async listProducts(filters: ListProductsQueryType) {
     const query: any = {};
@@ -77,7 +77,7 @@ export class ProductService {
       return syncedProducts.map(p => p._id.toString());
       
     } catch (error) {
-      throw new AppError('Erro ao sincronizar produtos do ciclo.', 500);
+      throw new AppError('PRODUCT_SYNC_FAILED', 500);
     }
   }
 }

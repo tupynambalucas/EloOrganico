@@ -1,11 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { RegisterDTO, LoginDTO } from '@elo-organico/shared';
-import { AuthRepository } from './auth.repository';
+import { IAuthRepository } from './auth.repository.interface';
 import { AppError } from '../../utils/AppError';
 
 export class AuthService {
   constructor(
-    private authRepo: AuthRepository,
+    private authRepo: IAuthRepository,
     private server: FastifyInstance
   ) {}
 
@@ -13,10 +13,10 @@ export class AuthService {
     const existingUser = await this.authRepo.findByEmailOrUsername(data.email, data.username);
 
     if (existingUser) {
-      const message = existingUser.email === data.email 
-        ? 'Este endereço de e-mail já está sendo utilizado.' 
-        : 'Este nome de usuário já está em uso.';
-      throw new AppError(message, 409);
+      const code = existingUser.email === data.email 
+        ? 'EMAIL_ALREADY_EXISTS' 
+        : 'USERNAME_ALREADY_EXISTS';
+      throw new AppError(code, 409);
     }
 
     return this.authRepo.create(data);
@@ -26,12 +26,12 @@ export class AuthService {
     const user = await this.authRepo.findByIdentifier(data.identifier);
 
     if (!user || !user.password) {
-      throw new AppError('Credenciais de acesso inválidas.', 401);
+      throw new AppError('INVALID_CREDENTIALS', 401);
     }
 
     const isValid = await this.server.compareHash(data.password, user.password);
     if (!isValid) {
-      throw new AppError('Credenciais de acesso inválidas.', 401);
+      throw new AppError('INVALID_CREDENTIALS', 401);
     }
 
     const token = this.server.jwt.sign({ 
@@ -54,7 +54,7 @@ export class AuthService {
       const payload = this.server.jwt.verify(token); 
       return { authenticated: true, user: payload };
     } catch (err) {
-      throw new AppError('Sessão inválida ou expirada.', 401);
+      throw new AppError('SESSION_EXPIRED', 401);
     }
   }
 }

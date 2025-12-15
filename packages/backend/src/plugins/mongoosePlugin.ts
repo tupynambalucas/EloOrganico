@@ -1,9 +1,9 @@
 import fp from 'fastify-plugin';
 import type { FastifyPluginAsync, FastifyInstance } from 'fastify';
 import mongoose from 'mongoose';
-import { User } from '../models/User';
-import { Product } from '../models/Product';
-import { Cycle } from '../models/Cycle';
+import { User } from '../models/user.model';
+import { Product } from '../models/product.model';
+import { Cycle } from '../models/cycle.model';
 
 const MongoosePlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   try {

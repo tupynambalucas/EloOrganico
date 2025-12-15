@@ -1,7 +1,8 @@
 import { Model, FilterQuery, ClientSession } from 'mongoose';
-import { IProductDocument } from '../../models/Product';
+import { IProductDocument } from '../../models/product.model';
+import { IProductRepository } from './product.repository.interface';
 
-export class ProductRepository {
+export class ProductRepository implements IProductRepository {
   constructor(private model: Model<IProductDocument>) {}
 
   async findAll(queryFilters: FilterQuery<IProductDocument>) {
@@ -12,12 +13,9 @@ export class ProductRepository {
     return this.model.bulkWrite(ops, { session });
   }
 
-  // NOVO MÉTODO: Busca precisa por chaves compostas
-  // Localiza produtos que batem exatamente com a assinatura do frontend
   async findByKeys(keys: any[], session: ClientSession) {
     if (keys.length === 0) return [];
     
-    // Constrói uma query OR complexa
     const criteria = keys.map(k => {
       const filter: any = { 
         name: k.name, 
@@ -25,8 +23,6 @@ export class ProductRepository {
         'measure.type': k.measureType 
       };
 
-      // Se o produto tem conteúdo (ex: 500g), busca exato.
-      // Se não tem (null), busca onde o campo é null no banco.
       if (k.contentValue !== undefined && k.contentUnit !== undefined) {
         filter['content.value'] = k.contentValue;
         filter['content.unit'] = k.contentUnit;

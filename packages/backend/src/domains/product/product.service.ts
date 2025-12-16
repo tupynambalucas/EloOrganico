@@ -1,14 +1,15 @@
-import { ClientSession } from 'mongoose';
+import { ClientSession, FilterQuery, AnyBulkWriteOperation } from 'mongoose';
 import { IProduct } from '@elo-organico/shared';
 import { IProductRepository } from './product.repository.interface';
 import { ListProductsQueryType } from './product.schema';
 import { AppError } from '../../utils/AppError';
+import { IProductDocument } from '../../models/product.model';
 
 export class ProductService {
   constructor(private repo: IProductRepository) {}
 
   async listProducts(filters: ListProductsQueryType) {
-    const query: any = {};
+    const query: FilterQuery<IProductDocument> = {};
 
     if (filters.availableOnly) {
       query.available = true;
@@ -29,8 +30,8 @@ export class ProductService {
     if (!products || products.length === 0) return [];
 
     try {
-      const bulkOps = products.map((p) => {
-        const filter: any = { 
+      const bulkOps: AnyBulkWriteOperation<IProductDocument>[] = products.map((p) => {
+        const filter: FilterQuery<IProductDocument> = { 
           name: p.name, 
           category: p.category,
           'measure.type': p.measure.type 
@@ -72,11 +73,14 @@ export class ProductService {
         contentUnit: p.content?.unit
       }));
 
-      const syncedProducts = await this.repo.findByKeys(keys, session);
-      
-      return syncedProducts.map(p => p._id.toString());
-      
-    } catch (error) {
+      const activeProducts = await this.repo.findByKeys(keys, session);
+      const activeIds = activeProducts.map(p => p._id.toString());
+
+      await this.repo.deactivateOthers(activeIds, session);
+
+      return activeIds;
+
+    } catch {
       throw new AppError('PRODUCT_SYNC_FAILED', 500);
     }
   }

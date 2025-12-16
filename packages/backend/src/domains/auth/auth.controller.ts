@@ -1,6 +1,7 @@
 import { FastifyZodHandler } from '../../types/fastify';
 import { AuthService } from './auth.service';
 import { RegisterRoute, LoginRoute } from './auth.schema';
+import { AppError } from '../../utils/AppError';
 
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -10,7 +11,9 @@ export class AuthController {
 
     const obj = typeof user.toObject === 'function' ? user.toObject() : user;
     
-    const { password, __v, ...safeUser } = obj;
+    const safeUser = { ...obj };
+    delete safeUser.password;
+    delete safeUser.__v;
 
     return {
       ...safeUser,
@@ -38,23 +41,22 @@ export class AuthController {
     });
   }
 
-  logoutHandler: FastifyZodHandler<{}> = async (req, reply) => {
+  logoutHandler: FastifyZodHandler<Record<string, never>> = async (req, reply) => {
     if (req.session) {
       await req.session.destroy();
     }
     return reply.send({ message: 'LOGOUT_SUCCESSFUL' });
   }
 
-  verifyHandler: FastifyZodHandler<{}> = async (req, reply) => {
-    if (!req.session?.token) {
-      return reply.status(401).send({ authenticated: false, message: 'NOT_AUTHENTICATED' });
+  verifyHandler: FastifyZodHandler<Record<string, never>> = async (req, reply) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader ? authHeader.replace('Bearer ', '') : req.session?.token;
+
+    if (!token) {
+      throw new AppError('TOKEN_MISSING', 401);
     }
 
-    const result = await this.authService.verify(req.session.token);
-    
-    return reply.send({
-      ...result,
-      user: this.mapUserResponse(result.user)
-    });
+    const result = await this.authService.verifyToken(token);
+    return reply.send(result);
   }
 }

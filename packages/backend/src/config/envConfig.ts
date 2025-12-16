@@ -8,6 +8,8 @@ const schema = {
     'SERVER_PORT', 
     'SERVER_HOST', 
     'MONGO_URI', 
+    'REDIS_HOST',
+    'REDIS_PORT',
     'JWT_SECRET', 
     'SESSION_SECRET',
     'ADMIN_USER_SEED',
@@ -21,6 +23,9 @@ const schema = {
     SERVER_HOST: { type: 'string' },
     NODE_ENV: { type: 'string' },
     MONGO_URI: { type: 'string' },
+    
+    REDIS_HOST: { type: 'string' },
+    REDIS_PORT: { type: 'number', default: 6379 },
     
     ADMIN_USER_SEED: { type: 'string' },
     ADMIN_EMAIL_SEED: { type: 'string' },
@@ -39,8 +44,10 @@ const envConfig = async (server: any) => {
   await server.register(fastifyEnv, {
     confKey: 'config',
     schema: schema,
-    dotenv: process.env.NODE_ENV === 'production' ? false : { path: rootEnvPath },
-    data: process.env 
+    dotenv: {
+      path: rootEnvPath,
+      debug: process.env.NODE_ENV === 'development'
+    }
   });
 };
 

@@ -11,11 +11,13 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import '@fastify/session'; 
 import '@fastify/jwt'; 
 import { type IUser, type IProduct } from '@elo-organico/shared';
-import { AuthController } from '../features/auth/auth.controller';
-import { CycleController } from '../features/cycle/cycle.controller';
-import { ProductController } from '../features/product/product.controller';
 
-// Importamos a interface oficial do documento Cycle que já contém os virtuals (status)
+import { AuthController } from '../domains/auth/auth.controller';
+import { CycleController } from '../domains/cycle/cycle.controller';
+import { ProductController } from '../domains/product/product.controller';
+
+import { CycleService } from '../domains/cycle/cycle.service'; // [NOVO]
+
 import { ICycleDocument } from '../models/cycle.model'; 
 
 export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & { 
@@ -51,10 +53,11 @@ declare module 'fastify' {
         cycleController: CycleController;
         productController: ProductController;
         
+        cycleService: CycleService; // [NOVO]
+        
         models: {
             User: Model<Omit<IUser, '_id'> & Document & { password?: string }>;
             Product: Model<Omit<IProduct, '_id'> & Document>;
-            // Agora usa a interface correta com o virtual 'status'
             Cycle: Model<ICycleDocument>; 
         };
         
@@ -83,6 +86,8 @@ declare module 'fastify' {
             ADMIN_PASS_SEED: string;
             USER_SESSION_KEY: string;
             SENTRY_DSN?: string;
+            REDIS_HOST?: string; // [NOVO]
+            REDIS_PORT?: number; // [NOVO]
         };
     }
 }

@@ -1,7 +1,7 @@
 // packages/frontend/src/features/shop/Shop.tsx
 import { Suspense, lazy } from 'react';
 import { useIsMobile } from '@/features/shop/hooks/useIsMobile';
-import Loader from '@/components/Loader';
+import Loader from '@/components/loaders/ScreenLoader';
 
 // Lazy loading para performance:
 // O usuário mobile não baixa o código do desktop e vice-versa.

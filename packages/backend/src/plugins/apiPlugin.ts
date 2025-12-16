@@ -1,7 +1,7 @@
-import type { FastifyPluginAsync, FastifyInstance, FastifyPluginOptions } from 'fastify';
-import authRoutes from '../features/auth/auth.routes';
-import cycleRoutes from '../features/cycle/cycle.routes';
-import productRoutes from '../features/product/product.routes';
+import type { FastifyPluginAsync, FastifyInstance } from 'fastify';
+import authRoutes from '../domains/auth/auth.routes';
+import cycleRoutes from '../domains/cycle/cycle.routes';
+import productRoutes from '../domains/product/product.routes';
 
 const apiPlugin: FastifyPluginAsync = async function (server: FastifyInstance) {
   

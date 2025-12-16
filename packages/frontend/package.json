@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@elo-organico/shared": "*",
+    "@fontsource/inter": "^5.2.8",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-brands-svg-icons": "^7.1.0",
     "@fortawesome/free-regular-svg-icons": "^7.1.0",
@@ -39,11 +40,12 @@
     "@types/react": "^19.0.0-rc.0",
     "@types/react-dom": "^19.0.0-rc.0",
     "@vitejs/plugin-react-swc": "^4.0.0",
-    
+    "autoprefixer": "^10.4.23",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
-    
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
     "typed-css-modules": "^0.9.1",
     "typescript": "~5.8.3",
     "vite": "^7.1.2",

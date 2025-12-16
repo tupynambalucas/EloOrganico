@@ -33,6 +33,20 @@ services:
       retries: 5
       start_period: 20s
 
+  redis:
+    image: redis:alpine
+    container_name: elo_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - elo_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   backend:
     build:
       context: .
@@ -41,11 +55,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - NODE_ENV=${NODE_ENV}
       - SERVER_PORT=${SERVER_PORT}
       - SERVER_HOST=0.0.0.0
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/${MONGO_DB_NAME}?authSource=admin&replicaSet=rs0
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - JWT_SECRET=${JWT_SECRET}
       - SESSION_SECRET=${SESSION_SECRET}
       - USER_SESSION_KEY=${USER_SESSION_KEY}
@@ -58,10 +76,10 @@ services:
     networks:
       - elo_network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
       start_period: 10s
 
   frontend:
@@ -78,6 +96,7 @@ services:
 volumes:
   mongo_data:
   backend_logs:
+  redis_data:
 
 networks:
   elo_network:

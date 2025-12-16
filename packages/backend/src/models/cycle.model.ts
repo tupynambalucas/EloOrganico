@@ -28,7 +28,7 @@ export const cycleSchema = new Schema<ICycleDocument>({
   isActive: {
     type: Boolean,
     default: true,
-    index: true
+    // [CORREÇÃO] Removido 'index: true' daqui para evitar conflito com o índice abaixo
   },
 }, { 
   timestamps: true,
@@ -43,6 +43,7 @@ cycleSchema.virtual('status').get(function() {
   return 'OPEN';
 });
 
+// Índice único para garantir apenas um ciclo ativo por vez
 cycleSchema.index({ isActive: 1 }, { 
   unique: true, 
   partialFilterExpression: { isActive: true } 

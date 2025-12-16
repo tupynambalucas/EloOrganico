@@ -1,6 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { Types } from 'mongoose';
+import { IProduct } from '@elo-organico/shared';
 import { CycleService } from './cycle.service';
 import { FastifyZodHandler } from '../../types/fastify';
+import { ICycleDocument } from '../../models/cycle.model';
 import { 
   CreateCycleRoute,
   GetHistoryRoute,
@@ -11,10 +14,11 @@ import {
 export class CycleController {
   constructor(private service: CycleService) {}
 
-  private mapToResponse(cycle: any) {
+  private mapToResponse(cycle: ICycleDocument | null) {
     if (!cycle) return null;
     
-    const obj = typeof cycle.toJSON === 'function' ? cycle.toJSON() : cycle;
+    // Converte para objeto plano (POJO) para evitar problemas com getters do Mongoose
+    const obj = cycle.toObject ? cycle.toObject() : cycle;
 
     return {
       ...obj,
@@ -23,19 +27,38 @@ export class CycleController {
       closingDate: obj.closingDate ? new Date(obj.closingDate).toISOString() : undefined,
       createdAt: obj.createdAt ? new Date(obj.createdAt).toISOString() : undefined,
       updatedAt: obj.updatedAt ? new Date(obj.updatedAt).toISOString() : undefined,
-      products: Array.isArray(obj.products) ? obj.products.map((p: any) => {
+      products: Array.isArray(obj.products) ? obj.products.map((p: unknown) => {
         if (!p) return null;
         
-        if (typeof p === 'object' && p._id) {
+        // Verifica se é um produto populado (objeto com _id e name)
+        if (typeof p === 'object' && p !== null && '_id' in p && 'name' in p) {
+          // Cast seguro: Afirmamos que 'p' tem a estrutura de um Produto + campos de DB
+          const product = p as IProduct & { 
+            _id: Types.ObjectId | string; 
+            createdAt?: Date | string; 
+            updatedAt?: Date | string; 
+          };
+
           return {
-            ...p,
-            _id: p._id.toString(),
-            createdAt: p.createdAt ? new Date(p.createdAt).toISOString() : undefined,
-            updatedAt: p.updatedAt ? new Date(p.updatedAt).toISOString() : undefined,
+            _id: product._id.toString(),
+            name: product.name,
+            category: product.category,
+            measure: product.measure,
+            content: product.content,
+            available: product.available,
+            createdAt: product.createdAt ? new Date(product.createdAt).toISOString() : undefined,
+            updatedAt: product.updatedAt ? new Date(product.updatedAt).toISOString() : undefined,
           };
         }
         
-        return p.toString();
+        // Se for um ObjectId ou objeto parcial, retorna apenas a string do ID
+        if (typeof p === 'object' && p !== null && '_id' in p) {
+            // Cast específico para extrair apenas o ID
+            return (p as { _id: Types.ObjectId | string })._id.toString();
+        }
+        
+        // Fallback para string simples (caso seja apenas um hash string)
+        return String(p);
       }) : []
     };
   }
@@ -70,7 +93,7 @@ export class CycleController {
     const result = await this.service.createCycle(req.body);
     return reply.status(201).send(this.mapToResponse(result));
   }
-  
+
   updateCycleHandler: FastifyZodHandler<UpdateCycleRoute> = async (req, reply) => {
     const result = await this.service.updateCycle(req.params.id, req.body.products);
     return reply.send(this.mapToResponse(result));

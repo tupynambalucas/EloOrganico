@@ -2,6 +2,9 @@ services:
   db:
     restart: always
 
+  redis:
+    restart: always
+
   backend:
     restart: on-failure
     ports:

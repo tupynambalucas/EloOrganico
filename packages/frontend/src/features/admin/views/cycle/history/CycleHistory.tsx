@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useCycleStore } from '../../../domains/cycle/cycle.store';
+import { useAdminCycleStore } from '../../../domains/cycle/cycle.store';
 import styles from './CycleHistory.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCalendarAlt, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -17,7 +17,7 @@ const CyclesHistory = () => {
     clearSelectedCycle,
     isLoadingDetails,
     historyPagination
-  } = useCycleStore();
+  } = useAdminCycleStore();
 
   const [page, setPage] = useState(1);
 
@@ -61,7 +61,7 @@ const CyclesHistory = () => {
                 </div>
                 <div className={styles.infoBlock}>
                     <label>Produtos Ofertados</label>
-                    <div className={styles.productsList}>
+                    <div>
                         {selectedCycle.products.map((p: string | IProduct, index) => {
                             const productName = (typeof p === 'object' && 'name' in p) 
                                 ? p.name 
@@ -121,11 +121,10 @@ const CyclesHistory = () => {
           </div>
           
           {historyPagination && historyPagination.pages > 1 && (
-            <footer className={styles.pagination}>
+            <footer>
                 <button 
                     onClick={handlePrevPage} 
                     disabled={page === 1}
-                    className={styles.pageBtn}
                 >
                     <FontAwesomeIcon icon={faChevronLeft} />
                 </button>
@@ -133,7 +132,6 @@ const CyclesHistory = () => {
                 <button 
                     onClick={handleNextPage} 
                     disabled={page === historyPagination.pages}
-                    className={styles.pageBtn}
                 >
                     <FontAwesomeIcon icon={faChevronRight} />
                 </button>

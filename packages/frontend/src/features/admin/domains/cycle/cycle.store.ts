@@ -4,7 +4,7 @@ import { useCycleStore as usePublicCycleStore } from '@/domains/cycle';
 import { getErrorMessage } from '@/utils/errorHelper';
 import { 
   type IProduct, 
-  type ICycle, 
+  type CycleResponse, // [CORREÇÃO] Usar o tipo de resposta correto
   CycleResponseSchema
 } from '@elo-organico/shared';
 import { z } from 'zod';
@@ -17,7 +17,7 @@ export type CycleFormData = {
 };
 
 interface HistoryResponse {
-  data: ICycle[];
+  data: CycleResponse[]; // [CORREÇÃO] Atualizado
   pagination: {
     total: number;
     page: number;
@@ -30,11 +30,11 @@ interface AdminCycleState {
   error: string | null;
   success: boolean;
 
-  historyCycles: ICycle[];
+  historyCycles: CycleResponse[]; // [CORREÇÃO] Atualizado de ICycle para CycleResponse
   historyPagination: HistoryResponse['pagination'] | null;
   isLoadingHistory: boolean;
   
-  selectedCycle: ICycle | null; 
+  selectedCycle: CycleResponse | null; // [CORREÇÃO] Atualizado
   isLoadingDetails: boolean;
 
   fetchHistory: (filters?: { page?: number; startDate?: Date; endDate?: Date }) => Promise<void>;
@@ -53,43 +53,46 @@ export const useAdminCycleStore = create<AdminCycleState>((set) => ({
   isSubmitting: false,
   error: null,
   success: false,
+
   historyCycles: [],
   historyPagination: null,
   isLoadingHistory: false,
+
   selectedCycle: null,
   isLoadingDetails: false,
 
   fetchHistory: async (filters = {}) => {
-    set({ isLoadingHistory: true });
+    set({ isLoadingHistory: true, error: null });
     try {
-      const params = {
+      const response = await adminCycleApi.getHistory({
         page: filters.page || 1,
         startDate: filters.startDate?.toISOString(),
         endDate: filters.endDate?.toISOString()
-      };
-      
-      const response = await adminCycleApi.getHistory(params);
-      const validatedCycles = CycleListSchema.parse(response.data);
+      });
+
+      // Valida os dados recebidos com o Schema correto
+      const validatedData = CycleListSchema.parse(response.data);
 
       set({ 
-        historyCycles: validatedCycles,
-        historyPagination: response.pagination,
-        isLoadingHistory: false 
+        historyCycles: validatedData, 
+        historyPagination: response.pagination 
       });
-    } catch (error) {
-      console.error(error);
+    } catch (err: unknown) {
+      set({ error: getErrorMessage(err) });
+    } finally {
       set({ isLoadingHistory: false });
     }
   },
 
   fetchCycleDetails: async (id) => {
-    set({ isLoadingDetails: true, selectedCycle: null });
+    set({ isLoadingDetails: true, error: null });
     try {
       const data = await adminCycleApi.getById(id);
       const validated = CycleResponseSchema.parse(data);
-      set({ selectedCycle: validated, isLoadingDetails: false });
-    } catch (error) {
-      console.error(error);
+      set({ selectedCycle: validated });
+    } catch (err: unknown) {
+      set({ error: getErrorMessage(err) });
+    } finally {
       set({ isLoadingDetails: false });
     }
   },
@@ -110,6 +113,7 @@ export const useAdminCycleStore = create<AdminCycleState>((set) => ({
 
       set({ isSubmitting: false, success: true });
       
+      // Atualiza a store pública para refletir a mudança imediatamente se necessário
       usePublicCycleStore.getState().fetchActiveCycle();
       
       return true;

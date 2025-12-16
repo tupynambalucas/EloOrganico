@@ -1,4 +1,4 @@
-import { Model, ClientSession } from 'mongoose';
+import { Model, ClientSession, FilterQuery } from 'mongoose';
 import { ICycleDocument } from '../../models/cycle.model';
 import { ICycleRepository } from './cycle.repository.interface';
 
@@ -9,7 +9,7 @@ export class CycleRepository implements ICycleRepository {
     return this.model.findOne({ isActive: true }).populate('products');
   }
 
-  async findHistory(query: any, skip: number, limit: number) {
+  async findHistory(query: FilterQuery<ICycleDocument>, skip: number, limit: number) {
     const cycles = await this.model.find(query)
       .select('-products')
       .sort({ createdAt: -1 })
@@ -28,6 +28,16 @@ export class CycleRepository implements ICycleRepository {
     return this.model.findById(id).session(session);
   }
 
+  async archiveExpired(toleranceDate: Date, session?: ClientSession) {
+    return this.model.updateMany(
+      { 
+        isActive: true, 
+        closingDate: { $lte: toleranceDate } 
+      }, 
+      { $set: { isActive: false } }
+    ).session(session || null);
+  }
+
   async deactivateAll(session: ClientSession) {
     return this.model.updateMany(
       { isActive: true }, 
@@ -35,7 +45,7 @@ export class CycleRepository implements ICycleRepository {
     ).session(session);
   }
 
-  async create(data: any, session: ClientSession) {
+  async create(data: Partial<ICycleDocument>, session: ClientSession) {
     const cycle = new this.model(data);
     return cycle.save({ session });
   }

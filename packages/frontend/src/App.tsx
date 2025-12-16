@@ -1,12 +1,15 @@
 import { useEffect, Suspense, lazy } from 'react';
 import { useAuthStore } from '@/domains/auth';
-import { initializeCsrf } from '@/lib/axios'; // Importe a função de inicialização
-import Loader from '@/components/Loader';
-import '@/i18n'; // Importa a configuração do i18n para registrar o pt-BR
+import { useCycleStore } from '@/domains/cycle';
+import { initializeCsrf } from '@/lib/axios';
+import Loader from '@/components/loaders/ScreenLoader';
+import '@/i18n';
 
-const AdminApp = lazy(() => import('@/features/admin'));
-const UserApp = lazy(() => import('@/features/shop'));
-const AuthScreen = lazy(() => import('@/features/auth'));
+const AdminLayout = lazy(() => import('@/features/admin'));
+const ShopLayout = lazy(() => import('@/features/shop'));
+const LandingLayout = lazy(() => import('@/features/landing/LandingLayout'));
+const AuthForm = lazy(() => import('@/features/auth/AuthForm'));
+const CycleTimer = lazy(() => import('@/features/landing/components/CycleTimer/index'));
 
 function App() {
   const { 
@@ -16,17 +19,25 @@ function App() {
     verifyAuth 
   } = useAuthStore();
 
+  const { 
+    activeCycle, 
+    fetchActiveCycle, 
+    isLoading: isCycleLoading 
+  } = useCycleStore();
+
   useEffect(() => {
     const initApp = async () => {
-      // 1. Garante que temos um Token CSRF antes de qualquer coisa
       await initializeCsrf();
-      
-      // 2. Verifica sessão
       await verifyAuth();
     };
-
     initApp();
   }, [verifyAuth]);
+
+  useEffect(() => {
+    if (isAuthenticated && user && user.role !== 'admin') {
+      fetchActiveCycle();
+    }
+  }, [isAuthenticated, user, fetchActiveCycle]);
 
   if (isAuthLoading) {
     return <Loader />;
@@ -35,11 +46,23 @@ function App() {
   return (
     <Suspense fallback={<Loader />}>
       {!isAuthenticated || !user ? (
-        <AuthScreen />
+        <LandingLayout>
+          <AuthForm />
+        </LandingLayout>
       ) : user.role === 'admin' ? (
-        <AdminApp />
+        <AdminLayout />
       ) : (
-        <UserApp />
+        <>
+          {isCycleLoading ? (
+            <Loader />
+          ) : activeCycle?.status === 'OPEN' ? (
+            <ShopLayout />
+          ) : (
+            <LandingLayout>
+              <CycleTimer />
+            </LandingLayout>
+          )}
+        </>
       )}
     </Suspense>
   );

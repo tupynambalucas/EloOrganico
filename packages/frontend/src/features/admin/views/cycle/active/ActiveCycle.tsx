@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useCycleStore } from '../../../domains/cycle/cycle.store';
+import { useCycleStore } from '@domains/cycle';
+import { useAdminCycleStore } from '../../../domains/cycle/cycle.store';
 import styles from './ActiveCycle.module.css';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -8,7 +9,8 @@ import { faBoxOpen, faArrowLeft, faSave, faTrash, faPen } from '@fortawesome/fre
 import type { IProduct } from '@elo-organico/shared';
 
 const ActiveCycle = () => {
-  const { activeCycle, updateActiveCycleProducts, isSubmitting } = useCycleStore();
+  const { activeCycle } = useCycleStore();
+  const { updateActiveCycleProducts, isSubmitting } = useAdminCycleStore();
   
   const [viewMode, setViewMode] = useState<'dashboard' | 'products'>('dashboard');
   const [draftProducts, setDraftProducts] = useState<IProduct[]>([]);

@@ -1,11 +1,12 @@
 import { ProductService } from './product.service';
 import { FastifyZodHandler } from '../../types/fastify';
 import { ListProductsRoute } from './product.schema';
+import { IProductDocument } from '../../models/product.model';
 
 export class ProductController {
   constructor(private service: ProductService) {}
 
-  private mapToResponse(product: any) {
+  private mapToResponse(product: IProductDocument | null) {
     if (!product) return null;
 
     const obj = typeof product.toObject === 'function' ? product.toObject() : product;

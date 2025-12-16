@@ -42,18 +42,18 @@ export class AuthService {
       role: user.role 
     });
 
-    return {
-      authenticated: true,
-      token,
-      user
+    return { 
+      authenticated: true, 
+      token, 
+      user 
     };
   }
 
-  async verify(token: string) {
+  async verifyToken(token: string) {
     try {
-      const payload = this.server.jwt.verify(token); 
+      const payload = this.server.jwt.verify(token);
       return { authenticated: true, user: payload };
-    } catch (err) {
+    } catch {
       throw new AppError('SESSION_EXPIRED', 401);
     }
   }

@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.leftPanel {
+  flex: 1;
+  background-color: #2ecc71;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.leftPanel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bannerContainer {
+  width: 60%;
+  position: relative;
+  z-index: 10;
+  display: flex; 
+  justify-content: center;
+}
+
+
+.bannerContainer > svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.rightPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 2rem;
+  position: relative;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 768px) {
+  .leftPanel {
+    display: none;
+  }
+}

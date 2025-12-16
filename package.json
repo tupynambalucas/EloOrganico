@@ -13,48 +13,40 @@
     "packages/*"
   ],
   "scripts": {
-    "// --- 1. Lifecycle & Install ---": "",
+    "// [1] INSTALAÇÃO": "-------------------------------------------------------",
     "postinstall": "npm run build -w @elo-organico/shared",
 
-    "// --- 2. Development (Local Stack) ---": "",
+    "// [2] DESENVOLVIMENTO (APP)": "-------------------------------------------------------",
     "dev:frontend": "npm run dev -w @elo-organico/frontend",
     "dev:backend": "npm run dev -w @elo-organico/backend",
     "dev:stack": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "backend:seed": "npm run seed -w @elo-organico/backend",
 
-    "// --- 3. Build & Compilation ---": "",
+    "// [3] INFRAESTRUTURA LOCAL (DOCKER)": "-------------------------------------------------------",
+    "infra:up": "docker compose up -d db redis",
+    "infra:stop": "docker compose stop",
+    "infra:down": "docker compose down",
+    "infra:clean": "docker compose down --volumes",
+    "infra:reset": "npm run infra:clean && npm run infra:up",
+    "infra:gen-key": "echo \"CHAVE_FALSA_PARA_DEV_$(date +%s)\" > mongo-keyfile && echo \"✅ Keyfile gerado!\"",
+
+    "// [4] BUILD E VERIFICAÇÃO": "-------------------------------------------------------",
     "build:all": "npm run build --workspaces --if-present",
     "backend:build": "npm run build -w @elo-organico/backend",
     "frontend:build": "npm run build -w @elo-organico/frontend",
     "shared:build": "npm run build -w @elo-organico/shared",
-
-    "// --- 4. Maintenance (Clean & Check) ---": "",
     "clean": "npm run clean --workspaces --if-present",
     "lint:all": "npm run lint --workspaces --if-present",
     "typecheck:all": "npm run typecheck --workspaces --if-present",
 
-    "// --- 4. Docker (Development Mode) ---": "",
-    "docker:down": "docker compose down",
-
-    "// --- 5. Database (Development Mode) ---": "",
-    "db:up": "docker compose up -d db",
-    "db:clean": "docker compose down --volumes",
-    "db:reset": "npm run db:clean && npm run db:up",
-    "db:gen-key": "echo \"CHAVE_FALSA_PARA_DEV_$(date +%s)\" > mongo-keyfile && echo \"✅ Keyfile gerado!\"",
-
-    "// --- 6. Production (Docker Simulation) ---": "",
+    "// [5] SIMULAÇÃO DE PRODUÇÃO": "-------------------------------------------------------",
     "prod:up": "docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build",
-    "prod:down": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down",
-    "prod:logs": "docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f"
+    "prod:down": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "devDependencies": {
+    "@types/node": "^22.9.0",
     "concurrently": "^8.2.2",
-    "rimraf": "^6.1.2",
-    "eslint": "^9.33.0",
-    "@eslint/js": "^9.33.0",
-    "globals": "^16.3.0",
-    "typescript-eslint": "^8.39.1",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import": "^2.32.0"
+    "turbo": "^2.2.3",
+    "typescript": "^5.6.3"
   }
 }

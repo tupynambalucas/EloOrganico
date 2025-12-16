@@ -13,18 +13,19 @@ import SecurityPlugin from './securityPlugin';
 import ApiPlugin from './apiPlugin';
 import sentryPlugin from './sentryPlugin';
 import errorHandlerPlugin from './errorHandlerPlugin';
+import queuePlugin from './queuePlugin'; // [NOVO]
 
-import { AuthRepository } from '../features/auth/auth.repository';
-import { AuthService } from '../features/auth/auth.service';
-import { AuthController } from '../features/auth/auth.controller';
+import { AuthRepository } from '../domains/auth/auth.repository';
+import { AuthService } from '../domains/auth/auth.service';
+import { AuthController } from '../domains/auth/auth.controller';
 
-import { ProductRepository } from '../features/product/product.repository';
-import { ProductService } from '../features/product/product.service';
-import { ProductController } from '../features/product/product.controller';
+import { ProductRepository } from '../domains/product/product.repository';
+import { ProductService } from '../domains/product/product.service';
+import { ProductController } from '../domains/product/product.controller';
 
-import { CycleRepository } from '../features/cycle/cycle.repository';
-import { CycleService } from '../features/cycle/cycle.service';
-import { CycleController } from '../features/cycle/cycle.controller';
+import { CycleRepository } from '../domains/cycle/cycle.repository';
+import { CycleService } from '../domains/cycle/cycle.service';
+import { CycleController } from '../domains/cycle/cycle.controller';
 
 const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyInstance) {
   server.setValidatorCompiler(validatorCompiler);
@@ -63,10 +64,13 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyIn
   server.decorate('authController', authController);
   server.decorate('productController', productController);
   server.decorate('cycleController', cycleController);
+  
+  server.decorate('cycleService', cycleService); // [NOVO]
 
   await server.register(ApiPlugin, { prefix: '/api' });
+  await server.register(queuePlugin); // [NOVO]
 
-  const allowedOrigins = ['http://localhost:5173'];
+  const allowedOrigins = ['http://localhost:5173', 'http://localhost:80'];
 
   await server.register(cors, {
     origin: allowedOrigins,

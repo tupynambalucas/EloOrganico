@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- Configuração de Fontes --- */
+  --font-sans: "Inter", sans-serif;
+
+  /* --- Paleta de Cores (Brand) --- */
+  --color-brand-primary: #2ecc71;
+  --color-brand-secondary: #27ae60;
+  --color-brand-dark: #281614;
+  --color-brand-accent: #dbc174;
+  --color-brand-bg: #f3f4f6;
+
+  /* --- Paleta de Cores (State) --- */
+  --color-state-error: #d32f2f;
+  --color-state-success: #2ecc71;
+}
+
+@layer base {
+  html, body, #root {
+    @apply h-full w-full m-0 p-0;
+  }
+
+  body {
+    @apply font-sans text-gray-800 antialiased bg-brand-bg;
+  }
+}

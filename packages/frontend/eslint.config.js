@@ -12,11 +12,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', '**/*.d.ts', 'src/vite-env.d.ts'] },
   
   {
     files: ['**/*.{js,mjs,cjs}'],
     languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+      },
       parserOptions: {
         tsconfigRootDir: __dirname,
         project: null
@@ -33,7 +37,10 @@ export default [
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        project: path.resolve(__dirname, 'tsconfig.json'),
+        project: [
+          path.resolve(__dirname, 'tsconfig.json'),
+          path.resolve(__dirname, 'tsconfig.node.json')
+        ],
         tsconfigRootDir: __dirname,
       },
     },

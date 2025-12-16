@@ -1,5 +1,6 @@
 {
   "name": "@elo-organico/frontend",
+  "type": "module",
   "version": "0.1.0",
   "author": "Tupynambá Lucas Varela Rodrigues <tupynambalucas.dev>",
   "license": "CC-BY-NC-4.0",
@@ -37,14 +38,13 @@
     "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.0.0-rc.0",
     "@types/react-dom": "^19.0.0-rc.0",
     "@vitejs/plugin-react-swc": "^4.0.0",
-    "autoprefixer": "^10.4.23",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
-    "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "typed-css-modules": "^0.9.1",
     "typescript": "~5.8.3",

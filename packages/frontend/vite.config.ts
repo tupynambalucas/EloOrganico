@@ -1,18 +1,15 @@
 import { defineConfig } from 'vite';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
-      react(), 
       tsconfigPaths(),
+      tailwindcss(),
+      react(), 
       svgr({
         include: "**/*.svg?react"
       })
@@ -22,7 +19,6 @@ export default defineConfig(({ mode }) => {
       exclude: ['@elo-organico/shared'],
     },
     
-    root: 'src', 
     base: '/',
 
     server: {
@@ -52,7 +48,7 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
-      outDir: path.resolve(__dirname, 'dist'),
+      outDir: 'dist',
       emptyOutDir: true,
       sourcemap: mode === 'development',
       rollupOptions: {

@@ -25,13 +25,19 @@ export class AuthService {
   async login(data: LoginDTO) {
     const user = await this.authRepo.findByIdentifier(data.identifier);
 
-    if (!user || !user.password) {
-      throw new AppError('INVALID_CREDENTIALS', 401);
+    // Alterado para retornar erro específico de usuário
+    if (!user) {
+      throw new AppError('USER_NOT_FOUND', 404);
+    }
+
+    // Verifica a senha apenas se o usuário existir
+    if (!user.password) {
+        throw new AppError('INVALID_PASSWORD', 401);
     }
 
     const isValid = await this.server.compareHash(data.password, user.password);
     if (!isValid) {
-      throw new AppError('INVALID_CREDENTIALS', 401);
+      throw new AppError('INVALID_PASSWORD', 401);
     }
 
     const token = this.server.jwt.sign({ 

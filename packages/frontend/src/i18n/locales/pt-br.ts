@@ -2,9 +2,12 @@ export const ptBR = {
   translation: {
     errors: {
       // Auth
-      EMAIL_ALREADY_EXISTS: 'Este e-mail já está em uso.',
-      USERNAME_ALREADY_EXISTS: 'Este nome de usuário já está em uso.',
-      INVALID_CREDENTIALS: 'E-mail ou senha incorretos.',
+      EMAIL_ALREADY_EXISTS: 'E-mail já existe.',
+      USERNAME_ALREADY_EXISTS: 'Nome de usuário já existe.',
+      INVALID_CREDENTIALS: 'Credenciais inválidas.', // Fallback
+      USER_NOT_FOUND: 'Usuário incorreto.',
+      INVALID_PASSWORD: 'Senha incorreta.',
+      INVALID_EMAIL: 'Formato de e-mail inválido.', // NOVA CHAVE
       NOT_AUTHENTICATED: 'Você precisa estar logado.',
       SESSION_EXPIRED: 'Sessão expirada. Faça login novamente.',
       USER_CREATED_SUCCESSFULLY: 'Conta criada! Faça login.',

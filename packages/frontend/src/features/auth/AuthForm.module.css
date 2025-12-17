@@ -1,39 +1,64 @@
 @reference "@/main.css";
 
-/* Container Principal (Centralizado e Limpo) */
 .container {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fff;
-  /* Opcional: Adicionar um padding se não houver no pai */
-  padding: 1rem; 
-  border-radius: 8px;
+  justify-content: center;
+  background-color: var(--color-bg-main);
+  padding: 2vh 2vw; 
+  border-radius: 1vw;
 }
 
-/* Cabeçalho (Título e Subtítulo) */
 .header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 3vh;
 }
 
 .header h2 {
   @apply font-black;
-  color: #2ecc71;
-  font-size: 1.8rem;
+  color: var(--color-primary);
+  font-size: clamp(20px, 4vw, 40px);
   margin: 0;
 }
 
 .header p {
-  color: #6b7280;
-  font-size: 0.95rem;
-  margin-top: 0.5rem;
+  color: var(--color-text-muted);
+  font-size: clamp(12px, 1.2vw, 18px);
+  margin-top: 1vh;
 }
 
-/* Formulário */
+.registerPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2vh;
+}
+
+.previewIconWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1vh;
+}
+
+.previewIcon {
+  border: 0.4vh solid var(--color-text-main) !important;
+  box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.1);
+}
+
+.previewUsername {
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-size: clamp(16px, 1.5vw, 22px);
+  text-align: center;
+  min-height: 1.5em;
+}
+
 .formContainer {
-  width: 60%;
+  width: 70%;
   display: flex;
   flex-direction: column;
 }
@@ -41,61 +66,156 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 2vh;
+  margin-bottom: 3vh;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .inputGroup input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  padding: clamp(0.8rem, 1vh, 1.2rem) 1vw; 
+  border: 0.2vh solid var(--color-border);
+  border-radius: 0.8vh;
+  font-size: clamp(14px, 1.1vw, 20px);
   outline: none;
   transition: all 0.2s;
-  background-color: #f9fafb;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-main);
+}
+
+.inputGroup input::placeholder {
+  color: var(--color-text-muted);
 }
 
 .inputGroup input:focus {
-  border-color: #2ecc71;
-  background-color: #fff;
-  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.4vh color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
-/* Botões */
-.formContainer button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #2ecc71;
-  color: white;
+.inputError {
+  border-color: var(--color-status-error) !important;
+  box-shadow: 0 0 0 0.2vh color-mix(in srgb, var(--color-status-error) 10%, transparent) !important;
+}
+
+.fieldErrorMessage {
+  color: var(--color-status-error);
+  font-size: clamp(10px, 0.9vw, 14px);
+  margin-top: 0.5vh;
+  margin-left: 0.5vw;
   font-weight: 600;
-  font-size: 1rem;
+  display: block;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 1vw;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  background: none;
   border: none;
-  border-radius: 0.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(14px, 1.2vw, 20px);
+  transition: color 0.2s;
+}
+
+.eyeIcon:hover {
+  color: var(--color-text-main);
+}
+
+.iconSelectorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5vh;
+  margin-bottom: 2vh;
+}
+
+.iconSelectorContainer label {
+  font-size: clamp(12px, 1vw, 16px);
+  color: var(--color-text-main);
+  font-weight: 500;
+}
+
+.iconGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1vw;
+  width: 100%;
+}
+
+.iconOption {
+  width: clamp(35px, 5vw, 60px);
+  height: clamp(35px, 5vw, 60px);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 0.2vh solid var(--color-border); 
+  transition: transform 0.2s, border-color 0.2s;
+  overflow: hidden;
+}
+
+.iconOption img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.iconOption:hover {
+  transform: scale(1.1);
+}
+
+.selectedIcon {
+  border-color: var(--color-primary);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 0.3vh color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.formContainer button[type="submit"] {
+  width: 100%;
+  padding: 1.5vh;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.8vh;
+  font-size: clamp(14px, 1.2vw, 18px);
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 0.5rem;
+  margin-top: 1vh;
 }
 
 .formContainer button:hover:not(:disabled) {
-  background-color: #27ae60;
+  background-color: var(--color-primary-deep);
 }
 
 .formContainer button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-  background-color: #9ca3af;
+  background-color: var(--color-text-muted);
 }
 
-/* Rodapé e Links */
 .footer {
-  margin-top: 1.5rem;
+  margin-top: 3vh;
   text-align: center;
 }
 
 .toggleLink {
-  color: #2ecc71;
-  font-size: 0.9rem;
+  color: var(--color-accent-blue);
+  font-size: clamp(12px, 1vw, 16px);
   text-decoration: none;
   cursor: pointer;
   font-weight: 500;
@@ -103,63 +223,6 @@
 }
 
 .toggleLink:hover {
-  color: #27ae60;
+  color: var(--color-primary-deep);
   text-decoration: underline;
-}
-
-.errorMessage {
-  color: #ef4444;
-  font-size: 0.9rem;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-/* --- SELETOR DE ÍCONES (Classes Reintroduzidas) --- */
-
-.iconSelector {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-  width: 100%;
-}
-
-.iconSelector label {
-  font-size: 0.9rem;
-  color: #4b5563;
-  font-weight: 500;
-  text-align: left;
-}
-
-.iconsGrid {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 0.5rem;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
-  border: 1px solid #f3f4f6;
-}
-
-.iconOption {
-  cursor: pointer;
-  border: 2px solid transparent;
-  border-radius: 50%;
-  padding: 2px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.iconOption:hover {
-  transform: scale(1.1);
-  background-color: #e5e7eb;
-}
-
-.selected {
-  border-color: #2ecc71;
-  background-color: rgba(46, 204, 113, 0.1);
-  transform: scale(1.1);
 }

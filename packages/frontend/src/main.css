@@ -3,19 +3,32 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* --- Configuração de Fontes --- */
-  --font-sans: "Inter", sans-serif;
+  /* --- Font Configuration --- */
+  /* Using Nunito as the primary font, with system sans-serif fallback */
+  --font-sans: "Nunito", sans-serif;
 
-  /* --- Paleta de Cores (Brand) --- */
-  --color-brand-primary: #2ecc71;
-  --color-brand-secondary: #27ae60;
-  --color-brand-dark: #281614;
-  --color-brand-accent: #dbc174;
-  --color-brand-bg: #f3f4f6;
+  /* --- Color Palette (Brand System) --- */
+  
+  /* Primary Colors */
+  --color-primary: #2ecc71;      /* Elo Green */
+  --color-primary-deep: #34493a; /* Moss Green (Wise) */
 
-  /* --- Paleta de Cores (State) --- */
-  --color-state-error: #d32f2f;
-  --color-state-success: #2ecc71;
+  /* Secondary Colors (Accents) */
+  --color-accent-gold: #c9b458;  /* Golden Ochre */
+  --color-accent-blue: #5b7f95;  /* Natural Blue */
+
+  /* Neutrals (Functional Greyscale) */
+  --color-text-main: #2a2e2b;    /* Warm Dark Gray */
+  --color-text-muted: #6b7280;   /* Medium Gray */
+  --color-border: #d1d5db;       /* Soft Border */
+  --color-bg-main: #ffffff;      /* Pure White Background */
+  --color-bg-secondary: #f3f4f6; /* Off-white */
+
+  /* --- Feedback Palette (State) --- */
+  --color-status-success: #2ecc71;
+  --color-status-error: #ef4444;
+  --color-status-warning: #f59e0b;
+  --color-status-info: #3b82f6;
 }
 
 @layer base {
@@ -32,6 +45,12 @@
   }
 
   body {
-    @apply font-sans text-gray-800 antialiased bg-brand-bg;
+    /* Applying font and base colors */
+    @apply font-sans text-text-main antialiased bg-bg-main;
+  }
+  
+  /* Global style for inputs to ensure theme consistency */
+  input, textarea, select {
+    @apply border-border text-text-main placeholder-text-muted;
   }
 }

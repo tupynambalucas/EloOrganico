@@ -1,5 +1,9 @@
 .container {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
@@ -7,7 +11,8 @@
 }
 
 .leftPanel {
-  flex: 1;
+  height: 100%;
+  width: 55%;
   background-color: #2ecc71;
   display: flex;
   justify-content: center;
@@ -15,18 +20,10 @@
   padding: 2rem;
   position: relative;
   overflow: hidden;
-}
-
-.leftPanel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0);
+  background-image: radial-gradient(circle at 2vh 2vh, rgba(255,255,255,0.1) 0.2vh, transparent 0);
   background-size: 24px 24px;
 }
+
 
 .bannerContainer {
   width: 60%;
@@ -44,7 +41,8 @@
 }
 
 .rightPanel {
-  flex: 1;
+  height: 100%;
+  width: 45%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -53,10 +51,4 @@
   padding: 2rem;
   position: relative;
   box-shadow: -5px 0 15px rgba(0,0,0,0.05);
-}
-
-@media (max-width: 768px) {
-  .leftPanel {
-    display: none;
-  }
 }

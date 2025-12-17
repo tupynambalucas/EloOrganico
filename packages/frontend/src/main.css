@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* --- Configuração de Fontes --- */
   --font-sans: "Inter", sans-serif;
@@ -17,6 +19,14 @@
 }
 
 @layer base {
+  html {
+    color-scheme: light;
+  }
+  
+  html.dark {
+    color-scheme: dark;
+  }
+
   html, body, #root {
     @apply h-full w-full m-0 p-0;
   }

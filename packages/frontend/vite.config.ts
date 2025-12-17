@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite';
+import path from 'path'; // [NOVO] Import necessário
+import { fileURLToPath } from 'url'; // [NOVO] Import necessário para __dirname em ESM
 import tsconfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }) => {
   return {
@@ -14,6 +19,12 @@ export default defineConfig(({ mode }) => {
         include: "**/*.svg?react"
       })
     ],
+
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
     
     optimizeDeps: {
       exclude: ['@elo-organico/shared'],

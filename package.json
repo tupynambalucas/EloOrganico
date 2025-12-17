@@ -15,13 +15,11 @@
   "scripts": {
     "// [1] INSTALAÇÃO": "-------------------------------------------------------",
     "postinstall": "npm run build -w @elo-organico/shared",
-
     "// [2] DESENVOLVIMENTO (APP)": "-------------------------------------------------------",
     "dev:frontend": "npm run dev -w @elo-organico/frontend",
     "dev:backend": "npm run dev -w @elo-organico/backend",
     "dev:stack": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "backend:seed": "npm run seed -w @elo-organico/backend",
-
     "// [3] INFRAESTRUTURA LOCAL (DOCKER)": "-------------------------------------------------------",
     "infra:up": "docker compose up -d db redis",
     "infra:stop": "docker compose stop",
@@ -29,7 +27,6 @@
     "infra:clean": "docker compose down --volumes",
     "infra:reset": "npm run infra:clean && npm run infra:up",
     "infra:gen-key": "echo \"CHAVE_FALSA_PARA_DEV_$(date +%s)\" > mongo-keyfile && echo \"✅ Keyfile gerado!\"",
-
     "// [4] BUILD E VERIFICAÇÃO": "-------------------------------------------------------",
     "build:all": "npm run build --workspaces --if-present",
     "backend:build": "npm run build -w @elo-organico/backend",
@@ -38,7 +35,6 @@
     "clean": "npm run clean --workspaces --if-present",
     "lint:all": "npm run lint --workspaces --if-present",
     "typecheck:all": "npm run typecheck --workspaces --if-present",
-
     "// [5] SIMULAÇÃO DE PRODUÇÃO": "-------------------------------------------------------",
     "prod:up": "docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build",
     "prod:down": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"

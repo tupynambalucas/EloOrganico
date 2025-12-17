@@ -1,4 +1,4 @@
-@import "@/index.css" theme(reference);
+@reference "@/index.css";
 
 /* Container Principal (Centralizado e Limpo) */
 .container {

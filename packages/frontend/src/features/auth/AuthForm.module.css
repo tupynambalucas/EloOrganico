@@ -7,7 +7,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-bg-main);
   padding: 2vh 2vw; 
   border-radius: 1vw;
 }
@@ -19,13 +18,13 @@
 
 .header h2 {
   @apply font-black;
-  color: var(--color-primary);
+  color: var(--color-olive-leaf); /* Atualizado: Primária: Marca & Navegação */
   font-size: clamp(20px, 4vw, 40px);
   margin: 0;
 }
 
 .header p {
-  color: var(--color-text-muted);
+  color: var(--color-humus-brown); /* Atualizado: Subtítulos/Texto secundário */
   font-size: clamp(12px, 1.2vw, 18px);
   margin-top: 1vh;
 }
@@ -45,13 +44,13 @@
 }
 
 .previewIcon {
-  border: 0.4vh solid var(--color-text-main) !important;
+  border: 0.4vh solid var(--color-earth-brown) !important; /* Atualizado: Títulos/Destaque Escuro */
   box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.1);
 }
 
 .previewUsername {
   font-weight: 700;
-  color: var(--color-text-main);
+  color: var(--color-earth-brown); /* Atualizado: Títulos/Texto Principal */
   font-size: clamp(16px, 1.5vw, 22px);
   text-align: center;
   min-height: 1.5em;
@@ -85,31 +84,31 @@
 .inputGroup input {
   width: 100%;
   padding: clamp(0.8rem, 1vh, 1.2rem) 1vw; 
-  border: 0.2vh solid var(--color-border);
+  border: 0.2vh solid var(--color-raw-line); /* Atualizado: Bordas (Modo Claro) */
   border-radius: 0.8vh;
   font-size: clamp(14px, 1.1vw, 20px);
   outline: none;
   transition: all 0.2s;
-  color: var(--color-text-main);
-  background-color: var(--color-bg-main);
+  color: var(--color-soil-dark); /* Atualizado: Corpo de Texto */
+  background-color: var(--color-cotton-white); /* Atualizado: Card Surface/White */
 }
 
 .inputGroup input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--color-ash-gray); /* Atualizado: Legendas/Placeholder */
 }
 
 .inputGroup input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 0.4vh color-mix(in srgb, var(--color-primary) 20%, transparent);
+  border-color: var(--color-olive-leaf); /* Atualizado: Primária */
+  box-shadow: 0 0 0 0.4vh color-mix(in srgb, var(--color-olive-leaf) 20%, transparent);
 }
 
 .inputError {
-  border-color: var(--color-status-error) !important;
-  box-shadow: 0 0 0 0.2vh color-mix(in srgb, var(--color-status-error) 10%, transparent) !important;
+  border-color: var(--color-clay-error) !important; /* Atualizado: Erro */
+  box-shadow: 0 0 0 0.2vh color-mix(in srgb, var(--color-clay-error) 10%, transparent) !important;
 }
 
 .fieldErrorMessage {
-  color: var(--color-status-error);
+  color: var(--color-clay-error); /* Atualizado: Erro */
   font-size: clamp(10px, 0.9vw, 14px);
   margin-top: 0.5vh;
   margin-left: 0.5vw;
@@ -121,7 +120,7 @@
   position: absolute;
   right: 1vw;
   cursor: pointer;
-  color: var(--color-text-muted);
+  color: var(--color-ash-gray); /* Atualizado: Ícone inativo/Legenda */
   background: none;
   border: none;
   padding: 0;
@@ -133,7 +132,7 @@
 }
 
 .eyeIcon:hover {
-  color: var(--color-text-main);
+  color: var(--color-earth-brown); /* Atualizado: Ícone ativo/Destaque */
 }
 
 .iconSelectorContainer {
@@ -146,7 +145,7 @@
 
 .iconSelectorContainer label {
   font-size: clamp(12px, 1vw, 16px);
-  color: var(--color-text-main);
+  color: var(--color-earth-brown);
   font-weight: 500;
 }
 
@@ -163,7 +162,7 @@
   height: clamp(35px, 5vw, 60px);
   border-radius: 50%;
   cursor: pointer;
-  border: 0.2vh solid var(--color-border); 
+  border: 0.2vh solid var(--color-raw-line); /* Atualizado: Borda */
   transition: transform 0.2s, border-color 0.2s;
   overflow: hidden;
 }
@@ -176,19 +175,20 @@
 
 .iconOption:hover {
   transform: scale(1.1);
+  border-color: var(--color-olive-leaf); /* Atualizado: Primária */
 }
 
 .selectedIcon {
-  border-color: var(--color-primary);
+  border-color: var(--color-olive-leaf);
   transform: scale(1.1);
-  box-shadow: 0 0 0 0.3vh color-mix(in srgb, var(--color-primary) 30%, transparent);
+  box-shadow: 0 0 0 0.3vh color-mix(in srgb, var(--color-olive-leaf) 30%, transparent);
 }
 
 .formContainer button[type="submit"] {
   width: 100%;
   padding: 1.5vh;
-  background-color: var(--color-primary);
-  color: #ffffff;
+  background-color: var(--color-olive-leaf); /* Atualizado: Primária */
+  color: var(--color-cotton-white); /* Atualizado: Texto claro */
   border: none;
   border-radius: 0.8vh;
   font-size: clamp(14px, 1.2vw, 18px);
@@ -199,13 +199,13 @@
 }
 
 .formContainer button:hover:not(:disabled) {
-  background-color: var(--color-primary-deep);
+  background-color: var(--color-deep-forest); /* Atualizado: Terciária/Darker Green para Hover */
 }
 
 .formContainer button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-  background-color: var(--color-text-muted);
+  background-color: var(--color-disabled-gray); /* Atualizado: Estado inativo */
 }
 
 .footer {
@@ -214,7 +214,7 @@
 }
 
 .toggleLink {
-  color: var(--color-accent-blue);
+  color: var(--color-olive-leaf); /* Atualizado: Primária para links */
   font-size: clamp(12px, 1vw, 16px);
   text-decoration: none;
   cursor: pointer;
@@ -223,6 +223,6 @@
 }
 
 .toggleLink:hover {
-  color: var(--color-primary-deep);
+  color: var(--color-harvest-pumpkin); /* Atualizado: CTA/Active color no hover */
   text-decoration: underline;
 }

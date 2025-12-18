@@ -4,53 +4,69 @@
 
 @theme {
   /* --- Font Configuration --- */
-  /* Using Nunito as the primary font, with system sans-serif fallback */
   --font-sans: "Nunito", sans-serif;
 
-  /* --- Color Palette (Brand System) --- */
-  
-  /* Primary Colors */
-  --color-primary: #2ecc71;      /* Elo Green */
-  --color-primary-deep: #34493a; /* Moss Green (Wise) */
+  /* --- 1. Identidade Principal (Tríade da Marca) --- */
+  --color-olive-leaf: #8EA637;   /* Primária: Marca & Navegação */
+  --color-sprout-green: #C9F2AC; /* Secundária: Suporte & Leitura Dark */
+  --color-deep-forest: #022601;  /* Terciária: Base Sólida */
 
-  /* Secondary Colors (Accents) */
-  --color-accent-gold: #c9b458;  /* Golden Ochre */
-  --color-accent-blue: #5b7f95;  /* Natural Blue */
+  /* --- 2. Sistema de Backgrounds (Superfícies) --- */
+  --color-natural-fiber: #F2E8C9; /* Fundo Claro (Base/Papel) */
+  --color-coffee-soil: #400101;   /* Fundo Escuro (Base/Terra) */
+  --color-mint-whisper: #F1F8E9;  /* Fundo Claro (Tint/Sucesso Suave) */
+  --color-canopy-dark: #02590F;   /* Fundo Escuro (Shade/Modal) */
 
-  /* Neutrals (Functional Greyscale) */
-  --color-text-main: #2a2e2b;    /* Warm Dark Gray */
-  --color-text-muted: #6b7280;   /* Medium Gray */
-  --color-border: #d1d5db;       /* Soft Border */
-  --color-bg-main: #ffffff;      /* Pure White Background */
-  --color-bg-secondary: #f3f4f6; /* Off-white */
+  /* --- 3. Cores Neutras Estruturais --- */
+  --color-raw-line: #E6DCC3;      /* Bordas (Modo Claro) */
+  --color-night-line: #2C1A1A;    /* Bordas (Modo Escuro) */
+  --color-disabled-gray: #A89F91; /* Estados Inativos */
+  --color-overlay: #022601;       /* Máscara de Modal (Usar com opacity) */
 
-  /* --- Feedback Palette (State) --- */
-  --color-status-success: #2ecc71;
-  --color-status-error: #ef4444;
-  --color-status-warning: #f59e0b;
-  --color-status-info: #3b82f6;
+  /* --- 4. Sistema Tipográfico (Hierarquia) --- */
+  --color-earth-brown: #400101;   /* Títulos (Claro) & Ícones Primários */
+  --color-humus-brown: #5C4B3F;   /* Subtítulos (Claro) */
+  --color-soil-dark: #212121;     /* Corpo de Texto (Claro) */
+  --color-cotton-white: #FBF8F1;  /* Corpo de Texto (Escuro) & Card Surface */
+  --color-ash-gray: #6D6D6D;      /* Legendas */
+
+  /* --- 5. Call to Action (Destaques) --- */
+  --color-harvest-pumpkin: #F2622E; /* CTA Principal & Ícone Ativo */
+  --color-sun-pollen: #F2A341;      /* Badges & Notificações */
+
+  /* --- 6. Cores de Feedback (Status) --- */
+  --color-emerald-fresh: #2ECC71; /* Sucesso */
+  --color-clay-error: #D9042B;    /* Erro */
+  --color-ripe-warning: #F2C84B;  /* Atenção */
+  --color-water-info: #2F80ED;    /* Informação */
 }
 
 @layer base {
-  html {
-    color-scheme: light;
-  }
-  
-  html.dark {
-    color-scheme: dark;
-  }
-
-  html, body, #root {
-    @apply h-full w-full m-0 p-0;
-  }
-
   body {
-    /* Applying font and base colors */
-    @apply font-sans text-text-main antialiased bg-bg-main;
+    /* Configuração Base: Aplica o fundo 'Natural Fiber' e texto 'Soil Dark' por padrão */
+    /* No Dark Mode, o fundo muda para 'Coffee Soil' e o texto para 'Cotton White' automaticamente */
+    @apply bg-[--color-natural-fiber] text-[--color-soil-dark] font-sans antialiased;
+    @apply dark:bg-[--color-coffee-soil] dark:text-[--color-cotton-white];
+  }
+
+  /* Hierarquia de Títulos */
+  h1, h2, h3 {
+    @apply text-[--color-earth-brown] font-bold;
+    @apply dark:text-[--color-natural-fiber];
+  }
+
+  /* Hierarquia de Subtítulos */
+  h4, h5, h6 {
+    @apply text-[--color-humus-brown] font-semibold;
+    @apply dark:text-[--color-sprout-green];
+  }
+
+  /* Configuração de Ícones (Classe Utilitária Sugerida: .icon-base) */
+  .icon-base {
+    @apply text-[--color-earth-brown] dark:text-[--color-natural-fiber];
   }
   
-  /* Global style for inputs to ensure theme consistency */
-  input, textarea, select {
-    @apply border-border text-text-main placeholder-text-muted;
+  .icon-active {
+    @apply text-[--color-harvest-pumpkin];
   }
 }

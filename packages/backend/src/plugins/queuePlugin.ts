@@ -36,7 +36,7 @@ const queuePlugin = async (server: FastifyInstance) => {
       {},
       {
         repeat: {
-          pattern: '0 * * * *', // A cada hora cheia
+          pattern: '0 * * * *', // In every o'clock 
         },
         jobId: 'archive-expired-cycles-cron'
       }

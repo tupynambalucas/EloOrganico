@@ -1,46 +1,65 @@
-# @elo-organico/frontend
+# Frontend Module - Elo Orgânico
 
-The client-side application for Elo Orgânico. A modern SPA (Single Page Application) built for speed, interactivity, and responsiveness.
+This module comprises the user interface (Client-Side) of the Elo Orgânico platform. It is a modern **Single Page Application (SPA)**, developed to offer a fluid, responsive, and accessible experience for both administrators and end customers.
 
-## 🎨 Tech Stack
+## 🎨 Design System and UX
 
-* **Framework:** React 19
-* **Bundler:** Vite
-* **State Management:** Zustand
-* **Styling:** CSS Modules
-* **Language:** TypeScript
+The interface was built following rigorous usability and visual identity standards:
 
-## 🧩 Features
+* **Visual Identity**: Color palette inspired by the Atlantic Forest and **Nunito** typography for readability and visual comfort.
+* **Responsiveness**: *Mobile-First* layout, adapting perfectly to mobile devices and desktops.
+* **Internationalization (i18n)**: Architecture prepared for multiple languages (default `pt-BR`).
 
-* **Admin Panel:** Cycle management, product list parsing, and reporting.
-* **Shop Interface:** Dynamic catalog based on the active cycle.
-* **Smart Parsing:** Client-side regex parsing for bulk product ingestion.
-* **Auth System:** Secure integration with backend HTTP-only sessions.
+## 🛠 Technology Stack
 
-## 🚀 Development
+* **Core**: [React 19](https://react.dev/)
+* **Build System**: [Vite](https://vitejs.dev/) (Optimized compilation)
+* **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) (Utility-First CSS)
+* **State Management**: [Zustand](https://github.com/pmndrs/zustand) (Simplified data flow)
+* **HTTP Communication**: Axios (Interceptors and centralized error handling)
 
-This package is configured to proxy API requests to `http://localhost:3000` during development to avoid CORS issues.
+---
+
+## 📂 Directory Structure
+
+The source code is organized by *Features*, promoting cohesion and modularity:
+
+```text
+src/
+├── assets/           # Static resources (Images, Fonts, SVGs)
+├── components/       # Reusable UI component library (Atomic Design)
+├── constants/        # Static definitions and configurations
+├── domains/          # API integration layer and Stores (Zustand)
+├── features/         # Functional Modules
+│   ├── admin/        # Control Panel (Management)
+│   ├── shop/         # E-commerce and Catalog (Customer)
+│   ├── auth/         # Authentication Flows
+│   └── landing/      # Institutional Page
+├── i18n/             # Translation configurations
+└── lib/              # Third-party library configuration
+```
+
+---
+
+## 💻 Local Development
+
+To run the frontend in isolation in a development environment:
 
 ```bash
-# Start dev server (Port 5173)
 npm run dev
-````
+```
+The application will be accessible at `http://localhost:5173`.
 
-## 🏗️ Build & Deployment
+> **Technical Note**: for full functionality (Login, Catalog, Checkout), the **Backend** must be running and accessible on the configured port.
 
-The build process enforces type safety before bundling.
+---
+
+## 📦 Build and Deploy
+
+The build process generates optimized static assets in the `dist/` directory.
 
 ```bash
-# 1. Type Check -> 2. Build with Vite
 npm run build
 ```
 
-The output (`dist/`) is designed to be served by **Nginx** (see `nginx.conf` in root), handling client-side routing via `try_files`.
-
-## 📦 Dependency Optimization
-
-To ensure seamless integration with the monorepo, `vite.config.ts` is configured to exclude `@elo-organico/shared` from pre-bundling, ensuring hot updates from the shared library are reflected instantly.
-
------
-
-**Author:** Tupynambá Lucas Varela Rodrigues ([tupynambalucas.dev](https://www.google.com/search?q=https://tupynambalucas.dev))
+In a production environment (Docker), these artifacts are served by a high-performance **Nginx** server, configured as a Reverse Proxy and static file server.

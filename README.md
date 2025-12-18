@@ -1,90 +1,159 @@
-# Elo Orgânico - Monorepo
+# Elo Orgânico - Integrated Management Platform
 
-![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue)
-![Architecture](https://img.shields.io/badge/architecture-monorepo-orange)
-![Maintainer](https://img.shields.io/badge/maintainer-tupynambalucas.dev-green)
+## Project Overview
 
-**Elo Orgânico** is an enterprise-grade platform designed to manage organic product sharing cycles within eco-villages and communities. It streamlines the process of product cataloging, ordering, and logistics through a robust digital solution.
+**Elo Orgânico** is a digital solution tailored to optimize and manage the sharing cycle of organic products. The system is designed to replace manual processes with a centralized, secure, and scalable infrastructure, ensuring data integrity and operational efficiency from catalog ingestion to financial reconciliation via Pix.
 
-This repository is structured as a **Monorepo** using NPM Workspaces, ensuring a unified development lifecycle and strict type safety across the stack.
+This repository operates under a **Monorepo** architecture, consolidating all application modules (Backend, Frontend, and Shared Library) into a single versioning environment, facilitating maintenance and code consistency.
 
-## 🏗 Architecture
+## 📖 Master Plan
+- [Master Plan (English)](./docs/MASTER_PLAN.en.md)
+- [Documento Mestre (Português)](./docs/MASTER_PLAN.pt-BR.md)
 
-The project follows a modular architecture:
+## 🏗 Solution Architecture
 
-* **`packages/backend`**: RESTful API built with **Fastify**, **MongoDB**, and **Zod**.
-* **`packages/frontend`**: SPA built with **React 19**, **Vite**, and **Zustand**.
-* **`packages/shared`**: Internal library containing the **Single Source of Truth** (Types, Zod Schemas, Constants) shared between backend and frontend.
+The system is composed of three main modules, orchestrated via **Docker** to ensure parity between development and production environments:
 
-## 🚀 Prerequisites
+| Module | Technology | Responsibility | 
+| :--- | :--- | :--- | 
+| **`@elo-organico/backend`** | Fastify v5, Node.js, MongoDB | RESTful API, Business Rules, Transaction Management, and Queues. | 
+| **`@elo-organico/frontend`** | React 19, Vite, Tailwind CSS | User Interface (SPA), Administrative Panel, and Customer Portal. | 
+| **`@elo-organico/shared`** | TypeScript, Zod | *Single Source of Truth* for typing and data validation. | 
 
-Ensure you have the following installed:
+## 🚀 Infrastructure Requirements
 
-* **Node.js** (v20 LTS recommended)
-* **NPM** (v10+)
-* **Docker & Docker Compose** (for production builds)
+For local execution or deployment of the application, the environment must meet the following prerequisites:
 
-## 🛠 Installation
+* **Node.js**: Version 20 (LTS) or higher.
+* **Package Manager**: NPM v10+.
+* **Virtualization**: Docker Engine & Docker Compose.
 
-Clone the repository and install dependencies from the root directory. The `postinstall` script will automatically build the shared package.
+## 🛠 Installation and Execution Guide
+
+Follow the procedures below to initialize the development environment.
+
+### 1. Installation of Dependencies
+
+In the project root, execute the command to install dependencies for all workspaces and compile the shared library:
 
 ```bash
-# Clone Repository
-git clone https://github.com/tupynambalucas/EloOrganico.git
-
-# Navigate to new created repository
-cd EloOrganico  
-
-# Install dependencies
 npm install
+```
 
-#Open in VsCode
-code .
-````
+### 2. Environment Variables Configuration
 
-## 💻 Development Workflow
+It is necessary to configure sensitive environment variables. Create a `.env` file in the project root (or in the specific backend directory) following the model below:
 
-We use **concurrently** to run the full stack in development mode.
+```env
+# Environment Settings
+NODE_ENV=development
+SERVER_PORT=3000
 
-### Run Full Stack (Backend + Frontend)
+# Database (MongoDB Replica Set)
+MONGO_URI=mongodb://admin:secret@localhost:27017/elo-organico?authSource=admin&replicaSet=rs0
+MONGO_USER=admin
+MONGO_PASSWORD=secret
+MONGO_DB_NAME=elo-organico
+
+# Cache & Session (Redis)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Security & Encryption
+JWT_SECRET=<256_bit_hash_for_jwt>
+SESSION_SECRET=<32_character_hash_for_session>
+
+# Initial Credentials (Seed)
+ADMIN_USER_SEED=admin
+ADMIN_EMAIL_SEED=admin@elo.com
+ADMIN_PASS_SEED=initial_secure_password
+```
+
+### 3. Database Security Configuration
+
+The MongoDB cluster operates in *Replica Set* mode to ensure ACID transactions. Generating an internal authentication key (Keyfile) is mandatory:
+
+```bash
+npm run infra:gen-key
+```
+
+### 4. Development Infrastructure Initialization
+
+To run the application locally, it is necessary to provision support services (Database and Cache) before starting the application server. Execute the command below to start MongoDB and Redis containers in the background:
+
+```bash
+npm run infra:up
+```
+
+### 5. Initial Seeding
+
+For the first access, populate the database with the default administrative user configured in `.env`:
+
+```bash
+npm run backend:seed
+```
+
+## 💻 Development Environment
+
+You can choose to run the full stack or individual services with *Hot Reload* support.
+
+### Full Stack Execution
+
+Start both Backend and Frontend simultaneously:
 
 ```bash
 npm run dev:stack
 ```
 
-  * **Frontend:** http://localhost:5173
-  * **Backend:** http://localhost:3000
+### Individual Service Execution
 
-### Individual Commands
+* **Backend Only**:
+    ```bash
+    npm run dev:backend
+    ```
 
-| Command | Description |
-| :--- | :--- |
-| `npm run dev:backend` | Starts the API in watch mode (`ts-node-dev`). |
-| `npm run dev:frontend` | Starts the Vite dev server. |
-| `npm run build:all` | Builds all workspaces (Shared -\> Backend -\> Frontend). |
-| `npm run clean` | Removes `dist` folders and build artifacts across workspaces. |
-| `npm run typecheck` | Runs TypeScript validation across the entire project. |
+* **Frontend Only**:
+    ```bash
+    npm run dev:frontend
+    ```
 
-## 🐳 Production (Docker)
+### Access Points
 
-To simulate the production environment using **Nginx** (Frontend) and optimized Node.js runtime (Backend):
+* **Frontend (Web Application)**: http://localhost:5173
+
+* **Backend (REST API)**: http://localhost:3000
+
+## 🐳 Production Simulation (Docker)
+
+To validate image building and application execution in a containerized environment identical to the production server (VPS):
 
 ```bash
-# Build and start services
 npm run prod:up
-
-# View logs
-npm run docker:logs
-
-# Stop services
-npm run docker:down
 ```
 
-## 📄 License
+This command will:
 
-This project is licensed under the **CC BY-NC 4.0**.
-See the [LICENSE](https://www.google.com/search?q=./LICENSE.md) file for details.
+1. Compile Backend and Frontend (Production Build).
+2. Provision the Nginx server as a Reverse Proxy.
+3. Start the API and Database in the secure internal network.
 
------
+To terminate the environment:
 
-**Copyright (c) 2025 Tupynambá Lucas Varela Rodrigues** [tupynambalucas.dev](https://www.google.com/search?q=https://tupynambalucas.dev)
+```bash
+npm run prod:down
+```
+
+## 📜 Automation Scripts
+
+| Command | Technical Description | 
+| :--- | :--- | 
+| `npm run infra:up` | Provisions infrastructure services (DB, Cache). | 
+| `npm run infra:down` | Stops and removes active containers. | 
+| `npm run infra:reset` | Resets the entire infrastructure (Removes volumes/data). | 
+| `npm run build:all` | Executes the build process across all monorepo packages. | 
+| `npm run lint:all` | Executes static code analysis (Linter). | 
+
+## © License and Rights
+
+This software is protected under the **CC-BY-NC-4.0** license.
+Developed by **Tupynambá Lucas Varela Rodrigues**.

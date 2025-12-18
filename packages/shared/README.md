@@ -1,55 +1,40 @@
-# @elo-organico/shared
+# Shared Library - Elo Orgânico (@elo-organico/shared)
 
-This is the **core library** of the Elo Orgânico Monorepo. It acts as the **Single Source of Truth** for the entire application.
+This package plays the fundamental role of **Single Source of Truth** within the Elo Orgânico Monorepo architecture.
 
-It exports TypeScript interfaces, Zod Schemas, and constants used by both the Backend (API validation) and Frontend (Form validation).
+Its goal is to ensure data integrity and consistency by sharing interface contracts, validation rules, and constants between the **Server (Backend)** and the **Client (Frontend)**.
 
-## 📦 Contents
+## 📦 Exported Components
 
-### 1. Zod Schemas (`src/schemas/`)
-We use **Zod v3.24.1** to define the shape of our data.
-* `UserSchema`: Validation logic for users (email regex, password length).
-* `ProductSchema`: Structure for organic products and measures.
-* `CycleSchema`: Logic for sales cycles.
-* `AuthDTOs`: Data Transfer Objects for Login/Register payloads.
+The library provides the following resources to other modules:
 
-### 2. TypeScript Types
-Types are **inferred** directly from Zod schemas. We do not write interfaces manually.
-* `IUser`, `IProduct`, `ICycle`...
+1.  **Validation Schemas (Zod)**:
+    * Rigorous definitions for entities such as `User`, `Product`, `Cycle`, and `Auth`.
+    * Used in the Backend for Payload validation and in the Frontend for Form validation.
 
-### 3. Constants (`src/constants.ts`)
-Global business rules (e.g., minimum password length, max username characters).
+2.  **TypeScript Typing**:
+    * Static types inferred automatically from Zod Schemas (`z.infer<>`).
+    * Ensures that changes in the data model are reflected at compile time throughout the project.
 
-## 🔨 Usage
+3.  **Global Constants**:
+    * Configurations and fixed values shared between environments.
 
-**In Backend:**
-```typescript
-import { RegisterDTOSchema } from '@elo-organico/shared';
-// Used in Fastify routes for automatic validation
-````
+---
 
-**In Frontend:**
+## 🔄 Development and Maintenance Flow
 
-```typescript
-import { AUTH_RULES } from '@elo-organico/shared';
-// Used to validate forms before submission
-```
+To maintain system consistency, any change in data modeling must follow this flow:
 
-## ⚙️ Build Process
+1.  **Modification**: Modify the desired schema or constant in `src/schemas` or `src/constants.ts`.
+2.  **Compilation**: Execute the package build to generate distribution files and type definitions (`.d.ts`):
+    ```bash
+    npm run build
+    ```
+3.  **Propagation**: TypeScript will automatically detect changes in the `@elo-organico/backend` and `@elo-organico/frontend` modules, pointing out any inconsistencies that need refactoring.
 
-This package must be built **before** the Backend or Frontend.
+## 🛠 Available Commands
 
-```bash
-# Clean and Build
-npm run build
-```
-
-The build process generates:
-
-  * `dist/index.js`: CommonJS compiled code.
-  * `dist/index.d.ts`: Type definitions.
-  * `dist/*.map`: Source maps for debugging in consuming packages.
-
------
-
-**Author:** Tupynambá Lucas Varela Rodrigues ([tupynambalucas.dev](https://www.google.com/search?q=https://tupynambalucas.dev))
+* **`npm run build`**: Cleans the `dist` directory, compiles TypeScript, and generates type declarations.
+* **`npm run dev`**: Runs compilation in *Watch* mode, ideal for simultaneous development of business rules and interfaces.
+* **`npm run typecheck`**: Verifies type integrity without generating output files.
+* **`npm run lint`**: Ensures source code standardization.

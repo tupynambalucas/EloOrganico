@@ -6,67 +6,72 @@
   /* --- Font Configuration --- */
   --font-sans: "Nunito", sans-serif;
 
-  /* --- 1. Identidade Principal (Tríade da Marca) --- */
-  --color-olive-leaf: #8EA637;   /* Primária: Marca & Navegação */
-  --color-sprout-green: #C9F2AC; /* Secundária: Suporte & Leitura Dark */
-  --color-deep-forest: #022601;  /* Terciária: Base Sólida */
+  /* --- Identidade Principal (Tríade da Marca) --- */
+  --color-identity-primary: #8EA637;
+  --color-identity-secondary: #C9F2AC;
+  --color-identity-tertiary: #022601;
 
-  /* --- 2. Sistema de Backgrounds (Superfícies) --- */
-  --color-natural-fiber: #F2E8C9; /* Fundo Claro (Base/Papel) */
-  --color-coffee-soil: #400101;   /* Fundo Escuro (Base/Terra) */
-  --color-mint-whisper: #F1F8E9;  /* Fundo Claro (Tint/Sucesso Suave) */
-  --color-canopy-dark: #02590F;   /* Fundo Escuro (Shade/Modal) */
+  /* --- Sistema de Backgrounds (Superfícies) --- */
+  --color-background-light: #F2E8C9;
+  --color-background-dark: #400101;
+  --color-background-tint: #F1F8E9;
+  --color-background-shade: #02590F;
 
-  /* --- 3. Cores Neutras Estruturais --- */
-  --color-raw-line: #E6DCC3;      /* Bordas (Modo Claro) */
-  --color-night-line: #2C1A1A;    /* Bordas (Modo Escuro) */
-  --color-disabled-gray: #A89F91; /* Estados Inativos */
-  --color-overlay: #022601;       /* Máscara de Modal (Usar com opacity) */
+  /* --- Cores Neutras Estruturais --- */
+  --color-border-light: #E6DCC3;
+  --color-border-dark: #2C1A1A;
+  --color-disabled: #A89F91;
+  --color-overlay: #022601;
 
-  /* --- 4. Sistema Tipográfico (Hierarquia) --- */
-  --color-earth-brown: #400101;   /* Títulos (Claro) & Ícones Primários */
-  --color-humus-brown: #5C4B3F;   /* Subtítulos (Claro) */
-  --color-soil-dark: #212121;     /* Corpo de Texto (Claro) */
-  --color-cotton-white: #FBF8F1;  /* Corpo de Texto (Escuro) & Card Surface */
-  --color-ash-gray: #6D6D6D;      /* Legendas */
+  /* --- Sistema Tipográfico (Hierarquia) --- */
+  --color-title-dark: #400101;
+  --color-title-light: #F2E8C9;
+  --color-subtitle-dark: #5C4B3F;
+  --color-subtitle-light: #C9F2AC;
+  --color-body-dark: #212121;
+  --color-body-light: #FBF8F1;
+  --color-label-dark: #6D6D6D;
+  --color-label-light: #A89F91;
 
-  /* --- 5. Call to Action (Destaques) --- */
-  --color-harvest-pumpkin: #F2622E; /* CTA Principal & Ícone Ativo */
-  --color-sun-pollen: #F2A341;      /* Badges & Notificações */
+  /* --- Cores de Sombreamento --- */
+  --color-shadow-float: #400101;
+  --color-shadow-dense: #022601;
 
-  /* --- 6. Cores de Feedback (Status) --- */
-  --color-emerald-fresh: #2ECC71; /* Sucesso */
-  --color-clay-error: #D9042B;    /* Erro */
-  --color-ripe-warning: #F2C84B;  /* Atenção */
-  --color-water-info: #2F80ED;    /* Informação */
+  /* --- Call to Action (Destaques) --- */
+  --color-accent: #F2622E;
+  --color-highlight: #F2A341;
+
+  /* --- Call de Icones (Iconografia) --- */
+  --color-icon-primary-dark: #400101;
+  --color-icon-primary-light: #F2E8C9;
+  --color-icon-secondary-dark: #5C4B3F;
+  --color-icon-secondary-light: #A89F91;
+  --color-icon-invert-dark: #F2E8C9;
+  --color-icon-invert-light: #400101;
+  --color-icon-active: #F2622E;
+
+  /* --- Cores de Feedback (Status) --- */
+  --color-success: #2ECC71;
+  --color-error: #D9042B;
+  --color-warning: #F2C84B;
+  --color-info: #2F80ED;
+
 }
 
 @layer base {
-  body {
-    /* Configuração Base: Aplica o fundo 'Natural Fiber' e texto 'Soil Dark' por padrão */
-    /* No Dark Mode, o fundo muda para 'Coffee Soil' e o texto para 'Cotton White' automaticamente */
-    @apply bg-[--color-natural-fiber] text-[--color-soil-dark] font-sans antialiased;
-    @apply dark:bg-[--color-coffee-soil] dark:text-[--color-cotton-white];
-  }
-
-  /* Hierarquia de Títulos */
-  h1, h2, h3 {
-    @apply text-[--color-earth-brown] font-bold;
-    @apply dark:text-[--color-natural-fiber];
-  }
-
-  /* Hierarquia de Subtítulos */
-  h4, h5, h6 {
-    @apply text-[--color-humus-brown] font-semibold;
-    @apply dark:text-[--color-sprout-green];
-  }
-
-  /* Configuração de Ícones (Classe Utilitária Sugerida: .icon-base) */
-  .icon-base {
-    @apply text-[--color-earth-brown] dark:text-[--color-natural-fiber];
+  html {
+    color-scheme: light;
   }
   
-  .icon-active {
-    @apply text-[--color-harvest-pumpkin];
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html, body, #root {
+    @apply h-full w-full m-0 p-0;
+  }
+
+  body {
+    @apply font-sans antialiased;
   }
 }

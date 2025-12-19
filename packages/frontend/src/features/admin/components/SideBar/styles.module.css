@@ -2,13 +2,13 @@
     height: auto;
     position: relative;
     width: 4vw;
-    background: #09090B;
+    background: var(--color-background-shade);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    -webkit-box-shadow: 0.4vh 0 0.5vh 0 rgba(0,0,0,0.10); 
-    box-shadow: 0.4vh 0 0.5vh 0 rgba(0,0,0,0.10);
+    -webkit-box-shadow: 0.4vh 0 0.5vh 0 rgba(2, 38, 1,0.10); 
+    box-shadow: 0.4vh 0 0.5vh 0 rgba(2, 38, 1,0.10);
     z-index: 100;
 }
 
@@ -76,8 +76,7 @@
 }
 
 .logo > svg{
-    font-size: 2.5vw;
-    width: auto;
+    width: 2.5vw;
     height: auto;
     overflow: visible;
 }
@@ -91,19 +90,27 @@
     align-items: center;
 }
 .menu > button {
-    background: #09090B;
+    background: transparent;
     color: snow;
     cursor: pointer;
 }
+.menu > button > svg{
+    font-size: 1.5vw;
+    color: var(--color-icon-secondary-light);
+}
 
 .menu > button:hover {
-    background: rgba(200, 217, 61, 0.5);
-    color: snow;
+    background: transparent;
+}
+.menu > button:hover > svg{
+    color: var(--color-icon-primary-light);
 }
 
 .menu .active {
-    background: snow!important;
-    color: #09090B!important;
+    background: var(--color-background-tint)!important;
+}
+.menu .active > svg{
+    color: var(--color-icon-active)!important;
 }
 .footer{
     height: auto;
@@ -116,5 +123,5 @@
 }
 
 .menu, .footer svg {
-    font-size: 1.25vw;
+    font-size: 1vw;
 }

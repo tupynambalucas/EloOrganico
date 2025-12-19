@@ -11,7 +11,7 @@
     height: 100%;
     width: 100%;
     position: relative;
-    background: #E4E4E4;
+    background: var(--color-background-tint);
     display: flex;
     flex-direction: column;
     align-items: center;

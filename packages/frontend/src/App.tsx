@@ -2,28 +2,15 @@ import { useEffect, Suspense, lazy } from 'react';
 import { useAuthStore } from '@/domains/auth';
 import { useCycleStore } from '@/domains/cycle';
 import { initializeCsrf } from '@/lib/axios';
-import Loader from '@/components/loaders/ScreenLoader';
 import '@/i18n';
 
 const AdminLayout = lazy(() => import('@/features/admin'));
 const ShopLayout = lazy(() => import('@/features/shop'));
-const LandingLayout = lazy(() => import('@/features/landing/LandingLayout'));
-const AuthForm = lazy(() => import('@/features/auth/AuthForm'));
-const CycleTimer = lazy(() => import('@/features/landing/components/CycleTimer/index'));
+const LandingLayout = lazy(() => import('@/features/landing'));
 
 function App() {
-  const { 
-    user, 
-    isAuthenticated, 
-    isAuthLoading, 
-    verifyAuth 
-  } = useAuthStore();
-
-  const { 
-    activeCycle, 
-    fetchActiveCycle, 
-    isLoading: isCycleLoading 
-  } = useCycleStore();
+  const { user, isAuthenticated, isAuthLoading, verifyAuth } = useAuthStore();
+  const { activeCycle, fetchActiveCycle } = useCycleStore();
 
   useEffect(() => {
     const initApp = async () => {
@@ -39,30 +26,16 @@ function App() {
     }
   }, [isAuthenticated, user, fetchActiveCycle]);
 
-  if (isAuthLoading) {
-    return <Loader />;
-  }
+  if (isAuthLoading) return null;
 
   return (
-    <Suspense fallback={<Loader />}>
-      {!isAuthenticated || !user ? (
-        <LandingLayout>
-          <AuthForm />
-        </LandingLayout>
-      ) : user.role === 'admin' ? (
+    <Suspense fallback={null}>
+      {isAuthenticated && user?.role === 'admin' ? (
         <AdminLayout />
+      ) : isAuthenticated && activeCycle?.status === 'OPEN' ? (
+        <ShopLayout />
       ) : (
-        <>
-          {isCycleLoading ? (
-            <Loader />
-          ) : activeCycle?.status === 'OPEN' ? (
-            <ShopLayout />
-          ) : (
-            <LandingLayout>
-              <CycleTimer />
-            </LandingLayout>
-          )}
-        </>
+        <LandingLayout />
       )}
     </Suspense>
   );

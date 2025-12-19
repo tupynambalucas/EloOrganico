@@ -4,8 +4,8 @@ import { useAuthStore } from '@/domains/auth';
 import { AUTH_RULES } from '@elo-organico/shared';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import UserIcon from '@/components/UserIcon';
 import UserIconsList from '@/constants/userIconList';
+import { useGSAP } from '@gsap/react';
 import styles from './AuthForm.module.css';
 import { shakeElement, animateFormEntrance } from './animations';
 
@@ -39,16 +39,16 @@ const AuthForm = () => {
     email: null
   });
 
-  const containerRef = useRef<HTMLFormElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const identifierRef = useRef<HTMLInputElement>(null);
   const passwordLoginRef = useRef<HTMLInputElement>(null);
   const passwordRegisterRef = useRef<HTMLInputElement>(null);
   const usernameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     animateFormEntrance(containerRef.current);
-  }, [isLogin]);
+  }, { dependencies: [isLogin], scope: containerRef });
 
   useEffect(() => {
     if (errorCode) {
@@ -153,24 +153,14 @@ const AuthForm = () => {
   const isLoading = isLogin ? loginLoading : registerLoading;
 
   return (
-    <div className={styles.container}>
-      {!isLogin && (
-        <div className={styles.registerPreview}>
-          <div className={styles.previewIconWrapper}>
-            <UserIcon forceIcon={icon} size={100} className={styles.previewIcon} />
-          </div>
-          <p className={styles.previewUsername}>
-            {username || 'Seu Usuário'}
-          </p>
-        </div>
-      )}
+    <div className={styles.container} ref={containerRef}>
 
       <div className={styles.header}>
-        <h2>{isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta'}</h2>
-        <p>{isLogin ? 'Faça login para continuar' : 'Comece sua jornada sustentável'}</p>
+        <h1>{isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta'}</h1>
+        <p>{isLogin ? 'Faça login para continuar' : 'Comece sua jornada sustentável escolhendo seu avatar:'}</p>
       </div>
 
-      <form className={styles.formContainer} onSubmit={handleSubmit} ref={containerRef}>
+      <form className={styles.formContainer} onSubmit={handleSubmit}>
         
         {isLogin && (
           <div id="login-form" className={styles.inputGroup}>
@@ -222,9 +212,7 @@ const AuthForm = () => {
 
         {!isLogin && (
           <div id="register-form" className={styles.inputGroup}>
-            
             <div className={styles.iconSelectorContainer}>
-              <label>Escolha seu avatar:</label>
               <div className={styles.iconGrid}>
                 {UserIconsList.map((item) => (
                   <div 
@@ -238,7 +226,6 @@ const AuthForm = () => {
                 ))}
               </div>
             </div>
-
             <div className={styles.inputWrapper}>
               <input
                 ref={usernameRef}

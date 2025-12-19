@@ -6,58 +6,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 3vh;
   justify-content: center;
-  padding: 2vh 2vw; 
-  border-radius: 1vw;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 3vh;
-}
-
-.header h2 {
-  @apply font-black;
-  color: var(--color-olive-leaf); /* Atualizado: Primária: Marca & Navegação */
-  font-size: clamp(20px, 4vw, 40px);
-  margin: 0;
-}
-
-.header p {
-  color: var(--color-humus-brown); /* Atualizado: Subtítulos/Texto secundário */
-  font-size: clamp(12px, 1.2vw, 18px);
-  margin-top: 1vh;
-}
-
-.registerPreview {
+  width: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2vh;
-}
-
-.previewIconWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1vh;
-}
-
-.previewIcon {
-  border: 0.4vh solid var(--color-earth-brown) !important; /* Atualizado: Títulos/Destaque Escuro */
-  box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.1);
-}
-
-.previewUsername {
-  font-weight: 700;
-  color: var(--color-earth-brown); /* Atualizado: Títulos/Texto Principal */
-  font-size: clamp(16px, 1.5vw, 22px);
+  justify-content: space-between;
+  gap: 1.5vh;
   text-align: center;
-  min-height: 1.5em;
+}
+
+.header h1 {
+  color: var(--color-identity-primary);
+  font-size: 5vh;
+  line-height: 5vh;
+}
+
+.header p {
+  color: var(--color-subtitle-dark);
+  font-size: 2vh;
 }
 
 .formContainer {
-  width: 70%;
+  width: 60%;
   display: flex;
   flex-direction: column;
 }
@@ -84,35 +59,33 @@
 .inputGroup input {
   width: 100%;
   padding: clamp(0.8rem, 1vh, 1.2rem) 1vw; 
-  border: 0.2vh solid var(--color-raw-line); /* Atualizado: Bordas (Modo Claro) */
+  border: 0.2vh solid var(--color-border-light);
   border-radius: 0.8vh;
   font-size: clamp(14px, 1.1vw, 20px);
   outline: none;
   transition: all 0.2s;
-  color: var(--color-soil-dark); /* Atualizado: Corpo de Texto */
-  background-color: var(--color-cotton-white); /* Atualizado: Card Surface/White */
+  background-color: var(--color-background-tint);
 }
 
 .inputGroup input::placeholder {
-  color: var(--color-ash-gray); /* Atualizado: Legendas/Placeholder */
+  color: var(--color-label-dark);
 }
 
 .inputGroup input:focus {
-  border-color: var(--color-olive-leaf); /* Atualizado: Primária */
-  box-shadow: 0 0 0 0.4vh color-mix(in srgb, var(--color-olive-leaf) 20%, transparent);
+  border-color: var(--color-highlight);
+  box-shadow: 0 0 0 0.4vh color-mix(in srgb, var(--color-highlight) 20%, transparent);
 }
 
 .inputError {
-  border-color: var(--color-clay-error) !important; /* Atualizado: Erro */
-  box-shadow: 0 0 0 0.2vh color-mix(in srgb, var(--color-clay-error) 10%, transparent) !important;
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 0.2vh color-mix(in srgb, var(--color-error) 10%, transparent) !important;
 }
 
 .fieldErrorMessage {
-  color: var(--color-clay-error); /* Atualizado: Erro */
+  color: var(--color-error);
   font-size: clamp(10px, 0.9vw, 14px);
   margin-top: 0.5vh;
   margin-left: 0.5vw;
-  font-weight: 600;
   display: block;
 }
 
@@ -120,8 +93,8 @@
   position: absolute;
   right: 1vw;
   cursor: pointer;
-  color: var(--color-ash-gray); /* Atualizado: Ícone inativo/Legenda */
-  background: none;
+  color: var(--color-disabled);
+  background: transparent!important;
   border: none;
   padding: 0;
   display: flex;
@@ -132,37 +105,31 @@
 }
 
 .eyeIcon:hover {
-  color: var(--color-earth-brown); /* Atualizado: Ícone ativo/Destaque */
+  background: transparent;
+  color: var(--color-icon-active)!important;
 }
 
 .iconSelectorContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5vh;
-  margin-bottom: 2vh;
-}
-
-.iconSelectorContainer label {
-  font-size: clamp(12px, 1vw, 16px);
-  color: var(--color-earth-brown);
-  font-weight: 500;
+  width: 100%;
+  margin-bottom: 1vh;
 }
 
 .iconGrid {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1vw;
+  flex-wrap: nowrap;
+  justify-content: space-between;
   width: 100%;
 }
 
 .iconOption {
-  width: clamp(35px, 5vw, 60px);
-  height: clamp(35px, 5vw, 60px);
+  width: 3.5vw;
+  height: 3.5vw;
   border-radius: 50%;
   cursor: pointer;
-  border: 0.2vh solid var(--color-raw-line); /* Atualizado: Borda */
+  border: 0.2vh solid var(--color-border-light);
   transition: transform 0.2s, border-color 0.2s;
   overflow: hidden;
 }
@@ -175,54 +142,66 @@
 
 .iconOption:hover {
   transform: scale(1.1);
-  border-color: var(--color-olive-leaf); /* Atualizado: Primária */
+  border-color: var(--color-highlight);
 }
 
 .selectedIcon {
-  border-color: var(--color-olive-leaf);
+  border-color: var(--color-highlight);
   transform: scale(1.1);
-  box-shadow: 0 0 0 0.3vh color-mix(in srgb, var(--color-olive-leaf) 30%, transparent);
+  box-shadow: 0 0 0 0.3vh color-mix(in srgb, var(--color-highlight) 30%, transparent);
 }
 
 .formContainer button[type="submit"] {
   width: 100%;
   padding: 1.5vh;
-  background-color: var(--color-olive-leaf); /* Atualizado: Primária */
-  color: var(--color-cotton-white); /* Atualizado: Texto claro */
+  background-color: var(--color-identity-primary);
+  color: var(--color-body-light);
   border: none;
   border-radius: 0.8vh;
   font-size: clamp(14px, 1.2vw, 18px);
-  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
   margin-top: 1vh;
 }
 
 .formContainer button:hover:not(:disabled) {
-  background-color: var(--color-deep-forest); /* Atualizado: Terciária/Darker Green para Hover */
+  background-color: var(--color-accent);
+  color: var(--color-body-light);
 }
 
 .formContainer button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-  background-color: var(--color-disabled-gray); /* Atualizado: Estado inativo */
+  background-color: var(--color-disabled);
 }
 
 .footer {
-  margin-top: 3vh;
   text-align: center;
 }
 
 .toggleLink {
-  color: var(--color-olive-leaf); /* Atualizado: Primária para links */
+  color: var(--color-identity-primary);
   font-size: clamp(12px, 1vw, 16px);
   text-decoration: none;
   cursor: pointer;
-  font-weight: 500;
   transition: color 0.2s;
 }
 
 .toggleLink:hover {
-  color: var(--color-harvest-pumpkin); /* Atualizado: CTA/Active color no hover */
+  color: var(--color-accent);
   text-decoration: underline;
+}
+
+@media (max-width: 599px) {
+  .container{
+    height: 100%;
+    width: 100%;
+  }
+  .formContainer{
+    width: 80%;
+  }
+  .iconOption{
+    width: 6vh;
+    height: 6vh;
+  }
 }

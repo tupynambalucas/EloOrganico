@@ -6,72 +6,138 @@
   /* --- Font Configuration --- */
   --font-sans: "Nunito", sans-serif;
 
-  /* --- Identidade Principal (Tríade da Marca) --- */
-  --color-identity-primary: #8EA637;
-  --color-identity-secondary: #C9F2AC;
-  --color-identity-tertiary: #022601;
+  /* --- Main Identity (Brand Triad) --- */
+  --color-identity-primary: #8EA637;   /* Olive Leaf: Main brand identity, headers, and primary buttons */
+  --color-identity-secondary: #C9F2AC; /* Sprout Green: Support, highlights, and renewal indicators */
+  --color-identity-tertiary: #022601;  /* Deep Forest: High contrast elements and solid base structures */
 
-  /* --- Sistema de Backgrounds (Superfícies) --- */
-  --color-background-light: #F2E8C9;
-  --color-background-dark: #400101;
-  --color-background-tint: #F1F8E9;
-  --color-background-shade: #02590F;
+  /* --- Background System (Surfaces) --- */
+  --color-background-light: #F2E8C9;   /* Natural Fiber: Main background base ("Paper" color) */
+  --color-background-dark: #400101;    /* Coffee Soil: Dark mode base background or high-emphasis cards */
+  --color-background-tint: #F1F8E9;    /* Mint Whisper: Success areas or soft highlight surfaces (Light Mode) */
+  --color-background-shade: #02590F;   /* Canopy Dark: Base for modals, sidebars, or night mode surfaces */
 
-  /* --- Cores Neutras Estruturais --- */
-  --color-border-light: #E6DCC3;
-  --color-border-dark: #2C1A1A;
-  --color-disabled: #A89F91;
-  --color-overlay: #022601;
+  /* --- Structural Neutrals (Borders & Dividers) --- */
+  --color-border-light: #E6DCC3;       /* Raw Line: Borders for inputs and cards on light backgrounds */
+  --color-border-dark: #2C1A1A;        /* Night Line: Subtle dividers for dark/coffee backgrounds */
+  --color-disabled: #A89F91;           /* Disabled Gray: Inactive states for buttons or fields */
+  --color-overlay: #022601;            /* Overlay mask for modals (suggested 60% opacity) */
 
-  /* --- Sistema Tipográfico (Hierarquia) --- */
-  --color-title-dark: #400101;
-  --color-title-light: #F2E8C9;
-  --color-subtitle-dark: #5C4B3F;
-  --color-subtitle-light: #C9F2AC;
-  --color-body-dark: #212121;
-  --color-body-light: #FBF8F1;
-  --color-label-dark: #6D6D6D;
-  --color-label-light: #A89F91;
+  /* --- Typographic System (Hierarchy) --- */
+  --color-title-dark: #400101;         /* Earth Brown: Main headlines for light backgrounds */
+  --color-title-light: #F2E8C9;        /* Natural Fiber: Main headlines for dark backgrounds */
+  --color-subtitle-dark: #5C4B3F;      /* Humus Brown: Labels and metadata for light backgrounds */
+  --color-subtitle-light: #C9F2AC;     /* Sprout Green: Labels and metadata for dark backgrounds */
+  --color-body-dark: #212121;          /* Soil Dark: Long texts and descriptions for light backgrounds */
+  --color-body-light: #FBF8F1;         /* Cotton White: Long texts and descriptions for dark backgrounds */
+  --color-label-dark: #6D6D6D;         /* Ash Gray: Supporting text and captions for light backgrounds */
+  --color-label-light: #A89F91;        /* Disabled Gray: Supporting text and captions for dark backgrounds */
 
-  /* --- Cores de Sombreamento --- */
-  --color-shadow-float: #400101;
-  --color-shadow-dense: #022601;
+  /* --- Shadow Colors --- */
+  --color-shadow-float: #400101;       /* Warm Shadow: Standard elevation for cards on light backgrounds */
+  --color-shadow-dense: #022601;       /* Canopy Shadow: Intense depth for modals or overlapping elements */
 
-  /* --- Call to Action (Destaques) --- */
-  --color-accent: #F2622E;
-  --color-highlight: #F2A341;
+  /* --- Call to Action (Highlights) --- */
+  --color-accent: #F2622E;             /* Harvest Pumpkin: Main CTAs (Buy/Confirm) to evoke appetite and urgency */
+  --color-highlight: #F2A341;          /* Sun Pollen: Badges and notifications to highlight news */
 
-  /* --- Call de Icones (Iconografia) --- */
+  /* --- Iconography --- */
   --color-icon-primary-dark: #400101;
   --color-icon-primary-light: #F2E8C9;
   --color-icon-secondary-dark: #5C4B3F;
-  --color-icon-secondary-light: #A89F91;
   --color-icon-invert-dark: #F2E8C9;
   --color-icon-invert-light: #400101;
   --color-icon-active: #F2622E;
 
-  /* --- Cores de Feedback (Status) --- */
-  --color-success: #2ECC71;
-  --color-error: #D9042B;
-  --color-warning: #F2C84B;
-  --color-info: #2F80ED;
-
+  /* --- Feedback Colors (Status) --- */
+  --color-success: #2ECC71;            /* Emerald Fresh: Digital success indication */
+  --color-error: #D9042B;              /* Clay Error: Earthy red for critical alerts and errors */
+  --color-warning: #F2C84B;            /* Ripe Warning: Yellowish ochre for preventive warnings */
+  --color-info: #2F80ED;               /* Water Info: Soft blue for neutral system information */
 }
 
 @layer base {
-  html {
-    color-scheme: light;
-  }
-  
-  html.dark {
-    color-scheme: dark;
-  }
-
+  /* --- Global Reset and Base Typography --- */
   html, body, #root {
     @apply h-full w-full m-0 p-0;
+    /* Inter 400 (Regular) is the gold standard for interface readability */
+    font-weight: 400; 
   }
 
   body {
     @apply font-sans antialiased;
+    color: var(--color-body-dark);
+    background-color: var(--color-background-light);
+    line-height: 1.6;
+  }
+
+  /* --- Intelligent Weight Distribution --- */
+
+  /* H1: Maximum impact. Inter 800 (Extra Bold) creates a strong visual anchor */
+  h1 {
+    color: var(--color-title-dark);
+    font-weight: 800;
+    letter-spacing: -0.025em; /* Slightly tighter for large bold text */
+  }
+
+  /* H2: Secondary impact. Inter 700 (Bold) for clear section definition */
+  h2 {
+    color: var(--color-title-dark);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  /* H3: Inter 600 (Semi Bold) for sub-sections without overpowering the text */
+  h3 {
+    color: var(--color-title-dark);
+    font-weight: 600;
+  }
+
+  /* H4-H6: Inter 500 (Medium) used as labels or secondary metadata titles */
+  h4, h5, h6 {
+    color: var(--color-subtitle-dark);
+    font-weight: 500;
+  }
+
+  /* Paragraphs and general UI: 400 (Regular) for optimal scanning and reading */
+  p, span, li {
+    font-weight: 400;
+  }
+
+  /* Labels and Captions: 500 (Medium) ensures legibility at smaller sizes */
+  label, caption {
+    font-weight: 500;
+    color: var(--color-label-dark);
+  }
+
+  /* Secondary or helper text: 300 (Light) for subtle, less important information */
+  small {
+    font-weight: 300;
+    color: var(--color-label-dark);
+  }
+
+  /* Semantic bolding: 700 (Bold) for emphasis within bodies of text */
+  strong, b {
+    font-weight: 700;
+  }
+
+  /* Hero/Display accents: 900 (Black) reserved for special emphasis in marketing or splash screens */
+  .display-text {
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  /* --- Dark Mode Overrides --- */
+  html.dark body {
+    color: var(--color-body-light);
+    background-color: var(--color-background-dark);
+  }
+
+  html.dark h1, html.dark h2, html.dark h3 {
+    color: var(--color-title-light);
+  }
+
+  html.dark h4, html.dark h5, html.dark h6 {
+    color: var(--color-subtitle-light);
   }
 }

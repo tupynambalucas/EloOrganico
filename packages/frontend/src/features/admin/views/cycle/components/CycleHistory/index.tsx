@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useAdminCycleStore } from '../../../domains/cycle/cycle.store';
-import styles from './CycleHistory.module.css';
+import { useAdminCycleStore } from '../../../../domains/cycle/cycle.store';
+import styles from './styles.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCalendarAlt, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { format } from 'date-fns';

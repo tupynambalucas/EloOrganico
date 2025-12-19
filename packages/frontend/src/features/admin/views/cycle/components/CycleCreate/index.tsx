@@ -6,9 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faSync } from '@fortawesome/free-solid-svg-icons';
 
 import { parseProductList, FailedLine } from './parseProductList';
-import { useAdminCycleStore } from '../../../domains/cycle/cycle.store';
-import { useCyclesNavigation } from '../cycle.navigation';
-import styles from './CycleCreate.module.css';
+import { useAdminCycleStore } from '../../../../domains/cycle/cycle.store';
+import { useCyclesNavigation } from '../../cycle.navigation';
+import styles from './styles.module.css';
 import { IProduct } from '@elo-organico/shared';
 
 registerLocale('pt-BR', ptBR);

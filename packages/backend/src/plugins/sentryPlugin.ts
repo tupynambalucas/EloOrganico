@@ -6,7 +6,7 @@ import { AppError } from '../utils/AppError';
 
 const sentryPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   if (!server.config.SENTRY_DSN) return;
-
+  console.log(`🚀 Sentry Enabled`);
   Sentry.init({
     dsn: server.config.SENTRY_DSN,
     integrations: [

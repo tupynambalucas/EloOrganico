@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CreateCycleDTOSchema, ProductSchema, CycleResponseSchema } from '@elo-organico/shared';
+import { CreateCycleDTOSchema, CycleResponseSchema } from '@elo-organico/shared';
 
 export const createCycleSchema = {
   body: CreateCycleDTOSchema,
@@ -45,7 +45,7 @@ export const getCycleByIdSchema = {
 export const updateCycleSchema = {
   params: CycleIdParamSchema,
   body: z.object({
-    products: z.array(ProductSchema)
+    products: z.array(z.any())
   }),
   response: {
     200: CycleResponseSchema
@@ -53,6 +53,6 @@ export const updateCycleSchema = {
 } as const;
 
 export type CreateCycleRoute = typeof createCycleSchema;
-export type UpdateCycleRoute = typeof updateCycleSchema;
 export type GetHistoryRoute = typeof getHistorySchema;
 export type GetByIdRoute = typeof getCycleByIdSchema;
+export type UpdateCycleRoute = typeof updateCycleSchema;

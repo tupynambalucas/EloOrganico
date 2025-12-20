@@ -1,12 +1,6 @@
-import { LoginDTOSchema, RegisterDTOSchema } from '@elo-organico/shared';
-import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
+import { LoginDTOSchema, RegisterDTOSchema, AUTH_RULES } from '@elo-organico/shared';
+import { AuthFormData, AuthFormRefs, ValidationResult } from '../types';
 import { TFunction } from 'i18next';
-
-interface ValidationResult {
-  isValid: boolean;
-  errors: AuthFieldErrors;
-  firstErrorRef?: React.RefObject<HTMLInputElement | null>;
-}
 
 export const validateAuthForm = (
   isLogin: boolean,
@@ -15,7 +9,6 @@ export const validateAuthForm = (
   t: TFunction
 ): ValidationResult => {
   const schema = isLogin ? LoginDTOSchema : RegisterDTOSchema;
-  
   const dataToValidate = isLogin 
     ? { identifier: data.identifier, password: data.password }
     : { email: data.email, username: data.username, icon: data.icon, password: data.password };
@@ -25,7 +18,13 @@ export const validateAuthForm = (
   if (!result.success) {
     const firstError = result.error.errors[0];
     const field = firstError.path[0] as keyof AuthFormData;
-    
+    const minVal = field === 'username' ? AUTH_RULES.USERNAME.MIN : AUTH_RULES.PASSWORD.MIN;
+
+    const errorMessage = t(`auth.errors.${field}_${firstError.code}`, { 
+      min: minVal,
+      defaultValue: firstError.message 
+    });
+
     const errorRefs: Record<string, React.RefObject<HTMLInputElement | null>> = {
       identifier: refs.identifier,
       password: isLogin ? refs.passwordLogin : refs.passwordRegister,
@@ -33,10 +32,10 @@ export const validateAuthForm = (
       email: refs.email,
     };
 
-    return {
-      isValid: false,
-      errors: { [field]: t(`auth.errors.${field}_${firstError.code.toLowerCase()}`, { defaultValue: firstError.message }) },
-      firstErrorRef: errorRefs[field]
+    return { 
+      isValid: false, 
+      errors: { [field]: errorMessage }, 
+      firstErrorRef: errorRefs[field] 
     };
   }
 

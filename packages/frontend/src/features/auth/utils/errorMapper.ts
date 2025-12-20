@@ -1,17 +1,8 @@
-import { AuthFieldErrors, AuthFormRefs, AuthFormData } from '../types';
+import { AuthFieldErrors, AuthFormRefs, AuthFormData, ErrorUIMapping } from '../types';
 import { TFunction } from 'i18next';
 
-interface ErrorMapping {
-  field: keyof AuthFormData;
-  ref: React.RefObject<HTMLInputElement | null>;
-}
-
-export const mapBackendErrorToUI = (
-  code: string,
-  refs: AuthFormRefs,
-  t: TFunction
-): { errors: AuthFieldErrors; ref: React.RefObject<HTMLInputElement | null> } | null => {
-  const errorMap: Record<string, ErrorMapping> = {
+export const mapBackendErrorToUI = (code: string, refs: AuthFormRefs, t: TFunction): ErrorUIMapping | null => {
+  const errorMap: Record<string, { field: keyof AuthFormData; ref: React.RefObject<HTMLInputElement | null> }> = {
     'USER_NOT_FOUND': { field: 'identifier', ref: refs.identifier },
     'INVALID_PASSWORD': { field: 'password', ref: refs.passwordLogin },
     'EMAIL_ALREADY_EXISTS': { field: 'email', ref: refs.email },
@@ -21,8 +12,10 @@ export const mapBackendErrorToUI = (
   const config = errorMap[code];
   if (!config) return null;
 
+  const fieldErrors: AuthFieldErrors = { [config.field]: t(`auth.errors.${code}`) };
+
   return {
-    errors: { [config.field]: t(`auth.errors.${code.toLowerCase()}`) },
+    errors: fieldErrors,
     ref: config.ref
   };
 };

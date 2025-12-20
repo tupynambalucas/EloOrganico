@@ -1,14 +1,8 @@
 import { create } from 'zustand';
 import { authApi } from './auth.api';
-import i18n from '@/i18n';
 import { setCsrfToken } from '@/lib/axios';
 import { getErrorMessage, extractErrorCode } from '@/utils/errorHelper';
-import { 
-  type LoginDTO, 
-  type RegisterDTO, 
-  type UserResponse, 
-  UserResponseSchema
-} from '@elo-organico/shared';
+import { type LoginDTO, type RegisterDTO, type UserResponse, UserResponseSchema } from '@elo-organico/shared';
 
 type AuthStatus = 'IDLE' | 'LOADING' | 'AUTHENTICATED' | 'UNAUTHENTICATED' | 'ERROR';
 
@@ -19,8 +13,6 @@ interface AuthState {
   status: AuthStatus;
   error: string | null;
   errorCode: string | null;
-  registerSuccess: string | null;
-
   login: (data: LoginDTO) => Promise<void>;
   logout: () => Promise<void>;
   register: (data: RegisterDTO) => Promise<boolean>;
@@ -35,7 +27,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   status: 'IDLE',
   error: null,
   errorCode: null,
-  registerSuccess: null,
 
   login: async (data) => {
     set({ status: 'LOADING', error: null, errorCode: null });
@@ -43,14 +34,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       const result = await authApi.login(data);
       setCsrfToken(result.token);
       set({ user: result.user, isAuthenticated: true, status: 'AUTHENTICATED' });
-    } catch (err: unknown) {
-      set({ 
-        status: 'ERROR', 
-        error: getErrorMessage(err),
-        errorCode: extractErrorCode(err),
-        isAuthenticated: false,
-        user: null
-      });
+    } catch (err) {
+      set({ status: 'ERROR', error: getErrorMessage(err), errorCode: extractErrorCode(err), isAuthenticated: false, user: null });
     }
   },
 
@@ -58,18 +43,18 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await authApi.logout();
     } finally {
-      set({ user: null, isAuthenticated: false, status: 'UNAUTHENTICATED', error: null, errorCode: null });
+      set({ user: null, isAuthenticated: false, status: 'UNAUTHENTICATED' });
       setCsrfToken('');
     }
   },
 
   register: async (data) => {
-    set({ status: 'LOADING', error: null, errorCode: null, registerSuccess: null });
+    set({ status: 'LOADING', error: null, errorCode: null });
     try {
       await authApi.register(data);
-      set({ status: 'IDLE', registerSuccess: i18n.t('success.USER_CREATED_SUCCESSFULLY') });
+      set({ status: 'IDLE' });
       return true;
-    } catch (err: unknown) {
+    } catch (err) {
       set({ status: 'ERROR', error: getErrorMessage(err), errorCode: extractErrorCode(err) });
       return false;
     }
@@ -86,5 +71,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  clearErrors: () => set({ error: null, errorCode: null, registerSuccess: null })
+  clearErrors: () => set({ error: null, errorCode: null })
 }));

@@ -19,11 +19,7 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
   };
 
   const [formData, setFormData] = useState<AuthFormData>({
-    identifier: '',
-    username: '',
-    email: '',
-    password: '',
-    icon: 'graxaim'
+    identifier: '', username: '', email: '', password: '', icon: 'graxaim'
   });
 
   const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({});
@@ -68,12 +64,5 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
     }
   };
 
-  return {
-    formData,
-    fieldErrors,
-    handleInputChange,
-    handleSubmit,
-    isLoading: status === 'LOADING',
-    refs
-  };
+  return { formData, fieldErrors, handleInputChange, handleSubmit, isLoading: status === 'LOADING', refs };
 };

@@ -1,6 +1,8 @@
-import { RegisterDTO, LoginDTO } from '@elo-organico/shared';
+import { LoginDTO, RegisterDTO } from '@elo-organico/shared';
 
-export type AuthFormData = LoginDTO & RegisterDTO;
+export type AuthFormData = LoginDTO & RegisterDTO & { icon: string };
+
+export type AuthFieldErrors = Partial<Record<keyof AuthFormData, string | null>>;
 
 export interface AuthFormRefs {
   identifier: React.RefObject<HTMLInputElement | null>;
@@ -10,4 +12,13 @@ export interface AuthFormRefs {
   passwordRegister: React.RefObject<HTMLInputElement | null>;
 }
 
-export type AuthFieldErrors = Partial<Record<keyof AuthFormData, string | null>>;
+export interface ValidationResult {
+  isValid: boolean;
+  errors: AuthFieldErrors;
+  firstErrorRef?: React.RefObject<HTMLInputElement | null>;
+}
+
+export interface ErrorUIMapping {
+  errors: AuthFieldErrors;
+  ref: React.RefObject<HTMLInputElement | null>;
+}

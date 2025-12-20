@@ -23,7 +23,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
-  isAuthLoading: false,
+  isAuthLoading: true, // Começa como true para o App.tsx saber que está checando
   status: 'IDLE',
   error: null,
   errorCode: null,
@@ -35,7 +35,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       setCsrfToken(result.token);
       set({ user: result.user, isAuthenticated: true, status: 'AUTHENTICATED' });
     } catch (err) {
-      set({ status: 'ERROR', error: getErrorMessage(err), errorCode: extractErrorCode(err), isAuthenticated: false, user: null });
+      console.error('[Login Error]:', err);
+      set({ status: 'ERROR', error: getErrorMessage(err), errorCode: extractErrorCode(err), isAuthenticated: false });
     }
   },
 
@@ -55,6 +56,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ status: 'IDLE' });
       return true;
     } catch (err) {
+      console.error('[Register Error]:', err);
       set({ status: 'ERROR', error: getErrorMessage(err), errorCode: extractErrorCode(err) });
       return false;
     }
@@ -64,9 +66,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isAuthLoading: true, status: 'LOADING' });
     try {
       const result = await authApi.verify();
+      // Se o backend retornar user: null, isso vai disparar o erro para o catch
       const validatedUser = UserResponseSchema.parse(result.user);
       set({ user: validatedUser, isAuthenticated: true, status: 'AUTHENTICATED', isAuthLoading: false });
-    } catch {
+    } catch (err) {
+      // Aqui era o erro: falhava o parse e limpava o login sem avisar no console
+      console.warn('[VerifyAuth]: Usuário não autenticado ou sessão expirada.');
       set({ user: null, isAuthenticated: false, status: 'UNAUTHENTICATED', isAuthLoading: false });
     }
   },

@@ -8,7 +8,7 @@ import BannerNegative from '@/assets/svg/identity/banner-negative.svg?react';
 // Importamos a lógica de animação separada
 import { animateLandingIntro } from './animations';
 
-const AuthForm = lazy(() => import('@/features/auth/AuthForm'));
+const AuthForm = lazy(() => import('@/features/auth'));
 const CycleTimer = lazy(() => import('@/features/landing/components/CycleTimer/index'));
 
 const LandingLayout = () => {

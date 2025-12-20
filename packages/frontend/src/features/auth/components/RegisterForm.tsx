@@ -2,15 +2,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { IconSelector } from '@/components/UserIcon';
-import { AUTH_RULES } from '@elo-organico/shared';
 import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
 import styles from '../styles.module.css';
 
 interface RegisterFormProps {
-  data: AuthFormData;
+  data: Omit<AuthFormData, 'identifier'>;
   errors: AuthFieldErrors;
   onChange: (field: keyof AuthFormData, value: string) => void;
-  inputRefs: AuthFormRefs;
+  inputRefs: Omit<AuthFormRefs, 'identifier' | 'passwordLogin'>;
   disabled: boolean;
 }
 
@@ -29,8 +28,9 @@ export const RegisterForm = ({ data, errors, onChange, inputRefs, disabled }: Re
           className={errors.username ? styles.inputError : ''}
           disabled={disabled}
           required
+          aria-invalid={!!errors.username}
         />
-        {errors.username && <span className={styles.fieldErrorMessage}>{errors.username}</span>}
+        {errors.username && <span className={styles.fieldErrorMessage} role="alert">{errors.username}</span>}
       </div>
 
       <div className={styles.inputWrapper}>
@@ -43,8 +43,9 @@ export const RegisterForm = ({ data, errors, onChange, inputRefs, disabled }: Re
           className={errors.email ? styles.inputError : ''}
           disabled={disabled}
           required
+          aria-invalid={!!errors.email}
         />
-        {errors.email && <span className={styles.fieldErrorMessage}>{errors.email}</span>}
+        {errors.email && <span className={styles.fieldErrorMessage} role="alert">{errors.email}</span>}
       </div>
 
       <IconSelector 
@@ -59,18 +60,25 @@ export const RegisterForm = ({ data, errors, onChange, inputRefs, disabled }: Re
           <input
             ref={inputRefs.passwordRegister}
             type={showPassword ? "text" : "password"}
-            placeholder={`Senha (min. ${AUTH_RULES.PASSWORD.MIN})`}
+            placeholder="Escolha uma senha forte"
             value={data.password}
             onChange={(e) => onChange('password', e.target.value)}
             className={errors.password ? styles.inputError : ''}
             disabled={disabled}
             required
+            aria-invalid={!!errors.password}
           />
-          <button type="button" className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+          <button 
+            type="button" 
+            className={styles.eyeIcon} 
+            onClick={() => setShowPassword(!showPassword)} 
+            tabIndex={-1}
+            aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+          >
             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
           </button>
         </div>
-        {errors.password && <span className={styles.fieldErrorMessage}>{errors.password}</span>}
+        {errors.password && <span className={styles.fieldErrorMessage} role="alert">{errors.password}</span>}
       </div>
     </div>
   );

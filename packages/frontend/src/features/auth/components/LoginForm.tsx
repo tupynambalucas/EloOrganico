@@ -5,10 +5,10 @@ import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
 import styles from '../styles.module.css';
 
 interface LoginFormProps {
-  data: AuthFormData;
+  data: Pick<AuthFormData, 'identifier' | 'password'>;
   errors: AuthFieldErrors;
   onChange: (field: keyof AuthFormData, value: string) => void;
-  inputRefs: AuthFormRefs;
+  inputRefs: Pick<AuthFormRefs, 'identifier' | 'passwordLogin'>;
   disabled: boolean;
 }
 
@@ -27,8 +27,9 @@ export const LoginForm = ({ data, errors, onChange, inputRefs, disabled }: Login
           className={errors.identifier ? styles.inputError : ''}
           disabled={disabled}
           required
+          aria-invalid={!!errors.identifier}
         />
-        {errors.identifier && <span className={styles.fieldErrorMessage}>{errors.identifier}</span>}
+        {errors.identifier && <span className={styles.fieldErrorMessage} role="alert">{errors.identifier}</span>}
       </div>
       <div className={styles.inputWrapper}>
         <div className={styles.passwordWrapper}>
@@ -41,12 +42,19 @@ export const LoginForm = ({ data, errors, onChange, inputRefs, disabled }: Login
             className={errors.password ? styles.inputError : ''}
             disabled={disabled}
             required
+            aria-invalid={!!errors.password}
           />
-          <button type="button" className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+          <button 
+            type="button" 
+            className={styles.eyeIcon} 
+            onClick={() => setShowPassword(!showPassword)} 
+            tabIndex={-1}
+            aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+          >
             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
           </button>
         </div>
-        {errors.password && <span className={styles.fieldErrorMessage}>{errors.password}</span>}
+        {errors.password && <span className={styles.fieldErrorMessage} role="alert">{errors.password}</span>}
       </div>
     </div>
   );

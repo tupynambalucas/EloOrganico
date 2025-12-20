@@ -1,6 +1,6 @@
-import { LoginDTO, RegisterDTO } from '@elo-organico/shared';
+import { RegisterDTO, LoginDTO } from '@elo-organico/shared';
 
-export type AuthFormData = LoginDTO & RegisterDTO & { icon: string };
+export type AuthFormData = LoginDTO & RegisterDTO;
 
 export interface AuthFormRefs {
   identifier: React.RefObject<HTMLInputElement | null>;

@@ -1,8 +1,6 @@
-import { AUTH_RULES } from '@elo-organico/shared';
+import { RegisterDTOSchema, LoginDTOSchema } from '@elo-organico/shared';
 import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
 import { TFunction } from 'i18next';
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface ValidationResult {
   isValid: boolean;
@@ -16,31 +14,26 @@ export const validateAuthForm = (
   refs: AuthFormRefs,
   t: TFunction
 ): ValidationResult => {
-  const errors: AuthFieldErrors = {};
-  
-  if (isLogin) {
-    if (!data.identifier) {
-      errors.identifier = t('auth.errors.required');
-      return { isValid: false, errors, firstErrorRef: refs.identifier };
-    }
-    if (!data.password) {
-      errors.password = t('auth.errors.required');
-      return { isValid: false, errors, firstErrorRef: refs.passwordLogin };
-    }
-  } else {
-    if (data.username.length < AUTH_RULES.USERNAME.MIN) {
-      errors.username = t('auth.errors.username_min', { min: AUTH_RULES.USERNAME.MIN });
-      return { isValid: false, errors, firstErrorRef: refs.username };
-    }
-    if (!EMAIL_REGEX.test(data.email)) {
-      errors.email = t('auth.errors.invalid_email');
-      return { isValid: false, errors, firstErrorRef: refs.email };
-    }
-    if (data.password.length < AUTH_RULES.PASSWORD.MIN) {
-      errors.password = t('auth.errors.password_min', { min: AUTH_RULES.PASSWORD.MIN });
-      return { isValid: false, errors, firstErrorRef: refs.passwordRegister };
-    }
+  const schema = isLogin ? LoginDTOSchema : RegisterDTOSchema;
+  const result = schema.safeParse(data);
+
+  if (!result.success) {
+    const firstError = result.error.errors[0];
+    const field = firstError.path[0] as keyof AuthFormData;
+    
+    const errorRefs: Record<string, React.RefObject<HTMLInputElement | null>> = {
+      identifier: refs.identifier,
+      password: isLogin ? refs.passwordLogin : refs.passwordRegister,
+      username: refs.username,
+      email: refs.email,
+    };
+
+    return {
+      isValid: false,
+      errors: { [field]: t(`auth.errors.${field}_${firstError.code.toLowerCase()}`, { defaultValue: firstError.message }) },
+      firstErrorRef: errorRefs[field]
+    };
   }
 
-  return { isValid: true, errors };
+  return { isValid: true, errors: {} };
 };

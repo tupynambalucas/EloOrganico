@@ -1,15 +1,16 @@
-import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
 import { IconSelector } from '@/components/UserIcon';
 import { AUTH_RULES } from '@elo-organico/shared';
-import styles from '../AuthForm.module.css';
+import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
+import styles from '../styles.module.css';
 
 interface RegisterFormProps {
-  data: any;
-  errors: any;
-  onChange: (field: string, value: string) => void;
-  inputRefs: any;
+  data: AuthFormData;
+  errors: AuthFieldErrors;
+  onChange: (field: keyof AuthFormData, value: string) => void;
+  inputRefs: AuthFormRefs;
   disabled: boolean;
 }
 

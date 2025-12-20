@@ -1,13 +1,14 @@
-import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import styles from '../AuthForm.module.css';
+import { useState } from 'react';
+import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
+import styles from '../styles.module.css';
 
 interface LoginFormProps {
-  data: any;
-  errors: any;
-  onChange: (field: string, value: string) => void;
-  inputRefs: any;
+  data: AuthFormData;
+  errors: AuthFieldErrors;
+  onChange: (field: keyof AuthFormData, value: string) => void;
+  inputRefs: AuthFormRefs;
   disabled: boolean;
 }
 
@@ -41,12 +42,7 @@ export const LoginForm = ({ data, errors, onChange, inputRefs, disabled }: Login
             disabled={disabled}
             required
           />
-          <button 
-            type="button" 
-            className={styles.eyeIcon} 
-            onClick={() => setShowPassword(!showPassword)} 
-            tabIndex={-1}
-          >
+          <button type="button" className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
           </button>
         </div>

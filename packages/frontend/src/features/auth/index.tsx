@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { useAuthStore } from '@/domains/auth';
-import styles from './AuthForm.module.css';
+import styles from './styles.module.css';
 import { animateFormEntrance } from './animations';
 import { useAuthForm } from './hooks/useAuthForm';
 import { LoginForm } from './components/LoginForm';

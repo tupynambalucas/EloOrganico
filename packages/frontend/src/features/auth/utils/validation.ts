@@ -1,4 +1,4 @@
-import { RegisterDTOSchema, LoginDTOSchema } from '@elo-organico/shared';
+import { LoginDTOSchema, RegisterDTOSchema } from '@elo-organico/shared';
 import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
 import { TFunction } from 'i18next';
 
@@ -15,7 +15,12 @@ export const validateAuthForm = (
   t: TFunction
 ): ValidationResult => {
   const schema = isLogin ? LoginDTOSchema : RegisterDTOSchema;
-  const result = schema.safeParse(data);
+  
+  const dataToValidate = isLogin 
+    ? { identifier: data.identifier, password: data.password }
+    : { email: data.email, username: data.username, icon: data.icon, password: data.password };
+
+  const result = schema.safeParse(dataToValidate);
 
   if (!result.success) {
     const firstError = result.error.errors[0];

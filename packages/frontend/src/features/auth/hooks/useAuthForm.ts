@@ -8,7 +8,7 @@ import { mapBackendErrorToUI } from '../utils/errorMapper';
 
 export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
   const { t } = useTranslation();
-  const { login, register, loginLoading, registerLoading, errorCode, clearErrors } = useAuthStore();
+  const { login, register, status, errorCode, clearErrors } = useAuthStore();
 
   const refs: AuthFormRefs = {
     identifier: useRef<HTMLInputElement>(null),
@@ -46,7 +46,7 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginLoading || registerLoading) return;
+    if (status === 'LOADING') return;
 
     const validation = validateAuthForm(isLogin, formData, refs, t);
     if (!validation.isValid) {
@@ -73,7 +73,7 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
     fieldErrors,
     handleInputChange,
     handleSubmit,
-    isLoading: loginLoading || registerLoading,
+    isLoading: status === 'LOADING',
     refs
   };
 };

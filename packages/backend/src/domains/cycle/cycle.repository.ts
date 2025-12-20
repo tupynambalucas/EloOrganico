@@ -9,14 +9,25 @@ export class CycleRepository implements ICycleRepository {
     return this.model.findOne({ isActive: true }).populate('products');
   }
 
-  async findHistory(query: FilterQuery<ICycleDocument>, skip: number, limit: number) {
-    const cycles = await this.model.find(query)
-      .select('-products')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-    
-    const total = await this.model.countDocuments(query);
+  async findHistory(page: number, limit: number, startDate?: string, endDate?: string) {
+    const skip = (page - 1) * limit;
+    const query: FilterQuery<ICycleDocument> = {};
+
+    if (startDate || endDate) {
+      query.openingDate = {};
+      if (startDate) query.openingDate.$gte = new Date(startDate);
+      if (endDate) query.openingDate.$lte = new Date(endDate);
+    }
+
+    const [cycles, total] = await Promise.all([
+      this.model.find(query)
+        .select('-products')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      this.model.countDocuments(query)
+    ]);
+
     return { cycles, total };
   }
 
@@ -30,10 +41,7 @@ export class CycleRepository implements ICycleRepository {
 
   async archiveExpired(toleranceDate: Date, session?: ClientSession) {
     return this.model.updateMany(
-      { 
-        isActive: true, 
-        closingDate: { $lte: toleranceDate } 
-      }, 
+      { isActive: true, closingDate: { $lte: toleranceDate } }, 
       { $set: { isActive: false } }
     ).session(session || null);
   }
@@ -46,8 +54,8 @@ export class CycleRepository implements ICycleRepository {
   }
 
   async create(data: Partial<ICycleDocument>, session: ClientSession) {
-    const cycle = new this.model(data);
-    return cycle.save({ session });
+    const newCycle = new this.model(data);
+    return newCycle.save({ session });
   }
 
   async save(document: ICycleDocument, session: ClientSession) {

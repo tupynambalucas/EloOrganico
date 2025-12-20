@@ -25,12 +25,10 @@ export class AuthService {
   async login(data: LoginDTO) {
     const user = await this.authRepo.findByIdentifier(data.identifier);
 
-    // Alterado para retornar erro específico de usuário
     if (!user) {
       throw new AppError('USER_NOT_FOUND', 404);
     }
 
-    // Verifica a senha apenas se o usuário existir
     if (!user.password) {
         throw new AppError('INVALID_PASSWORD', 401);
     }
@@ -44,21 +42,17 @@ export class AuthService {
       _id: user.id, 
       icon: user.icon, 
       email: user.email, 
-      username: user.username, 
+      username: user.username,
       role: user.role 
     });
-
-    return { 
-      authenticated: true, 
-      token, 
-      user 
-    };
+    
+    return { token, user };
   }
 
   async verifyToken(token: string) {
     try {
       const payload = this.server.jwt.verify(token);
-      return { authenticated: true, user: payload };
+      return payload;
     } catch {
       throw new AppError('SESSION_EXPIRED', 401);
     }

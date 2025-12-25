@@ -3,7 +3,30 @@
   "compilerOptions": {
     "rootDir": "./src",
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@features/*": [
+        "./src/features/*"
+      ],
+      "@domains/*": [
+        "./src/domains/*"
+      ],
+      "@elo-organico/shared": [
+        "../shared/dist/index.d.ts"
+      ]
+    }
   },
-  "exclude": ["node_modules", "test", "**/*.spec.ts"]
+  "exclude": [
+    "node_modules",
+    "test",
+    "**/*.spec.ts"
+  ]
 }

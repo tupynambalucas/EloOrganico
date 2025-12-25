@@ -10,11 +10,22 @@
     "directory": "packages/shared"
   },
   "private": true,
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "npm run clean && tsc", 
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "build": "npm run clean && tsc -b",
     "dev": "npm run clean && tsc -w",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."

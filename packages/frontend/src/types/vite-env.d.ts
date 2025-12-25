@@ -54,8 +54,3 @@ interface ImportMeta {
     on(event: string, cb: (...args: any[]) => void): void;
   };
 }
-
-/* --- CSS --- 
-   NÃO declare '*.module.css' aqui. 
-   Deixe o 'typescript-plugin-css-modules' lidar com isso exclusivamente.
-*/

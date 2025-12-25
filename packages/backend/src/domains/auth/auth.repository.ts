@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
-import { IUserDocument } from '../../models/user.model';
+import { IUserDocument } from '../../models/user.model.js';
 import { RegisterDTO } from '@elo-organico/shared';
-import { IAuthRepository } from './auth.repository.interface';
+import { IAuthRepository } from './auth.repository.interface.js';
 
 export class AuthRepository implements IAuthRepository {
   constructor(private userModel: Model<IUserDocument>) {}

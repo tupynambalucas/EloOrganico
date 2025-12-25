@@ -7,11 +7,9 @@ services:
       - bash
       - -c
       - |
-        echo "Fixing keyfile permissions..."
         cp /tmp/mongo-keyfile /data/mongo-keyfile
         chmod 400 /data/mongo-keyfile
         chown 999:999 /data/mongo-keyfile
-        echo "Starting MongoDB..."
         exec docker-entrypoint.sh $$@
     command: [ "mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/mongo-keyfile" ]
     environment:

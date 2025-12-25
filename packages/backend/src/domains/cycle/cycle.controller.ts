@@ -1,13 +1,13 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { CycleService } from './cycle.service';
-import { FastifyZodHandler } from '../../types/fastify';
-import { ICycleDocument } from '../../models/cycle.model';
+import { CycleService } from './cycle.service.js';
+import { FastifyZodHandler } from '../../types/fastify.js';
+import { ICycleDocument } from '../../models/cycle.model.js';
 import { 
   CreateCycleRoute,
   GetHistoryRoute,
   GetByIdRoute,
   UpdateCycleRoute
-} from './cycle.schema';
+} from './cycle.schema.js';
 
 export class CycleController {
   constructor(private service: CycleService) {}

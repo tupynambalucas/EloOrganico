@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
-import { User } from '../models/user.model';
+import { User } from '../models/user.model.js';
 
 async function seedAdmin() {
   const envPath = path.resolve(__dirname, '../../../../.env');

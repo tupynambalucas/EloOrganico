@@ -1,6 +1,6 @@
 import { Model, ClientSession, FilterQuery } from 'mongoose';
-import { ICycleDocument } from '../../models/cycle.model';
-import { ICycleRepository } from './cycle.repository.interface';
+import { ICycleDocument } from '../../models/cycle.model.js';
+import { ICycleRepository } from './cycle.repository.interface.js';
 
 export class CycleRepository implements ICycleRepository {
   constructor(private model: Model<ICycleDocument>) {}

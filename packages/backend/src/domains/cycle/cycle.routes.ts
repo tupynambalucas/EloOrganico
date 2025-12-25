@@ -5,7 +5,7 @@ import {
   getHistorySchema, 
   getCycleByIdSchema,
   updateCycleSchema
-} from './cycle.schema';
+} from './cycle.schema.js';
 
 const cycleRoutes: FastifyPluginAsync = async (server) => {
   const app = server.withTypeProvider<ZodTypeProvider>();

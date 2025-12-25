@@ -1,5 +1,5 @@
 import { ClientSession, UpdateWriteOpResult } from 'mongoose';
-import { ICycleDocument } from '../../models/cycle.model';
+import { ICycleDocument } from '../../models/cycle.model.js';
 
 export interface ICycleRepository {
   findActive(): Promise<ICycleDocument | null>;

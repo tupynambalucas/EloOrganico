@@ -1,7 +1,7 @@
-import { ProductService } from './product.service';
-import { FastifyZodHandler } from '../../types/fastify';
-import { ListProductsRoute } from './product.schema';
-import { IProductDocument } from '../../models/product.model';
+import { ProductService } from './product.service.js';
+import { FastifyZodHandler } from '../../types/fastify.js';
+import { ListProductsRoute } from './product.schema.js';
+import { IProductDocument } from '../../models/product.model.js';
 
 export class ProductController {
   constructor(private service: ProductService) {}

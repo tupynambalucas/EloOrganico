@@ -1,9 +1,9 @@
 import { ClientSession, FilterQuery, AnyBulkWriteOperation } from 'mongoose';
 import { IProduct } from '@elo-organico/shared';
-import { IProductRepository } from './product.repository.interface';
-import { ListProductsQueryType } from './product.schema';
-import { AppError } from '../../utils/AppError';
-import { IProductDocument } from '../../models/product.model';
+import { IProductRepository } from './product.repository.interface.js';
+import { ListProductsQueryType } from './product.schema.js';
+import { AppError } from '../../utils/AppError.js';
+import { IProductDocument } from '../../models/product.model.js';
 
 export class ProductService {
   constructor(private repo: IProductRepository) {}

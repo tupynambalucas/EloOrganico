@@ -1,5 +1,5 @@
-import { Queue } from 'bullmq'; 
-import IORedis from 'ioredis';
+import { Queue } from 'bullmq';
+import { Redis } from 'ioredis';
 
 const getRedisConfig = () => ({
   host: process.env.REDIS_HOST || 'localhost',
@@ -7,7 +7,7 @@ const getRedisConfig = () => ({
   maxRetriesPerRequest: null,
 });
 
-export const connection = new IORedis(getRedisConfig());
+export const connection = new Redis(getRedisConfig());
 
 export const CYCLE_QUEUE_NAME = 'cycle-management-queue';
 

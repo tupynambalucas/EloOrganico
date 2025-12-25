@@ -2,7 +2,7 @@ import fp from 'fastify-plugin';
 import { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
-import { AppError } from '../utils/AppError';
+import { AppError } from '../utils/AppError.js';
 
 const sentryPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   if (!server.config.SENTRY_DSN) return;

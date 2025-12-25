@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { registerSchema, loginSchema } from './auth.schema';
+import { registerSchema, loginSchema } from './auth.schema.js';
 
 const authRoutes: FastifyPluginAsync = async (server) => {
   const app = server.withTypeProvider<ZodTypeProvider>();

@@ -3,6 +3,8 @@
   "compilerOptions": {
     "rootDir": "./src",
     "baseUrl": ".",
+    "noEmit": false,
+    "outDir": "dist",
     "paths": {
       "@/*": [
         "./src/*"
@@ -18,12 +20,14 @@
       ],
       "@domains/*": [
         "./src/domains/*"
-      ],
-      "@elo-organico/shared": [
-        "../shared/dist/index.d.ts"
       ]
     }
   },
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ],
   "exclude": [
     "node_modules",
     "test",

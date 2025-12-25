@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { RegisterDTO, LoginDTO } from '@elo-organico/shared';
-import { IAuthRepository } from './auth.repository.interface';
-import { AppError } from '../../utils/AppError';
+import { IAuthRepository } from './auth.repository.interface.js';
+import { AppError } from '../../utils/AppError.js';
 
 export class AuthService {
   constructor(

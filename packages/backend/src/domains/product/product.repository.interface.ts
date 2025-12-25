@@ -1,5 +1,5 @@
 import { FilterQuery, ClientSession, AnyBulkWriteOperation, UpdateWriteOpResult, UpdateQuery, mongo } from 'mongoose';
-import { IProductDocument } from '../../models/product.model';
+import { IProductDocument } from '../../models/product.model.js';
 
 export interface ProductKey {
   name: string;

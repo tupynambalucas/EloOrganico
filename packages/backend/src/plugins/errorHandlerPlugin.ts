@@ -2,7 +2,7 @@ import fp from 'fastify-plugin';
 import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import * as Sentry from '@sentry/node';
-import { AppError } from '../utils/AppError';
+import { AppError } from '../utils/AppError.js';
 
 const errorHandlerPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   server.setErrorHandler((error: any, request, reply) => {

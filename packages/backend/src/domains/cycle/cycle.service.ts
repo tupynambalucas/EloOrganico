@@ -1,8 +1,8 @@
 import { Mongoose, Types } from 'mongoose';
 import { IProduct, CreateCycleDTO } from '@elo-organico/shared';
-import { ICycleRepository } from './cycle.repository.interface';
-import { ProductService } from '../product/product.service'; 
-import { AppError } from '../../utils/AppError';
+import { ICycleRepository } from './cycle.repository.interface.js';
+import { ProductService } from '../product/product.service.js'; 
+import { AppError } from '../../utils/AppError.js';
 
 export class CycleService {
   constructor(

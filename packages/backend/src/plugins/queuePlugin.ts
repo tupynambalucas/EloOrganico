@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 import { FastifyInstance } from 'fastify';
 import { Worker } from 'bullmq';
-import { cycleQueue, CYCLE_QUEUE_NAME, connection } from '../config/queueConfig';
+import { cycleQueue, CYCLE_QUEUE_NAME, connection } from '../config/queueConfig.js';
 
 const queuePlugin = async (server: FastifyInstance) => {
   

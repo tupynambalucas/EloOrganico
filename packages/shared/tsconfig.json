@@ -1,24 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    
-    // --- Configurações de Build Profissionais ---
-    "declaration": true,        // Gera os tipos .d.ts
-    "declarationMap": true,     // PERMITE NAVEGAR PARA O CÓDIGO FONTE (Ctrl+Click funciona)
-    "sourceMap": true,          // Permite debugar o TS original
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "declarationMap": true,
+    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true,          // Otimiza builds incrementais no monorepo
-    "removeComments": true,     // Limpa comentários no build final (opcional, mas bom pra prod)
-
-    // --- Rigor e Compatibilidade ---
+    "composite": true,
     "strict": true,
-    "esModuleInterop": true,    // Melhor compatibilidade com imports
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true // Evita erros entre Windows e Linux
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

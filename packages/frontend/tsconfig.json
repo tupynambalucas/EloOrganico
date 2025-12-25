@@ -2,43 +2,29 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@assets/*": [
-        "./src/assets/*"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@features/*": [
-        "./src/features/*"
-      ],
-      "@domains/*": [
-        "./src/domains/*"
-      ],
-      "@elo-organico/shared": [
-        "../shared/src/index.ts"
-      ]
+      "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@features/*": ["./src/features/*"],
+      "@domains/*": ["./src/domains/*"],
+      "@elo-organico/shared": ["../shared/src/index.ts"]
     },
     "plugins": [
       {
@@ -50,12 +36,9 @@
       }
     ]
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
-    {
-      "path": "../shared"
-    }
+    { "path": "./tsconfig.node.json" },
+    { "path": "../shared" }
   ]
 }

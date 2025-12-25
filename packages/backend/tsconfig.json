@@ -1,22 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-
+    "composite": true,
+    "noEmit": false,
     "baseUrl": ".",
     "paths": {
-        "@elo-organico/shared": ["../shared/src/index.ts"]
+      "@elo-organico/shared": ["../shared/src/index.ts"]
     }
   },
   "include": ["src"],
   "references": [
-        { "path": "../shared" }
-    ]
+    { "path": "../shared" }
+  ]
 }

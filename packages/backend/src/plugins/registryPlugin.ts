@@ -3,29 +3,29 @@ import fp from 'fastify-plugin';
 import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 import fastifyCookie from '@fastify/cookie';
-import fastifyMetrics from 'fastify-metrics';
+import fastifyMetricsPlugin from 'fastify-metrics';
 
-import envConfig from '../config/envConfig';
-import utils from '../config/utilsConfig';
-import secureSession from './sessionPlugin';
-import MongoosePlugin from './mongoosePlugin';
-import SecurityPlugin from './securityPlugin';
-import ApiPlugin from './apiPlugin';
-import sentryPlugin from './sentryPlugin';
-import errorHandlerPlugin from './errorHandlerPlugin';
-import queuePlugin from './queuePlugin'; // [NOVO]
+import envConfig from '../config/envConfig.js';
+import utils from '../config/utilsConfig.js';
+import secureSession from './sessionPlugin.js';
+import MongoosePlugin from './mongoosePlugin.js';
+import SecurityPlugin from './securityPlugin.js';
+import ApiPlugin from './apiPlugin.js';
+import sentryPlugin from './sentryPlugin.js';
+import errorHandlerPlugin from './errorHandlerPlugin.js';
+import queuePlugin from './queuePlugin.js';
 
-import { AuthRepository } from '../domains/auth/auth.repository';
-import { AuthService } from '../domains/auth/auth.service';
-import { AuthController } from '../domains/auth/auth.controller';
+import { AuthRepository } from '../domains/auth/auth.repository.js';
+import { AuthService } from '../domains/auth/auth.service.js';
+import { AuthController } from '../domains/auth/auth.controller.js';
 
-import { ProductRepository } from '../domains/product/product.repository';
-import { ProductService } from '../domains/product/product.service';
-import { ProductController } from '../domains/product/product.controller';
+import { ProductRepository } from '../domains/product/product.repository.js';
+import { ProductService } from '../domains/product/product.service.js';
+import { ProductController } from '../domains/product/product.controller.js';
 
-import { CycleRepository } from '../domains/cycle/cycle.repository';
-import { CycleService } from '../domains/cycle/cycle.service';
-import { CycleController } from '../domains/cycle/cycle.controller';
+import { CycleRepository } from '../domains/cycle/cycle.repository.js';
+import { CycleService } from '../domains/cycle/cycle.service.js';
+import { CycleController } from '../domains/cycle/cycle.controller.js';
 
 const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyInstance) {
   server.setValidatorCompiler(validatorCompiler);
@@ -35,7 +35,8 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyIn
   await server.register(envConfig);
   await server.register(sentryPlugin);
   
-  await server.register(fastifyMetrics, { endpoint: '/metrics' });
+  const metrics = (fastifyMetricsPlugin as any).default || fastifyMetricsPlugin;
+  await server.register(metrics, { endpoint: '/metrics' });
 
   await server.register(errorHandlerPlugin);
 

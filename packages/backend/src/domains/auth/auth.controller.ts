@@ -1,6 +1,6 @@
-import { FastifyZodHandler } from '../../types/fastify';
-import { AuthService } from './auth.service';
-import { RegisterRoute, LoginRoute } from './auth.schema';
+import { FastifyZodHandler } from '../../types/fastify.js';
+import { AuthService } from './auth.service.js';
+import { RegisterRoute, LoginRoute } from './auth.schema.js';
 
 export class AuthController {
   constructor(private authService: AuthService) {}

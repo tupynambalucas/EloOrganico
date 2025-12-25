@@ -1,6 +1,6 @@
 import { Model, FilterQuery, ClientSession, AnyBulkWriteOperation, UpdateQuery } from 'mongoose';
-import { IProductDocument } from '../../models/product.model';
-import { IProductRepository, ProductKey } from './product.repository.interface';
+import { IProductDocument } from '../../models/product.model.js';
+import { IProductRepository, ProductKey } from './product.repository.interface.js';
 
 export class ProductRepository implements IProductRepository {
   constructor(private model: Model<IProductDocument>) {}

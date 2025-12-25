@@ -12,15 +12,15 @@ import '@fastify/session';
 import '@fastify/jwt';
 import { type IUser } from '@elo-organico/shared';
 
-import { AuthController } from '../domains/auth/auth.controller';
-import { CycleController } from '../domains/cycle/cycle.controller';
-import { ProductController } from '../domains/product/product.controller';
+import { AuthController } from '../domains/auth/auth.controller.js';
+import { CycleController } from '../domains/cycle/cycle.controller.js';
+import { ProductController } from '../domains/product/product.controller.js';
 
-import { CycleService } from '../domains/cycle/cycle.service'; // [NOVO]
+import { CycleService } from '../domains/cycle/cycle.service.js'; // [NOVO]
 
-import { IUserDocument } from '../models/user.model';
-import { IProductDocument } from '../models/product.model';
-import { ICycleDocument } from '../models/cycle.model';
+import { IUserDocument } from '../models/user.model.js';
+import { IProductDocument } from '../models/product.model.js';
+import { ICycleDocument } from '../models/cycle.model.js';
 
 export type UserPayload = Pick<IUser, 'email' | 'username' | 'role' | 'icon'> & {
   _id: string;

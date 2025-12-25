@@ -3,7 +3,7 @@ import fp from 'fastify-plugin';
 import fastifySession from '@fastify/session';
 import fastifyJwt from '@fastify/jwt';
 import bcrypt from 'bcrypt';
-import { UserPayload } from '../types/fastify';
+import { UserPayload } from '../types/fastify.js';
 
 const SessionPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 

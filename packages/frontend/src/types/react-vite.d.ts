@@ -9,7 +9,3 @@
 //   export default ReactComponent;
 // }
 
-// declare module '*.module.css' {
-//   const classes: { [key: string]: string };
-//   export default classes;
-// }

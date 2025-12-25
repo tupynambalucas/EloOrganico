@@ -16,6 +16,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "allowArbitraryExtensions": true,
     "composite": true,
     "baseUrl": ".",
     "paths": {
@@ -36,14 +37,7 @@
       }
     ]
   },
-  "include": [
-    "src",
-    "src/**/*.css",
-    "src/**/*.module.css"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
   "exclude": ["node_modules"],
-  "references": [
-    { "path": "./tsconfig.node.json" },
-    { "path": "../shared" }
-  ]
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "../shared" }]
 }

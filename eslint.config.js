@@ -7,15 +7,10 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 export default [
   // 1. Configuração de Ignores (Global)
-  { 
-    ignores: [
-      '**/dist/**', 
-      '**/node_modules/**', 
-      'packages/**' 
-    ] 
+  {
+    ignores: ['**/dist/**', '**/node_modules/**', 'packages/**'],
   },
 
   // 2. Configs Base (JS e TS)
@@ -29,7 +24,7 @@ export default [
         // O projectService resolve automaticamente o tsconfig.json mais próximo
         // e permite arquivos soltos como este config
         projectService: {
-          allowDefaultProject: ['eslint.config.js']
+          allowDefaultProject: ['eslint.config.js'],
         },
         tsconfigRootDir: __dirname,
       },
@@ -41,6 +36,6 @@ export default [
     files: ['*.json'],
     rules: {
       // Regras para JSON se necessário
-    }
-  }
+    },
+  },
 ];

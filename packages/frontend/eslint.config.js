@@ -18,7 +18,6 @@ export default [
     ignores: [
       'dist',
       '**/*.d.ts',
-      'src/vite-env.d.ts',
       '**/*.css',
       '**/*.module.css',
       '**/*.scss',
@@ -27,9 +26,13 @@ export default [
     ],
   },
 
+  // 2. Configurações Base
   js.configs.recommended,
   ...tseslint.configs.recommended,
 
+  // [CORREÇÃO CRÍTICA] 2.1 Configuração Global do Parser
+  // Define o diretório raiz para TODOS os arquivos (incluindo js e o próprio config),
+  // resolvendo o erro "No tsconfigRootDir was set".
   {
     languageOptions: {
       parserOptions: {
@@ -38,17 +41,18 @@ export default [
     },
   },
 
+  // 3. Regras Principais (React + TS)
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mjs}'], // Aplica regras pesadas apenas em TS/TSX
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        project: [
-          path.resolve(__dirname, 'tsconfig.json'),
-          path.resolve(__dirname, 'tsconfig.node.json'),
-        ],
-      },
+        // Aqui definimos o projeto para análise de tipos (Type-Aware Linting)
+      projectService: true, 
+        tsconfigRootDir: __dirname,
+        extraFileExtensions: ['.css'],
+        },
     },
     plugins: {
       'react-hooks': reactHooks,
@@ -66,7 +70,7 @@ export default [
           alwaysTryTypes: true,
         },
         node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.css', '.module.css'],
         },
       },
     },
@@ -78,5 +82,6 @@ export default [
     },
   },
 
+  // 4. Configuração do Prettier (SEMPRE POR ÚLTIMO)
   prettierConfig,
 ];

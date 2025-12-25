@@ -16,23 +16,24 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
     username: useRef<HTMLInputElement>(null),
     email: useRef<HTMLInputElement>(null),
     passwordRegister: useRef<HTMLInputElement>(null),
+    confirmPassword: useRef<HTMLInputElement>(null),
   };
 
   const [formData, setFormData] = useState<AuthFormData>({
-    identifier: '', username: '', email: '', password: '', icon: 'graxaim'
+    identifier: '', username: '', email: '', password: '', confirmPassword: '', icon: 'graxaim'
   });
 
   const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({});
 
   useEffect(() => {
     if (errorCode) {
-      const errorUI = mapBackendErrorToUI(errorCode, refs, t);
+      const errorUI = mapBackendErrorToUI(errorCode, refs, t, isLogin);
       if (errorUI) {
         setFieldErrors(errorUI.errors);
         shakeElement(errorUI.ref.current);
       }
     }
-  }, [errorCode, t]);
+  }, [errorCode, t, isLogin]);
 
   const handleInputChange = (field: keyof AuthFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));

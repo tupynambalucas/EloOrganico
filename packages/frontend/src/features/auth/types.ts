@@ -1,6 +1,9 @@
 import { LoginDTO, RegisterDTO } from '@elo-organico/shared';
 
-export type AuthFormData = LoginDTO & RegisterDTO & { icon: string };
+export type AuthFormData = LoginDTO & RegisterDTO & { 
+  icon: string;
+  confirmPassword?: string; 
+};
 
 export type AuthFieldErrors = Partial<Record<keyof AuthFormData, string | null>>;
 
@@ -10,6 +13,7 @@ export interface AuthFormRefs {
   username: React.RefObject<HTMLInputElement | null>;
   email: React.RefObject<HTMLInputElement | null>;
   passwordRegister: React.RefObject<HTMLInputElement | null>;
+  confirmPassword: React.RefObject<HTMLInputElement | null>;
 }
 
 export interface ValidationResult {

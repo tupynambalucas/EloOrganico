@@ -15,6 +15,14 @@ export const validateAuthForm = (
 
   const result = schema.safeParse(dataToValidate);
 
+  const errorRefs: Record<string, React.RefObject<HTMLInputElement | null>> = {
+    identifier: refs.identifier,
+    password: isLogin ? refs.passwordLogin : refs.passwordRegister,
+    username: refs.username,
+    email: refs.email,
+    confirmPassword: refs.confirmPassword
+  };
+
   if (!result.success) {
     const firstError = result.error.errors[0];
     const field = firstError.path[0] as keyof AuthFormData;
@@ -25,17 +33,18 @@ export const validateAuthForm = (
       defaultValue: firstError.message 
     });
 
-    const errorRefs: Record<string, React.RefObject<HTMLInputElement | null>> = {
-      identifier: refs.identifier,
-      password: isLogin ? refs.passwordLogin : refs.passwordRegister,
-      username: refs.username,
-      email: refs.email,
-    };
-
     return { 
       isValid: false, 
       errors: { [field]: errorMessage }, 
       firstErrorRef: errorRefs[field] 
+    };
+  }
+
+  if (!isLogin && data.password !== data.confirmPassword) {
+    return {
+      isValid: false,
+      errors: { confirmPassword: t('auth.errors.PASSWORDS_MISMATCH') },
+      firstErrorRef: refs.confirmPassword
     };
   }
 

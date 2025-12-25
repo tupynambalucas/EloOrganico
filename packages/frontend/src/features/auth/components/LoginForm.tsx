@@ -27,10 +27,10 @@ export const LoginForm = ({ data, errors, onChange, inputRefs, disabled }: Login
           className={errors.identifier ? styles.inputError : ''}
           disabled={disabled}
           required
-          aria-invalid={!!errors.identifier}
         />
-        {errors.identifier && <span className={styles.fieldErrorMessage} role="alert">{errors.identifier}</span>}
+        {errors.identifier && <span className={styles.fieldErrorMessage}>{errors.identifier}</span>}
       </div>
+
       <div className={styles.inputWrapper}>
         <div className={styles.passwordWrapper}>
           <input
@@ -42,19 +42,12 @@ export const LoginForm = ({ data, errors, onChange, inputRefs, disabled }: Login
             className={errors.password ? styles.inputError : ''}
             disabled={disabled}
             required
-            aria-invalid={!!errors.password}
           />
-          <button 
-            type="button" 
-            className={styles.eyeIcon} 
-            onClick={() => setShowPassword(!showPassword)} 
-            tabIndex={-1}
-            aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
-          >
+          <button type="button" className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
           </button>
         </div>
-        {errors.password && <span className={styles.fieldErrorMessage} role="alert">{errors.password}</span>}
+        {errors.password && <span className={styles.fieldErrorMessage}>{errors.password}</span>}
       </div>
     </div>
   );

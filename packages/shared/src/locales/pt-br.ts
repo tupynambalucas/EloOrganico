@@ -15,6 +15,7 @@ export const translations = {
       USERNAME_ALREADY_EXISTS: 'Nome de usuário já existe.',
       NOT_AUTHENTICATED: 'Você precisa estar logado.',
       SESSION_EXPIRED: 'Sessão expirada. Faça login novamente.',
+      PASSWORDS_MISMATCH: 'As senhas não são iguais. Digite novamente com calma.',
       required: 'Este campo é obrigatório.',
       identifier_invalid_string: 'Insira um usuário ou e-mail válido.',
       email_invalid_string: 'Formato de e-mail inválido.',

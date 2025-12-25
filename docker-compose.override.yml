@@ -1,27 +1,5 @@
 services:
-  # Serviço que gera a chave se ela não existir
-  key-gen:
-    image: mongo:7.0
-    volumes:
-      - ./:/infra
-    user: root
-    entrypoint:
-      - bash
-      - -c
-      - |
-        if [ ! -f /infra/mongo-keyfile ]; then
-          echo "Gerando mongo-keyfile pela primeira vez..."
-          openssl rand -base64 756 > /infra/mongo-keyfile
-          chmod 400 /infra/mongo-keyfile
-          echo "✅ Chave gerada com sucesso!"
-        else
-          echo "Chave já existe, pulando geração."
-        fi
-
   db:
-    depends_on:
-      key-gen:
-        condition: service_completed_successfully
     ports:
       - "27017:27017"
     restart: "no"

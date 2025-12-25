@@ -17,7 +17,7 @@ const AuthFeature = () => {
     fieldErrors, 
     handleInputChange, 
     handleSubmit, 
-    isLoading, 
+    isLoading,
     refs 
   } = useAuthForm(isLogin, () => setIsLogin(true));
 

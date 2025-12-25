@@ -55,7 +55,8 @@ interface ImportMeta {
   };
 }
 
-/* --- CSS --- 
-   NÃO declare '*.module.css' aqui. 
-   Deixe o 'typescript-plugin-css-modules' lidar com isso exclusivamente.
-*/
+//--- CSS --- 
+declare module '*.module.css' {
+  const classes: { readonly [key: string]: string };
+  export default classes;
+}

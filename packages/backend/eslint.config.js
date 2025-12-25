@@ -10,22 +10,22 @@ const __dirname = path.dirname(__filename);
 
 export default [
   {
-    ignores: ['dist', 'coverage', 'node_modules']
+    ignores: ['dist', 'coverage', 'node_modules'],
   },
-  
+
   {
     files: ['**/*.{js,mjs,cjs}'],
     languageOptions: {
       parserOptions: {
         tsconfigRootDir: __dirname,
-        project: null
-      }
-    }
+        project: null,
+      },
+    },
   },
 
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  
+
   {
     files: ['src/**/*.ts'],
     languageOptions: {
@@ -40,7 +40,7 @@ export default [
       },
     },
     plugins: {
-      'import': importPlugin,
+      import: importPlugin,
     },
     settings: {
       'import/resolver': {
@@ -48,7 +48,7 @@ export default [
           project: path.resolve(__dirname, 'tsconfig.json'),
           alwaysTryTypes: true,
         },
-      }
+      },
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -56,7 +56,7 @@ export default [
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/await-thenable': 'error',
       'no-console': 'warn',
-      'import/no-unresolved': 'error'
+      'import/no-unresolved': 'error',
     },
   },
 ];

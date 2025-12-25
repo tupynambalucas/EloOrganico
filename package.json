@@ -16,15 +16,12 @@
   "scripts": {
     "// [1] INSTALAÇÃO E SETUP": "-------------------------------------------------------",
     "postinstall": "npm run build -w @elo-organico/shared",
-
     "// [2] DESENVOLVIMENTO LOCAL": "----------------------------------------------------",
     "dev:frontend": "npm run dev -w @elo-organico/frontend",
     "dev:backend": "npm run dev -w @elo-organico/backend",
     "dev:stack": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-
     "// [3] SEED MONGODB": "----------------------------------------------------",
     "backend:seed": "npm run seed -w @elo-organico/backend",
-
     "// [4] INFRAESTRUTURA LOCAL (DOCKER)": "---------------------------------------------",
     "infra:keygen": "node -e \"const fs=require('fs'); if(!fs.existsSync('mongo-keyfile')){fs.writeFileSync('mongo-keyfile', require('crypto').randomBytes(756).toString('base64')); console.log('✅ mongo-keyfile gerado com sucesso!')} else {console.log('ℹ️ mongo-keyfile já existe.')}\"",
     "infra:up": "npm run infra:keygen && docker compose up -d db redis",
@@ -32,7 +29,6 @@
     "infra:down": "docker compose down",
     "infra:clean": "docker compose down --volumes && node -e \"const fs=require('fs'); if(fs.existsSync('mongo-keyfile')) fs.unlinkSync('mongo-keyfile')\"",
     "infra:reset": "npm run infra:clean && npm run infra:up",
-    
     "// [5] BUILD E QUALIDADE (CI/CD)": "-------------------------------------------------",
     "build:shared": "npm run build -w @elo-organico/shared",
     "build:backend": "npm run build -w @elo-organico/backend",
@@ -41,23 +37,24 @@
     "clean": "npm run clean --workspaces --if-present",
     "lint:all": "npm run lint --workspaces --if-present",
     "typecheck:all": "npm run typecheck --workspaces --if-present",
-    
     "// [6] SIMULAÇÃO DE PRODUÇÃO (CONTAINERS)": "----------------------------------------",
     "prod:up": "docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build",
     "prod:down": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "typescript": "~5.7.2",
-    "rimraf": "^6.0.1",
-    "eslint": "^9.33.0",
     "@eslint/js": "^9.33.0",
-    "globals": "^16.3.0",
-    "typescript-eslint": "^8.39.1",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20"
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "prettier": "^3.7.4",
+    "rimraf": "^6.0.1",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.39.1"
   }
 }

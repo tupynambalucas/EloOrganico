@@ -12,18 +12,17 @@ const AuthFeature = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { clearErrors } = useAuthStore();
 
-  const { 
-    formData, 
-    fieldErrors, 
-    handleInputChange, 
-    handleSubmit, 
-    isLoading,
-    refs 
-  } = useAuthForm(isLogin, () => setIsLogin(true));
+  const { formData, fieldErrors, handleInputChange, handleSubmit, isLoading, refs } = useAuthForm(
+    isLogin,
+    () => setIsLogin(true),
+  );
 
-  useGSAP(() => {
-    animateFormEntrance(containerRef.current);
-  }, { dependencies: [isLogin], scope: containerRef });
+  useGSAP(
+    () => {
+      animateFormEntrance(containerRef.current);
+    },
+    { dependencies: [isLogin], scope: containerRef },
+  );
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
@@ -39,25 +38,25 @@ const AuthFeature = () => {
 
       <form className={styles.formContainer} onSubmit={handleSubmit}>
         {isLogin ? (
-          <LoginForm 
-            data={formData} 
-            errors={fieldErrors} 
-            onChange={handleInputChange} 
-            inputRefs={refs} 
-            disabled={isLoading} 
+          <LoginForm
+            data={formData}
+            errors={fieldErrors}
+            onChange={handleInputChange}
+            inputRefs={refs}
+            disabled={isLoading}
           />
         ) : (
-          <RegisterForm 
-            data={formData} 
-            errors={fieldErrors} 
-            onChange={handleInputChange} 
-            inputRefs={refs} 
-            disabled={isLoading} 
+          <RegisterForm
+            data={formData}
+            errors={fieldErrors}
+            onChange={handleInputChange}
+            inputRefs={refs}
+            disabled={isLoading}
           />
         )}
 
         <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Registrar')}
+          {isLoading ? 'Carregando...' : isLogin ? 'Entrar' : 'Registrar'}
         </button>
       </form>
 

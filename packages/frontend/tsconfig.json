@@ -36,7 +36,12 @@
       }
     ]
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "src/**/*.css",
+    "src/**/*.module.css"
+  ],
+  "exclude": ["node_modules"],
   "references": [
     { "path": "./tsconfig.node.json" },
     { "path": "../shared" }

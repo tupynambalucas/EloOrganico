@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default [
   {
-    ignores: ['dist', 'node_modules']
+    ignores: ['dist', 'node_modules'],
   },
 
   {
@@ -16,14 +16,14 @@ export default [
     languageOptions: {
       parserOptions: {
         tsconfigRootDir: __dirname,
-        project: null
-      }
-    }
+        project: null,
+      },
+    },
   },
 
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  
+
   {
     files: ['src/**/*.ts'],
     languageOptions: {
@@ -35,9 +35,9 @@ export default [
       },
     },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'error', 
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
-      '@typescript-eslint/explicit-module-boundary-types': 'off'
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
     },
   },
 ];

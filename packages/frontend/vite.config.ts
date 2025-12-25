@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
       exclude: ['@elo-organico/shared'],
     },
     
-    base: '/',
+    base: './',
 
     server: {
       host: true,

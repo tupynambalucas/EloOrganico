@@ -1,6 +1,8 @@
 {
   "name": "@elo-organico/monorepo",
   "version": "0.1.0",
+  "type": "module",
+  "private": true,
   "author": "Tupynambá Lucas Varela Rodrigues <tupynambalucas.dev>",
   "license": "CC-BY-NC-4.0",
   "homepage": "https://tupynambalucas.dev",
@@ -8,7 +10,6 @@
     "type": "git",
     "url": "git+https://github.com/tupynambalucas/EloOrganico.git"
   },
-  "private": true,
   "workspaces": [
     "packages/*"
   ],

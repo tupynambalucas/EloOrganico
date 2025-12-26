@@ -16,7 +16,6 @@ coverage/
 *.tsbuildinfo
 
 # --- Arquivos (Frontend) ---
-*.css.d.ts
 
 # --- Ambiente e Segredos (CRÍTICO) ---
 # Ignora todos os arquivos de env
@@ -48,7 +47,8 @@ lerna-debug.log*
 *.swp
 *.swo
 *.swn
-
+.iaignore
+.prettierrc
 # --- Sistema Operacional ---
 .DS_Store
 Thumbs.db

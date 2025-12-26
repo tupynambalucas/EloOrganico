@@ -24,7 +24,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@types/node": "^20.12.12",
     "zod": "^3.24.1"
   }
 }

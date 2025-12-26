@@ -2,6 +2,7 @@ import fp from 'fastify-plugin';
 import fastifyEnv from '@fastify/env';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { FastifyInstance } from 'fastify';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,7 +43,7 @@ const schema = {
   }
 };
 
-const envConfig = async (server: any) => {
+const envConfig = async (server: FastifyInstance) => {
   const rootEnvPath = path.join(__dirname, '../../../../.env');
 
   await server.register(fastifyEnv, {

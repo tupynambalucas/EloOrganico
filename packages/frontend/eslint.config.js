@@ -13,7 +13,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default [
-  // 1. Configuração Global de Ignores
   {
     ignores: [
       'dist',
@@ -25,14 +24,8 @@ export default [
       '**/*.png',
     ],
   },
-
-  // 2. Configurações Base
   js.configs.recommended,
   ...tseslint.configs.recommended,
-
-  // [CORREÇÃO CRÍTICA] 2.1 Configuração Global do Parser
-  // Define o diretório raiz para TODOS os arquivos (incluindo js e o próprio config),
-  // resolvendo o erro "No tsconfigRootDir was set".
   {
     languageOptions: {
       parserOptions: {
@@ -40,19 +33,16 @@ export default [
       },
     },
   },
-
-  // 3. Regras Principais (React + TS)
   {
-    files: ['**/*.{ts,tsx,mjs}'], // Aplica regras pesadas apenas em TS/TSX
+    files: ['**/*.{ts,tsx,mjs}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        // Aqui definimos o projeto para análise de tipos (Type-Aware Linting)
-      projectService: true, 
+        projectService: true,
         tsconfigRootDir: __dirname,
         extraFileExtensions: ['.css'],
-        },
+      },
     },
     plugins: {
       'react-hooks': reactHooks,
@@ -81,7 +71,5 @@ export default [
       'import/no-unresolved': 'error',
     },
   },
-
-  // 4. Configuração do Prettier (SEMPRE POR ÚLTIMO)
   prettierConfig,
 ];

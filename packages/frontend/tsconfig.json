@@ -32,7 +32,7 @@
         "name": "typescript-plugin-css-modules",
         "options": {
           "classnameTransform": "camelCase",
-          "customMatcher": "\\.module\\.css$"
+          "customMatcher": "\\.m\\.css$"
         }
       }
     ]

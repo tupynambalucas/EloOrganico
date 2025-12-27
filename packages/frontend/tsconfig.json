@@ -32,17 +32,15 @@
         "name": "typescript-plugin-css-modules",
         "options": {
           "classnameTransform": "camelCase",
-          "customMatcher": "\\.m\\.css$"
+          "customMatcher": "\\.module\\.css$"
         }
       }
     ]
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.css",
-    "src/**/*.module.css",
-    "src/types/**/*.d.ts"
-  ],
+  "include": ["src"],
   "exclude": ["node_modules"],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "../shared" }]
+  "references": [
+    { "path": "./tsconfig.node.json" }, 
+    { "path": "../shared" }
+  ]
 }

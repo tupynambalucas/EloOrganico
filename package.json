@@ -36,6 +36,9 @@
     "build:frontend": "npm run build -w @elo-organico/frontend",
     "build:all": "tsc -b",
     "clean": "npm run clean --workspaces --if-present",
+    "lint": "eslint . --cache --cache-location .eslintcache",
+    "lint:fix": "eslint . --fix --cache --cache-location .eslintcache",
+    "lint:check": "eslint . --max-warnings 0",
     "lint:all": "npm run lint --workspaces --if-present",
     "typecheck:all": "npm run typecheck --workspaces --if-present",
     "// [6] SIMULAÇÃO DE PRODUÇÃO (CONTAINERS)": "----------------------------------------",
@@ -45,6 +48,7 @@
   "devDependencies": {
     "@types/node": "^20.12.12",
     "concurrently": "^8.2.2",
+    "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",
     "prettier": "^3.7.4",
     "rimraf": "^6.0.1",

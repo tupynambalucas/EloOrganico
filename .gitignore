@@ -14,7 +14,7 @@ build/
 out/
 coverage/
 *.tsbuildinfo
-
+.eslintcache
 # --- Arquivos (Frontend) ---
 
 # --- Ambiente e Segredos (CRÍTICO) ---

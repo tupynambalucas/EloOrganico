@@ -1,36 +1,22 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "rootDir": "./src",
-    "baseUrl": ".",
+    "outDir": "./dist",
     "noEmit": false,
-    "outDir": "dist",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@assets/*": [
-        "./src/assets/*"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@features/*": [
-        "./src/features/*"
-      ],
-      "@domains/*": [
-        "./src/domains/*"
-      ]
+      "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@features/*": ["./src/features/*"],
+      "@domains/*": ["./src/domains/*"]
     }
   },
-  "references": [
-    {
-      "path": "../shared"
-    }
-  ],
-  "exclude": [
-    "node_modules",
-    "test",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "**/*.test.*", "**/*.spec.*", "**/*.css", "**/*.module.css"],
+  "references": [{ "path": "../shared" }]
 }

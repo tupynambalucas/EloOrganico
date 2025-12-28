@@ -9,15 +9,13 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false,
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "allowArbitraryExtensions": true,
-    "composite": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -26,21 +24,8 @@
       "@features/*": ["./src/features/*"],
       "@domains/*": ["./src/domains/*"],
       "@elo-organico/shared": ["../shared/src/index.ts"]
-    },
-    "plugins": [
-      {
-        "name": "typescript-plugin-css-modules",
-        "options": {
-          "classnameTransform": "camelCase",
-          "customMatcher": "\\.module\\.css$"
-        }
-      }
-    ]
+    }
   },
-  "include": ["src"],
-  "exclude": ["node_modules"],
-  "references": [
-    { "path": "./tsconfig.node.json" }, 
-    { "path": "../shared" }
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/types/**/*.d.ts", "../shared/src/index.ts"],
+  "exclude": ["node_modules", "dist", "**/*.css", "**/*.module.css"]
 }

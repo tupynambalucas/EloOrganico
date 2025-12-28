@@ -6,10 +6,9 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": false
+    "noEmit": true,
+    "target": "ES2022"
   },
-  "include": [
-    "vite.config.ts",
-    "eslint.config.js"
-  ]
+  "include": ["vite.config.ts", "*.config.ts"],
+  "exclude": ["src", "dist", "node_modules"]
 }

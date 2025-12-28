@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
-import path from 'path'; // [NOVO] Import necessário
-import { fileURLToPath } from 'url'; // [NOVO] Import necessário para __dirname em ESM
+import path from 'path';
+import { fileURLToPath } from 'url';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
@@ -14,22 +14,29 @@ export default defineConfig(({ mode }) => {
     plugins: [
       tsconfigPaths(),
       tailwindcss(),
-      react(), 
+      react(),
       svgr({
-        include: "**/*.svg?react"
-      })
+        include: '**/*.svg?react',
+      }),
     ],
 
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        '@': path.resolve(__dirname, './src'),
       },
     },
-    
+
+    css: {
+      modules: {
+        localsConvention: 'camelCase',
+        generateScopedName: '[name]__[local]___[hash:base64:5]',
+      },
+    },
+
     optimizeDeps: {
       exclude: ['@elo-organico/shared'],
     },
-    
+
     base: './',
 
     server: {
@@ -42,8 +49,8 @@ export default defineConfig(({ mode }) => {
           target: 'http://localhost:3000',
           changeOrigin: true,
           secure: false,
-        }
-      }
+        },
+      },
     },
 
     preview: {
@@ -54,8 +61,8 @@ export default defineConfig(({ mode }) => {
           target: 'http://localhost:3000',
           changeOrigin: true,
           secure: false,
-        }
-      }
+        },
+      },
     },
 
     build: {
@@ -65,15 +72,15 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           assetFileNames: (assetInfo) => {
-            const info = assetInfo.names ? assetInfo.names[0] : (assetInfo.name || '');
+            const info = assetInfo.names ? assetInfo.names[0] : assetInfo.name || '';
             let extType = info.split('.').at(1) || 'unknown';
-            
+
             if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
               extType = 'img';
             } else if (/css|scss|sass/i.test(extType)) {
-                extType = 'css';
+              extType = 'css';
             } else if (/woff|woff2|eot|ttf|otf/i.test(extType)) {
-                extType = 'fonts';
+              extType = 'fonts';
             }
 
             return `assets/${extType}/[name]-[hash][extname]`;

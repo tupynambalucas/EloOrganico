@@ -12,14 +12,6 @@
     "target": "ES2022",
     "lib": ["ES2022"]
   },
-  "include": [
-    "eslint.config.js",
-    "*.config.{js,mjs,ts}",
-    "scripts/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "packages"
-  ]
+  "include": ["eslint.config.ts", "*.config.{js,mjs,ts}", "scripts/**/*"],
+  "exclude": ["node_modules", "dist", "packages"]
 }

@@ -43,12 +43,10 @@ lerna-debug.log*
 
 # --- IDEs e Editores ---
 .idea/
-.vscode/
 *.swp
 *.swo
 *.swn
 .iaignore
-.prettierrc
 # --- Sistema Operacional ---
 .DS_Store
 Thumbs.db

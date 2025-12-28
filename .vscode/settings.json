@@ -48,6 +48,5 @@
   "typescript.suggest.autoImports": true,
   "css.validate": false,
   "scss.validate": false,
-  "less.validate": false,
-  "typescript.preferences.includePackageJsonAutoImports": "auto"
+  "less.validate": false
 }

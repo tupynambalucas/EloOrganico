@@ -7,6 +7,7 @@
 This repository operates under a **Monorepo** architecture, consolidating all application modules (Backend, Frontend, and Shared Library) into a single versioning environment, facilitating maintenance and code consistency.
 
 ## 📖 Master Plan
+
 - [Master Plan (English)](./docs/MASTER_PLAN.en.md)
 - [Documento Mestre (Português)](./docs/MASTER_PLAN.pt-BR.md)
 
@@ -14,19 +15,19 @@ This repository operates under a **Monorepo** architecture, consolidating all ap
 
 The system is composed of three main modules, orchestrated via **Docker** to ensure parity between development and production environments:
 
-| Module | Technology | Responsibility | 
-| :--- | :--- | :--- | 
-| **`@elo-organico/backend`** | Fastify v5, Node.js, MongoDB | RESTful API, Business Rules, Transaction Management, and Queues. | 
-| **`@elo-organico/frontend`** | React 19, Vite, Tailwind CSS | User Interface (SPA), Administrative Panel, and Customer Portal. | 
-| **`@elo-organico/shared`** | TypeScript, Zod | *Single Source of Truth* for typing and data validation. | 
+| Module                       | Technology                       | Responsibility                                                   |
+| :--------------------------- | :------------------------------- | :--------------------------------------------------------------- |
+| **`@elo-organico/backend`**  | Fastify v5, Node.js, MongoDB     | RESTful API, Business Rules, Transaction Management, and Queues. |
+| **`@elo-organico/frontend`** | React 19, Vite,Zustand, Tailwind | User Interface (SPA), Administrative Panel                       |
+| **`@elo-organico/shared`**   | TypeScript, Zod                  | _Single Source of Truth_ for typing and data validation.         |
 
 ## 🚀 Infrastructure Requirements
 
 For local execution or deployment of the application, the environment must meet the following prerequisites:
 
-* **Node.js**: Version 20 (LTS) or higher.
-* **Package Manager**: NPM v10+.
-* **Virtualization**: Docker Engine & Docker Compose.
+- **Node.js**: Version 20 (LTS) or higher.
+- **Package Manager**: NPM v10+.
+- **Virtualization**: Docker Engine & Docker Compose.
 
 ## 🛠 Installation and Execution Guide
 
@@ -71,7 +72,7 @@ ADMIN_PASS_SEED=initial_secure_password
 
 ### 3. Database Security Configuration
 
-The MongoDB cluster operates in *Replica Set* mode to ensure ACID transactions. Generating an internal authentication key (Keyfile) is mandatory:
+The MongoDB cluster operates in _Replica Set_ mode to ensure ACID transactions. Generating an internal authentication key (Keyfile) is mandatory:
 
 ```bash
 npm run infra:gen-key
@@ -95,7 +96,7 @@ npm run backend:seed
 
 ## 💻 Development Environment
 
-You can choose to run the full stack or individual services with *Hot Reload* support.
+You can choose to run the full stack or individual services with _Hot Reload_ support.
 
 ### Full Stack Execution
 
@@ -107,21 +108,22 @@ npm run dev:stack
 
 ### Individual Service Execution
 
-* **Backend Only**:
-    ```bash
-    npm run dev:backend
-    ```
+- **Backend Only**:
 
-* **Frontend Only**:
-    ```bash
-    npm run dev:frontend
-    ```
+  ```bash
+  npm run dev:backend
+  ```
+
+- **Frontend Only**:
+  ```bash
+  npm run dev:frontend
+  ```
 
 ### Access Points
 
-* **Frontend (Web Application)**: http://localhost:5173
+- **Frontend (Web Application)**: http://localhost:5173
 
-* **Backend (REST API)**: http://localhost:3000
+- **Backend (REST API)**: http://localhost:3000
 
 ## 🐳 Production Simulation (Docker)
 
@@ -145,13 +147,13 @@ npm run prod:down
 
 ## 📜 Automation Scripts
 
-| Command | Technical Description | 
-| :--- | :--- | 
-| `npm run infra:up` | Provisions infrastructure services (DB, Cache). | 
-| `npm run infra:down` | Stops and removes active containers. | 
-| `npm run infra:reset` | Resets the entire infrastructure (Removes volumes/data). | 
-| `npm run build:all` | Executes the build process across all monorepo packages. | 
-| `npm run lint:all` | Executes static code analysis (Linter). | 
+| Command               | Technical Description                                    |
+| :-------------------- | :------------------------------------------------------- |
+| `npm run infra:up`    | Provisions infrastructure services (DB, Cache).          |
+| `npm run infra:down`  | Stops and removes active containers.                     |
+| `npm run infra:reset` | Resets the entire infrastructure (Removes volumes/data). |
+| `npm run build:all`   | Executes the build process across all monorepo packages. |
+| `npm run lint:all`    | Executes static code analysis (Linter).                  |
 
 ## © License and Rights
 

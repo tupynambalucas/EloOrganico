@@ -8,6 +8,12 @@
     "**/node_modules": true,
     "**/dist": true
   },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "eslint.debug": false,
+  "eslint.trace.server": "off",
   "eslint.useFlatConfig": true,
   "eslint.workingDirectories": [
     {

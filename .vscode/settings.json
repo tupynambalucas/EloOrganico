@@ -54,5 +54,6 @@
   "typescript.suggest.autoImports": true,
   "css.validate": false,
   "scss.validate": false,
-  "less.validate": false
+  "less.validate": false,
+  "github.gitProtocol": "ssh"
 }

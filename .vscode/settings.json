@@ -2,7 +2,7 @@
   "files.exclude": {
     "**/.git": false,
     "**/.eslintcache": true,
-    "**/node_modules": false,
+    "**/node_modules": true,
     "**/dist": false
   },
   "eslint.debug": false,
@@ -18,8 +18,6 @@
     "cache": true,
     "cacheLocation": ".eslintcache"
   },
-
-  // "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",

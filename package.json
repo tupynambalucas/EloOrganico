@@ -15,10 +15,6 @@
     "packages/*"
   ],
   "scripts": {
-    "gemini": "start cmd /k npx gemini",
-    "gemini:chat": "start cmd /k npx gemini chat",
-    "gemini:review": "start cmd /k npx gemini review .",
-    "gemini:doc": "start cmd /k npx gemini doc --styleguide ./.gemini/styleguide.md",
     "// [1] INSTALAÇÃO E SETUP": "-------------------------------------------------------",
     "postinstall": "npm run build -w @elo-organico/shared",
     "// [2] DESENVOLVIMENTO LOCAL": "----------------------------------------------------",
@@ -50,7 +46,6 @@
     "prod:down": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "devDependencies": {
-    "@google/gemini-cli": "^0.22.4",
     "@types/node": "^20.12.12",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "concurrently": "^8.2.2",

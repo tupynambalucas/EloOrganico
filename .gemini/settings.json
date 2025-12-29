@@ -1,12 +1,15 @@
 {
+  "geminicodeassist.contextExclusionGitignore": false,
   "geminicodeassist.contextExclusionFile": ".gemini/.geminiignore",
-  "geminicodeassist.contextExclusionGitignore": true,
   "geminicodeassist.chat.enableStreaming": true,
   "geminicodeassist.enableTelemetry": false,
   "geminicodeassist.chat.automaticScrolling": false,
   "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
-  "geminicodeassist.inlineSuggestions.suggestionSpeed": "Slow",
   "http.systemCertificatesNode": true,
+  "gemini-cli.debug.logging.enabled": true,
+  "geminicodeassist.inlineSuggestions.enableAuto": true,
+  "geminicodeassist.inlineSuggestions.suggestionSpeed": "Fast",
+  "google.gemini-cli-vscode-ide-companion": true,
   "geminicodeassist.languages": [
     "typescriptreact",
     "typescript",
@@ -20,5 +23,9 @@
     "git-commit",
     "yaml",
     "plaintext"
-  ]
+  ],
+  "general": {
+    "disableAutoUpdate": false,
+    "previewFeatures": true
+  }
 }

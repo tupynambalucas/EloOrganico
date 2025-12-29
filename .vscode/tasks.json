@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🔑 Gemini Login",
+      "type": "shell",
+      "command": "Start-Process",
+      "args": [
+        "powershell",
+        "-ArgumentList",
+        "'-NoExit -Command Set-Location ''${workspaceFolder}''; gemini auth login'"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🚀 Gemini CLI",
+      "type": "shell",
+      "command": "Start-Process",
+      "args": [
+        "powershell",
+        "-ArgumentList",
+        "'-NoExit -Command Set-Location ''${workspaceFolder}''; gemini'"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🤖 Gemini Chat",
+      "type": "shell",
+      "command": "Start-Process",
+      "args": [
+        "powershell",
+        "-ArgumentList",
+        "'-NoExit -Command Set-Location ''${workspaceFolder}''; gemini chat'"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "📝 Gemini Review",
+      "type": "shell",
+      "command": "Start-Process",
+      "args": [
+        "powershell",
+        "-ArgumentList",
+        "'-NoExit -Command Set-Location ''${workspaceFolder}''; gemini review .'"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "📚 Gemini Doc",
+      "type": "shell",
+      "command": "Start-Process",
+      "args": [
+        "powershell",
+        "-ArgumentList",
+        "'-NoExit -Command Set-Location ''${workspaceFolder}''; gemini doc --styleguide ./.gemini/styleguide.md'"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      }
+    }
+  ]
+}

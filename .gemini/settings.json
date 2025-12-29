@@ -1,0 +1,24 @@
+{
+  "geminicodeassist.contextExclusionFile": ".gemini/.geminiignore",
+  "geminicodeassist.contextExclusionGitignore": true,
+  "geminicodeassist.chat.enableStreaming": true,
+  "geminicodeassist.enableTelemetry": false,
+  "geminicodeassist.chat.automaticScrolling": false,
+  "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
+  "geminicodeassist.inlineSuggestions.suggestionSpeed": "Slow",
+  "http.systemCertificatesNode": true,
+  "geminicodeassist.languages": [
+    "typescriptreact",
+    "typescript",
+    "html",
+    "dockerfile",
+    "dockercompose",
+    "css",
+    "json",
+    "powershell",
+    "markdown",
+    "git-commit",
+    "yaml",
+    "plaintext"
+  ]
+}

@@ -1,16 +1,9 @@
 {
-  "json.schemaDownload.enable": true,
-  "typescript.tsserver.log": "off",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "files.exclude": {
     "**/.git": false,
     "**/.eslintcache": true,
-    "**/node_modules": true,
-    "**/dist": true
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "never"
+    "**/node_modules": false,
+    "**/dist": false
   },
   "eslint.debug": false,
   "eslint.trace.server": "off",
@@ -24,6 +17,13 @@
   "eslint.options": {
     "cache": true,
     "cacheLocation": ".eslintcache"
+  },
+
+  // "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
   },
   "editor.formatOnSave": true,
   "[javascript]": {
@@ -49,6 +49,8 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.includePackageJsonAutoImports": "off",
   "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "json.schemaDownload.enable": true,
+  "typescript.tsserver.log": "off",
   "typescript.tsserver.maxTsServerMemory": 8192,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.suggest.autoImports": true,

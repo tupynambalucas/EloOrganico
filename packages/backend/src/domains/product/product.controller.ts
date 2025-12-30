@@ -1,27 +1,43 @@
-import { ProductService } from './product.service.js';
-import { FastifyZodHandler } from '../../types/fastify.js';
-import { ListProductsRoute } from './product.schema.js';
-import { IProductDocument } from '../../models/product.model.js';
+import type { z } from 'zod';
+import type { ProductResponseSchema } from '@elo-organico/shared';
+import type { FastifyZodHandler } from '../../types/fastify.js';
+import type { ListProductsRoute } from './product.schema.js';
+import type { IProductDocument } from '../../models/product.model.js';
+import type { ProductService } from './product.service.js';
+
+interface ProductPlainObject {
+  _id: { toString(): string };
+  name: string;
+  category: string;
+  measure: unknown;
+  content?: unknown;
+  available: boolean;
+  createdAt?: Date | string | number;
+  updatedAt?: Date | string | number;
+}
+
+type ProductReply = z.infer<typeof ProductResponseSchema>;
 
 export class ProductController {
-  constructor(private service: ProductService) {}
+  constructor(private readonly service: ProductService) {}
 
-  private mapToResponse(product: IProductDocument | null) {
-    if (!product) return null;
+  private mapToResponse(product: IProductDocument): ProductReply {
+    const obj = product.toObject() as ProductPlainObject;
 
-    const obj = typeof product.toObject === 'function' ? product.toObject() : product;
-    
     return {
       ...obj,
-      _id: obj._id?.toString(),
+      _id: obj._id.toString(),
       createdAt: obj.createdAt ? new Date(obj.createdAt).toISOString() : undefined,
       updatedAt: obj.updatedAt ? new Date(obj.updatedAt).toISOString() : undefined,
-    };
+    } as ProductReply;
   }
 
-  listHandler: FastifyZodHandler<ListProductsRoute> = async (request, reply) => {
+  public listHandler: FastifyZodHandler<ListProductsRoute> = async (
+    request,
+    reply,
+  ): Promise<void> => {
     const products = await this.service.listProducts(request.query);
-    const response = products.map(p => this.mapToResponse(p));
-    return reply.send(response);
-  }
+    const response = products.map((p) => this.mapToResponse(p));
+    void reply.send(response);
+  };
 }

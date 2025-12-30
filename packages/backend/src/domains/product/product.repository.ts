@@ -1,48 +1,68 @@
-import { Model, FilterQuery, ClientSession, AnyBulkWriteOperation, UpdateQuery } from 'mongoose';
-import { IProductDocument } from '../../models/product.model.js';
-import { IProductRepository, ProductKey } from './product.repository.interface.js';
+import type {
+  Model,
+  FilterQuery,
+  ClientSession,
+  AnyBulkWriteOperation,
+  UpdateQuery,
+  UpdateWriteOpResult,
+  mongo,
+} from 'mongoose';
+import type { IProductDocument } from '../../models/product.model.js';
+import type { IProductRepository, ProductKey } from './product.repository.interface.js';
 
 export class ProductRepository implements IProductRepository {
-  constructor(private model: Model<IProductDocument>) {}
+  constructor(private readonly model: Model<IProductDocument>) {}
 
-  async findAll(queryFilters: FilterQuery<IProductDocument>) {
-    return this.model.find(queryFilters).sort({ category: 1, name: 1 });
+  public async findAll(queryFilters: FilterQuery<IProductDocument>): Promise<IProductDocument[]> {
+    return this.model.find(queryFilters).sort({ category: 1, name: 1 }).exec();
   }
 
-  async bulkUpsert(ops: AnyBulkWriteOperation<IProductDocument>[], session: ClientSession) {
+  public async bulkUpsert(
+    ops: Array<AnyBulkWriteOperation<IProductDocument>>,
+    session: ClientSession,
+  ): Promise<mongo.BulkWriteResult> {
     return this.model.bulkWrite(ops, { session });
   }
 
-  async findByKeys(keys: ProductKey[], session: ClientSession) {
-    if (keys.length === 0) return [];
-    
-    const criteria = keys.map(k => {
-      const filter: FilterQuery<IProductDocument> = { 
-        name: k.name, 
+  public async findByKeys(keys: ProductKey[], session: ClientSession): Promise<IProductDocument[]> {
+    if (keys.length === 0) {
+      return [];
+    }
+
+    const criteria = keys.map((k) => {
+      const filter: FilterQuery<IProductDocument> = {
+        name: k.name,
         category: k.category,
-        'measure.type': k.measureType 
+        'measure.type': k.measureType,
       };
 
       if (k.contentValue !== undefined && k.contentUnit !== undefined) {
         filter['content.value'] = k.contentValue;
         filter['content.unit'] = k.contentUnit;
       } else {
-        filter['content'] = null; 
+        filter.content = null;
       }
       return filter;
     });
 
-    return this.model.find({ $or: criteria }).select('_id').session(session);
+    return this.model.find({ $or: criteria }).select('_id').session(session).exec();
   }
 
-  async deactivateOthers(activeIds: string[], session: ClientSession) {
-    return this.model.updateMany(
-      { _id: { $nin: activeIds }, available: true },
-      { $set: { available: false } }
-    ).session(session);
+  public async deactivateOthers(
+    activeIds: string[],
+    session: ClientSession,
+  ): Promise<UpdateWriteOpResult> {
+    return this.model
+      .updateMany({ _id: { $nin: activeIds }, available: true }, { $set: { available: false } })
+      .session(session)
+      .exec();
   }
 
-  async updateMany(filter: FilterQuery<IProductDocument>, update: UpdateQuery<IProductDocument>, session: ClientSession) {
-    return this.model.updateMany(filter, update).session(session);
+  public async updateMany(
+    filter: FilterQuery<IProductDocument>,
+    update: UpdateQuery<IProductDocument>,
+    session: ClientSession,
+  ): Promise<UpdateWriteOpResult> {
+    return this.model.updateMany(filter, update).session(session).exec();
   }
 }

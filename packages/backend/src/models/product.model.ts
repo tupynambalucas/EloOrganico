@@ -25,9 +25,6 @@ export const productSchema = new Schema<IProductDocument>(
   { timestamps: true },
 );
 
-// CORREÇÃO ENTERPRISE: Índice Composto de Unicidade
-// Um produto só é considerado duplicado se TUDO isso for igual.
-// Isso permite: "Mel (Mercearia 500g)" e "Mel (Mercearia 1kg)" coexistirem.
 productSchema.index(
   {
     name: 1,

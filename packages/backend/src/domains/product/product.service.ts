@@ -1,14 +1,17 @@
-import { ClientSession, FilterQuery, AnyBulkWriteOperation } from 'mongoose';
-import { IProduct } from '@elo-organico/shared';
-import { IProductRepository } from './product.repository.interface.js';
-import { ListProductsQueryType } from './product.schema.js';
+import type { ClientSession, FilterQuery, AnyBulkWriteOperation } from 'mongoose';
+import type { IProduct } from '@elo-organico/shared';
+import type { IProductRepository } from './product.repository.interface.js';
+import type { ListProductsRoute } from './product.schema.js';
 import { AppError } from '../../utils/AppError.js';
-import { IProductDocument } from '../../models/product.model.js';
+import type { IProductDocument } from '../../models/product.model.js';
+import type { z } from 'zod';
+
+type ListQuery = z.infer<ListProductsRoute['querystring']>;
 
 export class ProductService {
-  constructor(private repo: IProductRepository) {}
+  constructor(private readonly repo: IProductRepository) {}
 
-  async listProducts(filters: ListProductsQueryType) {
+  public async listProducts(filters: ListQuery): Promise<IProductDocument[]> {
     const query: FilterQuery<IProductDocument> = {};
 
     if (filters.availableOnly) {
@@ -26,27 +29,29 @@ export class ProductService {
     return this.repo.findAll(query);
   }
 
-  async syncCycleProducts(products: IProduct[], session: ClientSession): Promise<string[]> {
-    if (!products || products.length === 0) return [];
+  public async syncCycleProducts(products: IProduct[], session: ClientSession): Promise<string[]> {
+    if (products.length === 0) {
+      return [];
+    }
 
     try {
-      const bulkOps: AnyBulkWriteOperation<IProductDocument>[] = products.map((p) => {
-        const filter: FilterQuery<IProductDocument> = { 
-          name: p.name, 
+      const bulkOps: Array<AnyBulkWriteOperation<IProductDocument>> = products.map((p) => {
+        const filter: FilterQuery<IProductDocument> = {
+          name: p.name,
           category: p.category,
-          'measure.type': p.measure.type 
+          'measure.type': p.measure.type,
         };
 
         if (p.content) {
           filter['content.value'] = p.content.value;
           filter['content.unit'] = p.content.unit;
         } else {
-          filter['content'] = null; 
+          filter.content = null;
         }
 
         return {
           updateOne: {
-            filter: filter,
+            filter,
             update: {
               $set: {
                 name: p.name,
@@ -54,34 +59,34 @@ export class ProductService {
                 measure: p.measure,
                 content: p.content,
                 available: true,
-              }
+              },
             },
-            upsert: true
-          }
+            upsert: true,
+          },
         };
       });
 
-      if (bulkOps.length > 0) {
-        await this.repo.bulkUpsert(bulkOps, session);
-      }
+      await this.repo.bulkUpsert(bulkOps, session);
 
-      const keys = products.map(p => ({ 
-        name: p.name, 
+      const keys = products.map((p) => ({
+        name: p.name,
         category: p.category,
         measureType: p.measure.type,
         contentValue: p.content?.value,
-        contentUnit: p.content?.unit
+        contentUnit: p.content?.unit,
       }));
 
       const activeProducts = await this.repo.findByKeys(keys, session);
-      const activeIds = activeProducts.map(p => p._id.toString());
+      const activeIds = activeProducts.map((p) => String(p._id));
 
       await this.repo.deactivateOthers(activeIds, session);
 
       return activeIds;
-
-    } catch {
-      throw new AppError('PRODUCT_SYNC_FAILED', 500);
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('PRODUCT_SYNC_FAILED', 400);
     }
   }
 }

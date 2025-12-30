@@ -20,7 +20,7 @@
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
+    "source.fixAll.eslint": "off",
     "source.organizeImports": "never"
   },
   "editor.formatOnSave": true,
@@ -36,12 +36,12 @@
   },
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "off"
     }
   },
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "off"
     }
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
@@ -55,5 +55,7 @@
   "css.validate": false,
   "scss.validate": false,
   "less.validate": false,
-  "chat.extensionUnification.enabled": true
+  "chat.extensionUnification.enabled": true,
+  "javascript.suggest.includeCompletionsForImportStatements": false,
+  "typescript.suggest.includeCompletionsForImportStatements": false
 }

@@ -1,28 +1,33 @@
-import { FastifyInstance } from 'fastify';
-import { RegisterDTO, LoginDTO } from '@elo-organico/shared';
-import { IAuthRepository } from './auth.repository.interface.js';
+import type { FastifyInstance } from 'fastify';
+import type { RegisterDTO, LoginDTO } from '@elo-organico/shared';
+import type { IAuthRepository } from './auth.repository.interface.js';
+import type { IUserDocument } from '../../models/user.model.js';
 import { AppError } from '../../utils/AppError.js';
+
+interface LoginResponse {
+  user: IUserDocument;
+  token: string;
+}
 
 export class AuthService {
   constructor(
-    private authRepo: IAuthRepository,
-    private server: FastifyInstance
+    private readonly authRepo: IAuthRepository,
+    private readonly server: FastifyInstance,
   ) {}
 
-  async register(data: RegisterDTO) {
+  public async register(data: RegisterDTO): Promise<IUserDocument> {
     const existingUser = await this.authRepo.findByEmailOrUsername(data.email, data.username);
 
     if (existingUser) {
-      const code = existingUser.email === data.email 
-        ? 'EMAIL_ALREADY_EXISTS' 
-        : 'USERNAME_ALREADY_EXISTS';
+      const code =
+        existingUser.email === data.email ? 'EMAIL_ALREADY_EXISTS' : 'USERNAME_ALREADY_EXISTS';
       throw new AppError(code, 409);
     }
 
     return this.authRepo.create(data);
   }
 
-  async login(data: LoginDTO) {
+  public async login(data: LoginDTO): Promise<LoginResponse> {
     const user = await this.authRepo.findByIdentifier(data.identifier);
 
     if (!user) {
@@ -30,31 +35,26 @@ export class AuthService {
     }
 
     if (!user.password) {
-        throw new AppError('INVALID_PASSWORD', 401);
-    }
-
-    const isValid = await this.server.compareHash(data.password, user.password);
-    if (!isValid) {
       throw new AppError('INVALID_PASSWORD', 401);
     }
 
-    const token = this.server.jwt.sign({ 
-      _id: user.id, 
-      icon: user.icon, 
-      email: user.email, 
+    const isValid = await this.server.compareHash(data.password, user.password);
+    if (!isValid || isValid instanceof Error) {
+      throw new AppError('INVALID_PASSWORD', 401);
+    }
+
+    const token = this.server.jwt.sign({
+      _id: String(user._id),
+      email: user.email,
       username: user.username,
-      role: user.role 
+      role: user.role,
+      icon: user.icon,
     });
-    
-    return { token, user };
+
+    return { user, token };
   }
 
-  async verifyToken(token: string) {
-    try {
-      const payload = this.server.jwt.verify(token);
-      return payload;
-    } catch {
-      throw new AppError('SESSION_EXPIRED', 401);
-    }
+  public async validateUser(id: string): Promise<IUserDocument | null> {
+    return this.authRepo.findById(id);
   }
 }

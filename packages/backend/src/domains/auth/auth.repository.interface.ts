@@ -1,5 +1,5 @@
-import { RegisterDTO } from '@elo-organico/shared';
-import { IUserDocument } from '../../models/user.model.js';
+import type { RegisterDTO } from '@elo-organico/shared';
+import type { IUserDocument } from '../../models/user.model.js';
 
 export interface IAuthRepository {
   findById(id: string): Promise<IUserDocument | null>;

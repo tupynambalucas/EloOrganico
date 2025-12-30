@@ -3,10 +3,9 @@ import fp from 'fastify-plugin';
 import fastifySession from '@fastify/session';
 import fastifyJwt from '@fastify/jwt';
 import bcrypt from 'bcrypt';
-import { UserPayload } from '../types/fastify.js';
+import type { UserPayload } from '../types/fastify.js';
 
 const SessionPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
-
   server.decorate('genHash', async (password: string) => {
     try {
       return await bcrypt.hash(password, 10);
@@ -28,12 +27,12 @@ const SessionPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   await server.register(fastifySession, {
     cookieName: server.config.USER_SESSION_KEY,
     secret: server.config.SESSION_SECRET,
-    cookie: { 
+    cookie: {
       secure: server.config.NODE_ENV === 'production',
       httpOnly: true,
       path: '/api',
-      maxAge: 86400000 
-    }, 
+      maxAge: 86400000,
+    },
     saveUninitialized: false,
   });
 
@@ -51,18 +50,17 @@ const SessionPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       const decoded = server.jwt.verify<UserPayload>(token);
       request.user = decoded;
-
-    } catch (err) {
+    } catch {
       return reply.status(401).send({ message: 'Sessão inválida ou expirada' });
     }
   });
 
   server.decorate('verifyAdmin', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      if (!request.user || request.user.role !== 'admin') {
+      if (request.user.role !== 'admin') {
         return reply.status(403).send({ message: 'Acesso negado' });
       }
-    } catch (err) {
+    } catch {
       return reply.status(401).send({ message: 'Erro de verificação' });
     }
   });

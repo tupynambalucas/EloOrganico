@@ -1,6 +1,6 @@
 import cors from '@fastify/cors';
 import fp from 'fastify-plugin';
-import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import type { FastifyInstance, FastifyPluginAsync, FastifyPluginCallback } from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMetricsPlugin from 'fastify-metrics';
@@ -34,9 +34,13 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyIn
   await server.register(utils);
   await server.register(envConfig);
   await server.register(sentryPlugin);
-  
-  const metrics = (fastifyMetricsPlugin as any).default || fastifyMetricsPlugin;
-  await server.register(metrics, { endpoint: '/metrics' });
+
+  const metricsPlugin = fastifyMetricsPlugin as unknown as FastifyPluginCallback<{
+    endpoint: string;
+  }>;
+  await server.register(metricsPlugin, {
+    endpoint: '/metrics',
+  });
 
   await server.register(errorHandlerPlugin);
 
@@ -65,7 +69,7 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyIn
   server.decorate('authController', authController);
   server.decorate('productController', productController);
   server.decorate('cycleController', cycleController);
-  
+
   server.decorate('cycleService', cycleService); // [NOVO]
 
   await server.register(ApiPlugin, { prefix: '/api' });
@@ -78,8 +82,8 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyIn
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'CSRF-Token'],
-    exposedHeaders: ['CSRF-Token']
+    exposedHeaders: ['CSRF-Token'],
   });
-}
+};
 
 export default fp(serverAutoRegistry);

@@ -2,7 +2,7 @@
   "files.exclude": {
     "**/.git": false,
     "**/.eslintcache": true,
-    "**/node_modules": true,
+    "**/node_modules": false,
     "**/dist": false
   },
   "eslint.debug": false,
@@ -54,6 +54,5 @@
   "typescript.suggest.autoImports": true,
   "css.validate": false,
   "scss.validate": false,
-  "less.validate": false,
-  "github.gitProtocol": "ssh"
+  "less.validate": false
 }

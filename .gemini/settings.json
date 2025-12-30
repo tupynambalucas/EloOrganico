@@ -10,6 +10,7 @@
   "geminicodeassist.inlineSuggestions.enableAuto": true,
   "geminicodeassist.inlineSuggestions.suggestionSpeed": "Fast",
   "google.gemini-cli-vscode-ide-companion": true,
+  "geminicodeassist.agentDebugMode": true,
   "geminicodeassist.languages": [
     "typescriptreact",
     "typescript",

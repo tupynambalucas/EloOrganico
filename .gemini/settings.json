@@ -1,33 +1,81 @@
 {
-  "geminicodeassist.contextExclusionGitignore": false,
-  "geminicodeassist.contextExclusionFile": ".gemini/.geminiignore",
-  "geminicodeassist.chat.enableStreaming": true,
-  "geminicodeassist.enableTelemetry": false,
-  "geminicodeassist.chat.automaticScrolling": false,
-  "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
-  "http.systemCertificatesNode": true,
-  "gemini-cli.debug.logging.enabled": true,
-  "geminicodeassist.inlineSuggestions.enableAuto": true,
-  "geminicodeassist.inlineSuggestions.suggestionSpeed": "Fast",
-  "google.gemini-cli-vscode-ide-companion": true,
-  "geminicodeassist.agentDebugMode": true,
-  "geminicodeassist.languages": [
-    "typescriptreact",
-    "typescript",
-    "html",
-    "dockerfile",
-    "dockercompose",
-    "css",
-    "json",
-    "powershell",
-    "markdown",
-    "git-commit",
-    "yaml",
-    "plaintext"
-  ],
   "general": {
+    "previewFeatures": false,
+    "vimMode": false,
     "disableAutoUpdate": false,
-    "previewFeatures": true
+    "enablePromptCompletion": false,
+    "debugKeystrokeLogging": false,
+    "sessionRetention": {
+      "enabled": false
+    }
+  },
+  "output": {
+    "format": "text"
+  },
+  "ui": {
+    "hideWindowTitle": false,
+    "showStatusInTitle": false,
+    "hideTips": false,
+    "hideBanner": false,
+    "hideContextSummary": false,
+    "footer": {
+      "hideCWD": false,
+      "hideSandboxStatus": false,
+      "hideModelInfo": false,
+      "hideContextPercentage": true
+    },
+    "hideFooter": false,
+    "showMemoryUsage": false,
+    "showLineNumbers": false,
+    "showCitations": false,
+    "useFullWidth": true,
+    "useAlternateBuffer": true,
+    "accessibility": {
+      "disableLoadingPhrases": false,
+      "screenReader": false
+    }
+  },
+  "ide": {
+    "enabled": false
+  },
+  "model": {
+    "maxSessionTurns": -1,
+    "compressionThreshold": 0.2,
+    "skipNextSpeakerCheck": true
+  },
+  "context": {
+    "discoveryMaxDirs": 200,
+    "loadMemoryFromIncludeDirectories": true,
+    "fileFiltering": {
+      "respectGitIgnore": false,
+      "respectGeminiIgnore": true,
+      "enableRecursiveFileSearch": true,
+      "disableFuzzySearch": false
+    }
+  },
+  "tools": {
+    "shell": {
+      "enableInteractiveShell": true,
+      "showColor": false
+    },
+    "autoAccept": false,
+    "useRipgrep": true,
+    "enableToolOutputTruncation": true,
+    "truncateToolOutputThreshold": 10000,
+    "truncateToolOutputLines": 100
+  },
+  "security": {
+    "disableYoloMode": false,
+    "blockGitExtensions": false,
+    "folderTrust": {
+      "enabled": true
+    }
+  },
+  "experimental": {
+    "codebaseInvestigatorSettings": {
+      "enabled": true,
+      "maxNumTurns": 10
+    }
   },
   "mcpServers": {
     "github": {

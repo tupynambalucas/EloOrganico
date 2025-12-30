@@ -1,8 +1,8 @@
 {
   "files.exclude": {
-    "**/.git": false,
+    "**/.git": true,
     "**/.eslintcache": true,
-    "**/node_modules": false,
+    "**/node_modules": true,
     "**/dist": false
   },
   "eslint.debug": false,
@@ -54,5 +54,6 @@
   "typescript.suggest.autoImports": true,
   "css.validate": false,
   "scss.validate": false,
-  "less.validate": false
+  "less.validate": false,
+  "chat.extensionUnification.enabled": true
 }

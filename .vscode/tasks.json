@@ -22,8 +22,10 @@
       "command": "Start-Process",
       "args": [
         "powershell",
+        "-WorkingDirectory",
+        "'${workspaceFolder}'",
         "-ArgumentList",
-        "'-NoExit -Command Set-Location ''${workspaceFolder}''; gemini'"
+        "'-NoExit -Command gemini --include-directories .'"
       ],
       "problemMatcher": [],
       "presentation": {

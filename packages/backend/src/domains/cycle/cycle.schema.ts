@@ -1,18 +1,18 @@
 import { z } from 'zod';
-import { CreateCycleDTOSchema, CycleResponseSchema } from '@elo-organico/shared';
+import { CreateCycleDTOSchema, CycleResponseSchema, ProductSchema } from '@elo-organico/shared';
 
 export const createCycleSchema = {
   body: CreateCycleDTOSchema,
   response: {
-    201: CycleResponseSchema
-  }
+    201: CycleResponseSchema,
+  },
 } as const;
 
 const HistoryQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
   startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional()
+  endDate: z.string().datetime().optional(),
 });
 
 const HistoryResponseSchema = z.object({
@@ -20,39 +20,65 @@ const HistoryResponseSchema = z.object({
   pagination: z.object({
     total: z.number(),
     page: z.number(),
-    pages: z.number()
-  })
+    pages: z.number(),
+  }),
 });
 
 export const getHistorySchema = {
   querystring: HistoryQuerySchema,
   response: {
-    200: HistoryResponseSchema
-  }
+    200: HistoryResponseSchema,
+  },
 } as const;
 
 const CycleIdParamSchema = z.object({
-  id: z.string().min(1)
+  id: z.string().min(1),
 });
 
 export const getCycleByIdSchema = {
   params: CycleIdParamSchema,
   response: {
-    200: CycleResponseSchema
-  }
+    200: CycleResponseSchema,
+  },
 } as const;
 
 export const updateCycleSchema = {
   params: CycleIdParamSchema,
   body: z.object({
-    products: z.array(z.any())
+    products: z.array(ProductSchema),
   }),
   response: {
-    200: CycleResponseSchema
-  }
+    200: CycleResponseSchema,
+  },
 } as const;
 
-export type CreateCycleRoute = typeof createCycleSchema;
-export type GetHistoryRoute = typeof getHistorySchema;
-export type GetByIdRoute = typeof getCycleByIdSchema;
-export type UpdateCycleRoute = typeof updateCycleSchema;
+export interface CreateCycleRoute {
+  body: typeof CreateCycleDTOSchema;
+  response: {
+    201: typeof CycleResponseSchema;
+  };
+}
+
+export interface GetHistoryRoute {
+  querystring: typeof HistoryQuerySchema;
+  response: {
+    200: typeof HistoryResponseSchema;
+  };
+}
+
+export interface GetByIdRoute {
+  params: typeof CycleIdParamSchema;
+  response: {
+    200: typeof CycleResponseSchema;
+  };
+}
+
+export interface UpdateCycleRoute {
+  params: typeof CycleIdParamSchema;
+  body: z.ZodObject<{
+    products: z.ZodArray<typeof ProductSchema>;
+  }>;
+  response: {
+    200: typeof CycleResponseSchema;
+  };
+}

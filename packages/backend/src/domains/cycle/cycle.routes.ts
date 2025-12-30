@@ -1,10 +1,10 @@
-import { FastifyPluginAsync } from 'fastify';
-import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { 
-  createCycleSchema, 
-  getHistorySchema, 
+import type { FastifyPluginAsync } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import {
+  createCycleSchema,
+  getHistorySchema,
   getCycleByIdSchema,
-  updateCycleSchema
+  updateCycleSchema,
 } from './cycle.schema.js';
 
 const cycleRoutes: FastifyPluginAsync = async (server) => {
@@ -13,25 +13,41 @@ const cycleRoutes: FastifyPluginAsync = async (server) => {
 
   app.get('/cycles/active', controller.getActiveCycleHandler);
 
-  app.post('/admin/cycles', { 
-    schema: createCycleSchema,
-    preHandler: [server.authenticate, server.verifyAdmin]
-  }, controller.createCycleHandler);
-  
-  app.patch('/admin/cycles/:id', { 
-    schema: updateCycleSchema,
-    preHandler: [server.authenticate, server.verifyAdmin]
-  }, controller.updateCycleHandler);
+  app.post(
+    '/admin/cycles',
+    {
+      schema: createCycleSchema,
+      preHandler: [server.authenticate, server.verifyAdmin],
+    },
+    controller.createCycleHandler,
+  );
 
-  app.get('/cycles/:id', {
-    schema: getCycleByIdSchema,
-    preHandler: [server.authenticate] 
-  }, controller.getCycleByIdHandler);
-  
-  app.get('/admin/cycles/history', { 
-    schema: getHistorySchema,
-    preHandler: [server.authenticate, server.verifyAdmin]
-  }, controller.getCycleHistoryHandler);
+  app.patch(
+    '/admin/cycles/:id',
+    {
+      schema: updateCycleSchema,
+      preHandler: [server.authenticate, server.verifyAdmin],
+    },
+    controller.updateCycleHandler,
+  );
+
+  app.get(
+    '/cycles/:id',
+    {
+      schema: getCycleByIdSchema,
+      preHandler: [server.authenticate],
+    },
+    controller.getCycleByIdHandler,
+  );
+
+  app.get(
+    '/admin/cycles/history',
+    {
+      schema: getHistorySchema,
+      preHandler: [server.authenticate, server.verifyAdmin],
+    },
+    controller.getCycleHistoryHandler,
+  );
 };
 
 export default cycleRoutes;

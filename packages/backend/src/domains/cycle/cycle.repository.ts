@@ -1,64 +1,84 @@
-import { Model, ClientSession, FilterQuery } from 'mongoose';
-import { ICycleDocument } from '../../models/cycle.model.js';
-import { ICycleRepository } from './cycle.repository.interface.js';
+import type { Model, ClientSession, FilterQuery, UpdateWriteOpResult } from 'mongoose';
+import type { ICycleDocument } from '../../models/cycle.model.js';
+import type { ICycleRepository } from './cycle.repository.interface.js';
 
 export class CycleRepository implements ICycleRepository {
-  constructor(private model: Model<ICycleDocument>) {}
+  constructor(private readonly model: Model<ICycleDocument>) {}
 
-  async findActive() {
-    return this.model.findOne({ isActive: true }).populate('products');
+  public async findActive(): Promise<ICycleDocument | null> {
+    return this.model.findOne({ isActive: true }).populate('products').exec();
   }
 
-  async findHistory(page: number, limit: number, startDate?: string, endDate?: string) {
+  public async findHistory(
+    page: number,
+    limit: number,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<{ cycles: ICycleDocument[]; total: number }> {
     const skip = (page - 1) * limit;
     const query: FilterQuery<ICycleDocument> = {};
 
     if (startDate || endDate) {
-      query.openingDate = {};
-      if (startDate) query.openingDate.$gte = new Date(startDate);
-      if (endDate) query.openingDate.$lte = new Date(endDate);
+      const dateFilter: { $gte?: Date; $lte?: Date } = {};
+      if (startDate) dateFilter.$gte = new Date(startDate);
+      if (endDate) dateFilter.$lte = new Date(endDate);
+      query.openingDate = dateFilter;
     }
 
     const [cycles, total] = await Promise.all([
-      this.model.find(query)
+      this.model
+        .find(query)
         .select('-products')
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit),
-      this.model.countDocuments(query)
+        .limit(limit)
+        .exec(),
+      this.model.countDocuments(query).exec(),
     ]);
 
     return { cycles, total };
   }
 
-  async findById(id: string) {
-    return this.model.findById(id).populate('products');
+  public async findById(id: string): Promise<ICycleDocument | null> {
+    return this.model.findById(id).populate('products').exec();
   }
 
-  async findByIdWithSession(id: string, session: ClientSession) {
-    return this.model.findById(id).session(session);
+  public async findByIdWithSession(
+    id: string,
+    session: ClientSession,
+  ): Promise<ICycleDocument | null> {
+    return this.model.findById(id).session(session).exec();
   }
 
-  async archiveExpired(toleranceDate: Date, session?: ClientSession) {
-    return this.model.updateMany(
-      { isActive: true, closingDate: { $lte: toleranceDate } }, 
-      { $set: { isActive: false } }
-    ).session(session || null);
+  public async archiveExpired(
+    toleranceDate: Date,
+    session?: ClientSession,
+  ): Promise<UpdateWriteOpResult> {
+    return this.model
+      .updateMany(
+        { isActive: true, closingDate: { $lte: toleranceDate } },
+        { $set: { isActive: false } },
+      )
+      .session(session ?? null)
+      .exec();
   }
 
-  async deactivateAll(session: ClientSession) {
-    return this.model.updateMany(
-      { isActive: true }, 
-      { $set: { isActive: false } }
-    ).session(session);
+  public async deactivateAll(session: ClientSession): Promise<UpdateWriteOpResult> {
+    return this.model
+      .updateMany({ isActive: true }, { $set: { isActive: false } })
+      .session(session)
+      .exec();
   }
 
-  async create(data: Partial<ICycleDocument>, session: ClientSession) {
-    const newCycle = new this.model(data);
-    return newCycle.save({ session });
+  public async create(
+    data: Partial<ICycleDocument>,
+    session: ClientSession,
+  ): Promise<ICycleDocument> {
+    const [doc] = await this.model.create([data], { session });
+    return doc;
   }
 
-  async save(document: ICycleDocument, session: ClientSession) {
+  public async save(document: ICycleDocument, session: ClientSession): Promise<ICycleDocument> {
     return document.save({ session });
   }
 }

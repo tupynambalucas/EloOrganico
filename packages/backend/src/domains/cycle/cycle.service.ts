@@ -1,21 +1,22 @@
-import { Mongoose, Types } from 'mongoose';
-import { IProduct, CreateCycleDTO } from '@elo-organico/shared';
-import { ICycleRepository } from './cycle.repository.interface.js';
-import { ProductService } from '../product/product.service.js'; 
+import { Types, type Mongoose } from 'mongoose';
+import type { IProduct, CreateCycleDTO } from '@elo-organico/shared';
+import type { ICycleRepository } from './cycle.repository.interface.js';
+import type { ProductService } from '../product/product.service.js';
+import type { ICycleDocument } from '../../models/cycle.model.js';
 import { AppError } from '../../utils/AppError.js';
 
 export class CycleService {
   constructor(
-    private cycleRepo: ICycleRepository,
-    private productService: ProductService,
-    private mongoose: Mongoose
+    private readonly cycleRepo: ICycleRepository,
+    private readonly productService: ProductService,
+    private readonly mongoose: Mongoose,
   ) {}
 
-  async getActive() {
-    return await this.cycleRepo.findActive();
+  public async getActive(): Promise<ICycleDocument | null> {
+    return this.cycleRepo.findActive();
   }
 
-  async performScheduledArchival() {
+  public async performScheduledArchival(): Promise<number> {
     const session = await this.mongoose.startSession();
     try {
       session.startTransaction();
@@ -23,7 +24,7 @@ export class CycleService {
       toleranceDate.setDate(toleranceDate.getDate() - 2);
       const result = await this.cycleRepo.archiveExpired(toleranceDate, session);
       await session.commitTransaction();
-      return result.modifiedCount;
+      return Number(result.modifiedCount);
     } catch (error) {
       await session.abortTransaction();
       throw error;
@@ -32,35 +33,42 @@ export class CycleService {
     }
   }
 
-  async getHistory(page: number, limit: number, startDate?: string, endDate?: string) {
-    return await this.cycleRepo.findHistory(page, limit, startDate, endDate);
+  public async getHistory(
+    page: number,
+    limit: number,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<{ cycles: ICycleDocument[]; total: number }> {
+    return this.cycleRepo.findHistory(page, limit, startDate, endDate);
   }
 
-  async getById(id: string) {
+  public async getById(id: string): Promise<ICycleDocument> {
     const cycle = await this.cycleRepo.findById(id);
     if (!cycle) throw new AppError('CYCLE_NOT_FOUND', 404);
     return cycle;
   }
 
-  async createCycle(data: CreateCycleDTO) {
-    const active = await this.cycleRepo.findActive();
-    if (active) throw new AppError('ACTIVE_CYCLE_ALREADY_EXISTS', 400);
-
+  public async createCycle(data: CreateCycleDTO): Promise<ICycleDocument> {
     const session = await this.mongoose.startSession();
     session.startTransaction();
 
     try {
+      await this.cycleRepo.deactivateAll(session);
+
       const productIds = await this.productService.syncCycleProducts(data.products, session);
-      
+
       const newCycleData = {
         description: data.description,
         openingDate: new Date(data.openingDate),
         closingDate: new Date(data.closingDate),
-        products: productIds.map(id => new Types.ObjectId(id)),
-        isActive: true
+        products: productIds.map((id) => new Types.ObjectId(id)),
+        isActive: true,
       };
 
-      const createdCycle = await this.cycleRepo.create(newCycleData, session);
+      const createdCycle = await this.cycleRepo.create(
+        newCycleData as unknown as Partial<ICycleDocument>,
+        session,
+      );
       await session.commitTransaction();
       return createdCycle;
     } catch (error) {
@@ -72,7 +80,7 @@ export class CycleService {
     }
   }
 
-  async updateCycle(id: string, products: IProduct[]) {
+  public async updateCycle(id: string, products: IProduct[]): Promise<ICycleDocument | null> {
     const session = await this.mongoose.startSession();
     session.startTransaction();
 
@@ -81,11 +89,13 @@ export class CycleService {
       if (!cycle) throw new AppError('CYCLE_NOT_FOUND_FOR_UPDATE', 404);
 
       const productIds = await this.productService.syncCycleProducts(products, session);
-      cycle.products = productIds.map(pid => new Types.ObjectId(pid));
-      
+      cycle.products = productIds.map(
+        (pid) => new Types.ObjectId(pid),
+      ) as unknown as Types.ObjectId[];
+
       await this.cycleRepo.save(cycle, session);
       await session.commitTransaction();
-      return await this.cycleRepo.findById(id);
+      return this.cycleRepo.findById(id);
     } catch (error) {
       await session.abortTransaction();
       if (error instanceof AppError) throw error;

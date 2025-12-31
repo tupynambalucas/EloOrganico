@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import styles from './CycleView.module.css';
+import styles from './styles.module.css';
 import CreateCycle from './components/CycleCreate';
 import ActiveCycle from './components/ActiveCycle';
 import CyclesHistory from './components/CycleHistory';

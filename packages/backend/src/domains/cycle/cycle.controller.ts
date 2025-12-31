@@ -39,7 +39,6 @@ export class CycleController {
     return {
       ...obj,
       _id: obj._id.toString(),
-      // Corrigido: Removidos condicionais desnecessários para campos obrigatórios
       openingDate: obj.openingDate.toISOString(),
       closingDate: obj.closingDate.toISOString(),
       createdAt: obj.createdAt?.toISOString(),

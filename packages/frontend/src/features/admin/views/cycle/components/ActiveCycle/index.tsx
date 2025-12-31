@@ -17,7 +17,6 @@ const ActiveCycle = () => {
 
   const handleOpenProducts = () => {
     if (activeCycle?.products) {
-      console.log('ActiveCycle products:', activeCycle);
       setDraftProducts(activeCycle.products as IProduct[]);
     }
     setViewMode('products');

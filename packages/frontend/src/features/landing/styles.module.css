@@ -19,19 +19,24 @@
   padding: 2rem;
   position: relative;
   overflow: hidden;
-  background-image: radial-gradient(circle at 2vh 2vh, rgba(2, 89, 15,0.1) 0.2vh, transparent 0);
+  background-image: radial-gradient(circle at 2vh 2vh, rgba(2, 89, 15, 0.1) 0.2vh, transparent 0);
   background-size: 24px 24px;
 }
 
-
+.contentWrapper {
+  width: 70%;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .bannerContainer {
   width: 60%;
   position: relative;
   z-index: 10;
-  display: flex; 
+  display: flex;
   justify-content: center;
 }
-
 
 .bannerContainer > svg {
   width: 100%;
@@ -48,11 +53,11 @@
   align-items: center;
   background-color: var(--color-background-tint);
   position: relative;
-  box-shadow: -5px 0 15px rgba(2, 38, 1,0.2);
+  box-shadow: -5px 0 15px rgba(2, 38, 1, 0.2);
 }
 
 @media (max-width: 599px) {
-  .container{
+  .container {
     height: 100%;
     width: 100%;
   }

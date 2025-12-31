@@ -36,7 +36,7 @@ const AuthFeature = () => {
         <p>{isLogin ? 'Faça login para continuar' : 'Comece sua jornada sustentável'}</p>
       </div>
 
-      <form className={styles.formContainer} onSubmit={handleSubmit}>
+      <form className={styles.formContainer} onSubmit={(e) => void handleSubmit(e)}>
         {isLogin ? (
           <LoginForm
             data={formData}
@@ -61,9 +61,9 @@ const AuthFeature = () => {
       </form>
 
       <div className={styles.footer}>
-        <a className={styles.toggleLink} onClick={toggleMode}>
-          {isLogin ? 'Não tem uma conta? Registre-se' : 'Já tem uma conta? Faça o login'}
-        </a>
+        <button type="button" className={styles.toggleLink} onClick={toggleMode}>
+          {isLogin ? 'Ainda não tem uma conta? Registre-se' : 'Já tem uma conta? Faça login'}
+        </button>
       </div>
     </div>
   );

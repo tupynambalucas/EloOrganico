@@ -14,7 +14,7 @@ interface HistoryResponse {
     total: number;
     page: number;
     pages: number;
-  }
+  };
 }
 
 export const adminCycleApi = {
@@ -36,5 +36,5 @@ export const adminCycleApi = {
   updateProducts: async (id: string, products: IProduct[]) => {
     const response = await api.patch<ICycle>(`/admin/cycles/${id}`, { products });
     return response.data;
-  }
+  },
 };

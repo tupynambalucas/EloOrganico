@@ -16,21 +16,10 @@ export class CycleService {
     return this.cycleRepo.findActive();
   }
 
-  public async performScheduledArchival(): Promise<number> {
-    const session = await this.mongoose.startSession();
-    try {
-      session.startTransaction();
-      const toleranceDate = new Date();
-      toleranceDate.setDate(toleranceDate.getDate() - 2);
-      const result = await this.cycleRepo.archiveExpired(toleranceDate, session);
-      await session.commitTransaction();
-      return Number(result.modifiedCount);
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      await session.endSession();
-    }
+  public async getById(id: string): Promise<ICycleDocument | null> {
+    const cycle = await this.cycleRepo.findById(id);
+    if (!cycle) throw new AppError('CYCLE_NOT_FOUND', 404);
+    return cycle;
   }
 
   public async getHistory(
@@ -42,12 +31,6 @@ export class CycleService {
     return this.cycleRepo.findHistory(page, limit, startDate, endDate);
   }
 
-  public async getById(id: string): Promise<ICycleDocument> {
-    const cycle = await this.cycleRepo.findById(id);
-    if (!cycle) throw new AppError('CYCLE_NOT_FOUND', 404);
-    return cycle;
-  }
-
   public async createCycle(data: CreateCycleDTO): Promise<ICycleDocument> {
     const session = await this.mongoose.startSession();
     session.startTransaction();
@@ -56,6 +39,11 @@ export class CycleService {
       await this.cycleRepo.deactivateAll(session);
 
       const productIds = await this.productService.syncCycleProducts(data.products, session);
+
+      // CORREÇÃO: Verificação de segurança para productIds
+      if (!Array.isArray(productIds)) {
+        throw new AppError('PRODUCT_SYNC_FAILED', 500);
+      }
 
       const newCycleData = {
         description: data.description,
@@ -89,6 +77,12 @@ export class CycleService {
       if (!cycle) throw new AppError('CYCLE_NOT_FOUND_FOR_UPDATE', 404);
 
       const productIds = await this.productService.syncCycleProducts(products, session);
+
+      // CORREÇÃO: Verificação de segurança para productIds
+      if (!Array.isArray(productIds)) {
+        throw new AppError('PRODUCT_SYNC_FAILED', 500);
+      }
+
       cycle.products = productIds.map(
         (pid) => new Types.ObjectId(pid),
       ) as unknown as Types.ObjectId[];

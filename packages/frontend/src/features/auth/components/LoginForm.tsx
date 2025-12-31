@@ -1,7 +1,7 @@
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
+import type { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
 import styles from '../styles.module.css';
 
 interface LoginFormProps {
@@ -35,7 +35,7 @@ export const LoginForm = ({ data, errors, onChange, inputRefs, disabled }: Login
         <div className={styles.passwordWrapper}>
           <input
             ref={inputRefs.passwordLogin}
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             placeholder="Senha"
             value={data.password}
             onChange={(e) => onChange('password', e.target.value)}
@@ -43,7 +43,12 @@ export const LoginForm = ({ data, errors, onChange, inputRefs, disabled }: Login
             disabled={disabled}
             required
           />
-          <button type="button" className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+          <button
+            type="button"
+            className={styles.eyeIcon}
+            onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
+          >
             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
           </button>
         </div>

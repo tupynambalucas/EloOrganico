@@ -13,20 +13,22 @@ function App() {
   const { activeCycle, fetchActiveCycle } = useCycleStore();
 
   useEffect(() => {
-    const initApp = async () => {
+    const initApp = async (): Promise<void> => {
       await initializeCsrf();
       await verifyAuth();
     };
-    initApp();
+    void initApp();
   }, [verifyAuth]);
 
   useEffect(() => {
     if (isAuthenticated && user && user.role !== 'admin') {
-      fetchActiveCycle();
+      void fetchActiveCycle();
     }
   }, [isAuthenticated, user, fetchActiveCycle]);
 
-  if (isAuthLoading) return null;
+  if (isAuthLoading) {
+    return null;
+  }
 
   return (
     <Suspense fallback={null}>

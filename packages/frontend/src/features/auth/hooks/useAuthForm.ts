@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/domains/auth';
 import { shakeElement } from '../animations';
-import { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
+import type { AuthFormData, AuthFieldErrors, AuthFormRefs } from '../types';
 import { validateAuthForm } from '../utils/validation';
 import { mapBackendErrorToUI } from '../utils/errorMapper';
 
@@ -10,17 +11,32 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
   const { t } = useTranslation();
   const { login, register, status, errorCode, clearErrors } = useAuthStore();
 
-  const refs: AuthFormRefs = {
-    identifier: useRef<HTMLInputElement>(null),
-    passwordLogin: useRef<HTMLInputElement>(null),
-    username: useRef<HTMLInputElement>(null),
-    email: useRef<HTMLInputElement>(null),
-    passwordRegister: useRef<HTMLInputElement>(null),
-    confirmPassword: useRef<HTMLInputElement>(null),
-  };
+  const identifierRef = useRef<HTMLInputElement>(null);
+  const passwordLoginRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRegisterRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+
+  const refs: AuthFormRefs = useMemo(
+    () => ({
+      identifier: identifierRef,
+      passwordLogin: passwordLoginRef,
+      username: usernameRef,
+      email: emailRef,
+      passwordRegister: passwordRegisterRef,
+      confirmPassword: confirmPasswordRef,
+    }),
+    [],
+  );
 
   const [formData, setFormData] = useState<AuthFormData>({
-    identifier: '', username: '', email: '', password: '', confirmPassword: '', icon: 'graxaim'
+    identifier: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    icon: 'graxaim',
   });
 
   const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({});
@@ -33,22 +49,28 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
         shakeElement(errorUI.ref.current);
       }
     }
-  }, [errorCode, t, isLogin]);
+  }, [errorCode, t, isLogin, refs]);
 
   const handleInputChange = (field: keyof AuthFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (fieldErrors[field]) setFieldErrors(prev => ({ ...prev, [field]: null }));
-    if (errorCode) clearErrors();
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => ({ ...prev, [field]: null }));
+    }
+    if (errorCode) {
+      clearErrors();
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-    if (status === 'LOADING') return;
+    if (status === 'LOADING') {
+      return;
+    }
 
     const validation = validateAuthForm(isLogin, formData, refs, t);
     if (!validation.isValid) {
       setFieldErrors(validation.errors);
-      shakeElement(validation.firstErrorRef?.current || null);
+      shakeElement(validation.firstErrorRef?.current ?? null);
       return;
     }
 
@@ -59,11 +81,20 @@ export const useAuthForm = (isLogin: boolean, onSuccess: () => void) => {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        icon: formData.icon
+        icon: formData.icon,
       });
-      if (success) onSuccess();
+      if (success) {
+        onSuccess();
+      }
     }
   };
 
-  return { formData, fieldErrors, handleInputChange, handleSubmit, isLoading: status === 'LOADING', refs };
+  return {
+    formData,
+    fieldErrors,
+    handleInputChange,
+    handleSubmit,
+    isLoading: status === 'LOADING',
+    refs,
+  };
 };

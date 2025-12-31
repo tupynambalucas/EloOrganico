@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useAuthStore } from '@/domains/auth';
 import userIconList from './constants';
-import styles from './UserIcon.module.css';
+import styles from './styles.module.css';
 
 interface IconDisplayProps {
   className?: string;
   size?: number;
-  forceIcon?: string; 
+  forceIcon?: string;
 }
 
 export const IconDisplay = ({ className = '', size = 40, forceIcon }: IconDisplayProps) => {
@@ -18,9 +18,9 @@ export const IconDisplay = ({ className = '', size = 40, forceIcon }: IconDispla
   }, [iconName]);
 
   return (
-    <img 
-      src={iconData.base64} 
-      alt={iconName} 
+    <img
+      src={iconData.base64}
+      alt={iconName}
       className={`${styles.iconBase} ${className}`}
       style={{ width: size, height: size }}
     />

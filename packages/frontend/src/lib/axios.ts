@@ -1,18 +1,20 @@
-import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
-// Definição da estrutura da fila de processamento
-interface FailedRequestQueueItem {
-  resolve: (token: string) => void;
-  reject: (err: unknown) => void;
+interface CsrfResponse {
+  token: string;
 }
 
-// Singleton para controle de estado
+interface FailedRequestQueueItem {
+  resolve: (token: string) => void;
+  reject: (err: Error) => void;
+}
+
 let csrfToken: string | null = null;
 let isRefreshing = false;
 let failedQueue: FailedRequestQueueItem[] = [];
 
-// Processa a fila
-const processQueue = (error: unknown, token: string | null = null) => {
+const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -36,29 +38,30 @@ export function setCsrfToken(token: string) {
 }
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  if (csrfToken && config.method && !['get', 'head', 'options'].includes(config.method.toLowerCase())) {
-    config.headers['x-csrf-token'] = csrfToken;
+  if (
+    csrfToken &&
+    config.method &&
+    !['get', 'head', 'options'].includes(config.method.toLowerCase())
+  ) {
+    config.headers.set('x-csrf-token', csrfToken);
   }
   return config;
 });
 
 api.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response;
-  },
+  (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 403 && originalRequest && !originalRequest._retry) {
-      
       if (isRefreshing) {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<AxiosResponse>((resolve, reject) => {
           failedQueue.push({
             resolve: (token: string) => {
-              originalRequest.headers['x-csrf-token'] = token;
+              originalRequest.headers.set('x-csrf-token', token);
               resolve(api(originalRequest));
             },
-            reject: (err: unknown) => {
+            reject: (err: Error) => {
               reject(err);
             },
           });
@@ -69,39 +72,39 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.get('/api/csrf-token', { 
+        const response = await axios.get<CsrfResponse>('/api/csrf-token', {
           withCredentials: true,
-          baseURL: '/api' 
+          baseURL: '/api',
         });
-        
+
         const newToken = response.data.token;
         setCsrfToken(newToken);
-        
-        processQueue(null, newToken);
-        
-        originalRequest.headers['x-csrf-token'] = newToken;
-        return api(originalRequest);
 
+        processQueue(null, newToken);
+
+        originalRequest.headers.set('x-csrf-token', newToken);
+        return await api(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
-        return Promise.reject(refreshError);
+        const errorToReject =
+          refreshError instanceof Error ? refreshError : new Error(String(refreshError));
+        processQueue(errorToReject, null);
+        return Promise.reject(errorToReject);
       } finally {
         isRefreshing = false;
       }
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
-export const initializeCsrf = async () => {
+export const initializeCsrf = async (): Promise<void> => {
   try {
-    const { data } = await api.get('/csrf-token');
-    setCsrfToken(data.token);
-    return true;
-  } catch {
-    // Erro ignorado intencionalmente na inicialização (pode estar offline)
-    console.warn('Falha na inicialização do CSRF');
-    return false;
+    const response = await api.get<CsrfResponse>('/csrf-token');
+    setCsrfToken(response.data.token);
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('CSRF Initialization failed:', error);
+    }
   }
 };

@@ -1,17 +1,25 @@
-import { AuthFormRefs, AuthFormData, ErrorUIMapping } from '../types';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
+import type { AuthFormRefs, AuthFormData, ErrorUIMapping } from '../types';
+
+interface ErrorConfig {
+  field: keyof AuthFormData;
+  getRef: (r: AuthFormRefs) => React.RefObject<HTMLInputElement | null>;
+}
 
 export const mapBackendErrorToUI = (
-  code: string, 
-  refs: AuthFormRefs, 
+  code: string,
+  refs: AuthFormRefs,
   t: TFunction,
-  isLogin: boolean
+  isLogin: boolean,
 ): ErrorUIMapping | null => {
-  const errorMap: Record<string, { field: keyof AuthFormData; getRef: (r: AuthFormRefs) => any }> = {
-    'USER_NOT_FOUND': { field: 'identifier', getRef: (r) => r.identifier },
-    'INVALID_PASSWORD': { field: 'password', getRef: (r) => isLogin ? r.passwordLogin : r.passwordRegister },
-    'EMAIL_ALREADY_EXISTS': { field: 'email', getRef: (r) => r.email },
-    'USERNAME_ALREADY_EXISTS': { field: 'username', getRef: (r) => r.username },
+  const errorMap: Record<string, ErrorConfig> = {
+    USER_NOT_FOUND: { field: 'identifier', getRef: (r) => r.identifier },
+    INVALID_PASSWORD: {
+      field: 'password',
+      getRef: (r) => (isLogin ? r.passwordLogin : r.passwordRegister),
+    },
+    EMAIL_ALREADY_EXISTS: { field: 'email', getRef: (r) => r.email },
+    USERNAME_ALREADY_EXISTS: { field: 'username', getRef: (r) => r.username },
   };
 
   const config = errorMap[code];
@@ -19,6 +27,6 @@ export const mapBackendErrorToUI = (
 
   return {
     errors: { [config.field]: t(`auth.errors.${code}`) },
-    ref: config.getRef(refs)
+    ref: config.getRef(refs),
   };
 };

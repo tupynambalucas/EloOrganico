@@ -2,7 +2,12 @@ import { create } from 'zustand';
 import { authApi } from './auth.api';
 import { setCsrfToken } from '@/lib/axios';
 import { getErrorMessage, extractErrorCode } from '@/utils/errorHelper';
-import { type LoginDTO, type RegisterDTO, type UserResponse, UserResponseSchema } from '@elo-organico/shared';
+import {
+  type LoginDTO,
+  type RegisterDTO,
+  type UserResponse,
+  UserResponseSchema,
+} from '@elo-organico/shared';
 
 type AuthStatus = 'IDLE' | 'LOADING' | 'AUTHENTICATED' | 'UNAUTHENTICATED' | 'ERROR';
 
@@ -36,7 +41,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user: result.user, isAuthenticated: true, status: 'AUTHENTICATED' });
     } catch (err) {
       console.error('[Login Error]:', err);
-      set({ status: 'ERROR', error: getErrorMessage(err), errorCode: extractErrorCode(err), isAuthenticated: false });
+      set({
+        status: 'ERROR',
+        error: getErrorMessage(err),
+        errorCode: extractErrorCode(err),
+        isAuthenticated: false,
+      });
     }
   },
 
@@ -66,15 +76,18 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isAuthLoading: true, status: 'LOADING' });
     try {
       const result = await authApi.verify();
-      // Se o backend retornar user: null, isso vai disparar o erro para o catch
       const validatedUser = UserResponseSchema.parse(result.user);
-      set({ user: validatedUser, isAuthenticated: true, status: 'AUTHENTICATED', isAuthLoading: false });
-    } catch (err) {
-      // Aqui era o erro: falhava o parse e limpava o login sem avisar no console
+      set({
+        user: validatedUser,
+        isAuthenticated: true,
+        status: 'AUTHENTICATED',
+        isAuthLoading: false,
+      });
+    } catch {
       console.warn('[VerifyAuth]: Usuário não autenticado ou sessão expirada.');
       set({ user: null, isAuthenticated: false, status: 'UNAUTHENTICATED', isAuthLoading: false });
     }
   },
 
-  clearErrors: () => set({ error: null, errorCode: null })
+  clearErrors: () => set({ error: null, errorCode: null }),
 }));

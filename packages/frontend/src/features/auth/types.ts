@@ -1,9 +1,9 @@
-import { LoginDTO, RegisterDTO } from '@elo-organico/shared';
+import type { LoginDTO, RegisterDTO } from '@elo-organico/shared';
 
-export type AuthFormData = LoginDTO & RegisterDTO & { 
+export interface AuthFormData extends LoginDTO, RegisterDTO {
   icon: string;
-  confirmPassword?: string; 
-};
+  confirmPassword?: string;
+}
 
 export type AuthFieldErrors = Partial<Record<keyof AuthFormData, string | null>>;
 

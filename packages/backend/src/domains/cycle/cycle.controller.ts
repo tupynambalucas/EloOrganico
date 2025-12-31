@@ -1,5 +1,7 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { z } from 'zod';
-import type { CycleResponseSchema } from '@elo-organico/shared';
+import type { Types } from 'mongoose';
+import type { CycleResponseSchema, IProduct } from '@elo-organico/shared';
 import type { CycleService } from './cycle.service.js';
 import type { FastifyZodHandler } from '../../types/fastify.js';
 import type { ICycleDocument } from '../../models/cycle.model.js';
@@ -14,12 +16,12 @@ import type {
 type CycleResponse = z.infer<typeof CycleResponseSchema>;
 
 interface CyclePlainObject {
-  _id: { toString(): string };
+  _id: Types.ObjectId;
   description: string;
   openingDate: Date;
   closingDate: Date;
   isActive: boolean;
-  products: Array<{ _id: { toString(): string } } | { toString(): string }>;
+  products?: unknown[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -34,28 +36,57 @@ export class CycleController {
 
     const obj = cycle.toObject() as CyclePlainObject;
 
-    const mappedProducts = obj.products.map((p) => {
-      if (typeof p === 'object' && p !== null && '_id' in p) {
-        return p._id.toString();
-      }
-      return p.toString();
-    });
-
     return {
+      ...obj,
       _id: obj._id.toString(),
-      description: obj.description,
+      // Corrigido: Removidos condicionais desnecessários para campos obrigatórios
       openingDate: obj.openingDate.toISOString(),
       closingDate: obj.closingDate.toISOString(),
-      isActive: obj.isActive,
       createdAt: obj.createdAt?.toISOString(),
       updatedAt: obj.updatedAt?.toISOString(),
-      products: mappedProducts as CycleResponse['products'],
-    };
+      products: Array.isArray(obj.products)
+        ? obj.products.map((p: unknown) => {
+            if (!p) return null;
+
+            // Type narrowing seguro para evitar avisos de overlap
+            if (typeof p === 'object') {
+              if ('_id' in p) {
+                if ('name' in p) {
+                  const product = p as IProduct & {
+                    _id: Types.ObjectId | string;
+                    createdAt?: Date | string;
+                    updatedAt?: Date | string;
+                  };
+
+                  return {
+                    _id: product._id.toString(),
+                    name: product.name,
+                    category: product.category,
+                    measure: product.measure,
+                    content: product.content,
+                    available: product.available,
+                    createdAt: product.createdAt
+                      ? new Date(product.createdAt).toISOString()
+                      : undefined,
+                    updatedAt: product.updatedAt
+                      ? new Date(product.updatedAt).toISOString()
+                      : undefined,
+                  };
+                }
+                return (p as { _id: Types.ObjectId | string })._id.toString();
+              }
+            }
+
+            // Fallback seguro para strings e primitivos
+            return typeof p === 'string' ? p : String(p as string | number | boolean);
+          })
+        : [],
+    } as unknown as CycleResponse;
   }
 
   public getActiveCycleHandler: FastifyZodHandler<Record<string, never>> = async (
-    _req,
-    reply,
+    _req: FastifyRequest,
+    reply: FastifyReply,
   ): Promise<void> => {
     const activeCycle = await this.service.getActive();
     if (!activeCycle) {

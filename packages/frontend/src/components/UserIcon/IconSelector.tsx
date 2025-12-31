@@ -1,5 +1,5 @@
 import userIconList from './constants';
-import styles from './UserIcon.module.css';
+import styles from './styles.module.css';
 
 interface IconSelectorProps {
   selectedIcon: string;
@@ -8,17 +8,17 @@ interface IconSelectorProps {
   className?: string;
 }
 
-export const IconSelector = ({ 
-  selectedIcon, 
-  onSelect, 
-  disabled, 
-  className = '' 
+export const IconSelector = ({
+  selectedIcon,
+  onSelect,
+  disabled,
+  className = '',
 }: IconSelectorProps) => (
   <div className={`${styles.selectorContainer} ${className}`}>
     <label>Escolha seu avatar da fauna:</label>
     <div className={styles.iconGrid}>
       {userIconList.map((item) => (
-        <div 
+        <div
           key={item.name}
           className={`${styles.iconOption} ${selectedIcon === item.name ? styles.selectedIcon : ''}`}
           onClick={() => !disabled && onSelect(item.name)}

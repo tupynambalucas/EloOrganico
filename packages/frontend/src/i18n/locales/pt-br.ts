@@ -3,21 +3,20 @@ import { translations } from '@elo-organico/shared';
 export const ptBR = {
   translation: {
     ...translations,
-    // Conteúdo exclusivo do Frontend
     ui: {
       login: {
         title: 'Bem-vindo de volta',
         subtitle: 'Faça login para continuar',
         button: 'Entrar',
-        toggle: 'Não tem uma conta? Registre-se'
+        toggle: 'Não tem uma conta? Registre-se',
       },
       register: {
         title: 'Crie sua conta',
         subtitle: 'Comece sua jornada sustentável',
         button: 'Registrar',
         toggle: 'Já tem uma conta? Faça o login',
-        icon_label: 'Escolha seu avatar da fauna:'
-      }
-    }
-  }
+        icon_label: 'Escolha seu avatar da fauna:',
+      },
+    },
+  },
 };

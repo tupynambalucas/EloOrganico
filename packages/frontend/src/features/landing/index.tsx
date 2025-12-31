@@ -7,7 +7,7 @@ import { animateLandingIntro } from './animations';
 import styles from './styles.module.css';
 
 const AuthForm = lazy(() => import('@/features/auth'));
-const CycleTimer = lazy(() => import('@/features/landing/components/CycleTimer/index'));
+const CycleTimer = lazy(() => import('@/features/landing/components/CycleTimer'));
 
 const LandingLayout = () => {
   const { isAuthenticated } = useAuthStore();

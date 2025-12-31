@@ -1,0 +1,19 @@
+.container {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.storeFrontContainer {
+  width: 100%;
+  height: 100%;
+  background: red;
+}
+
+.sidebarContainer {
+  width: 35vw;
+  height: 100%;
+  background: blue;
+}

@@ -1,27 +1,15 @@
-// packages/frontend/src/features/shop/Shop.tsx
 import { Suspense, lazy } from 'react';
-import { useIsMobile } from '@/features/shop/hooks/useIsMobile';
+import { useIsMobile } from './hooks/useIsMobile';
 import Loader from '@/components/loaders/ScreenLoader';
 
-// Lazy loading para performance:
-// O usuário mobile não baixa o código do desktop e vice-versa.
-const MobileShopLayout = lazy(() => import('./mobile'));
-const DesktopShopLayout = lazy(() => import('./desktop'));
+const DesktopLayout = lazy(() => import('./layouts/DesktopLayout'));
+const MobileLayout = lazy(() => import('./layouts/MobileLayout'));
 
 const Shop = () => {
   const isMobile = useIsMobile();
 
-  // Aqui você poderia chamar hooks de dados globais da loja
-  // const { products } = useCatalogStore(); 
-
   return (
-    <Suspense fallback={<Loader />}>
-      {isMobile ? (
-        <MobileShopLayout />
-      ) : (
-        <DesktopShopLayout />
-      )}
-    </Suspense>
+    <Suspense fallback={<Loader />}>{isMobile ? <MobileLayout /> : <DesktopLayout />}</Suspense>
   );
 };
 

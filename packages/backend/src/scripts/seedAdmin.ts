@@ -53,6 +53,7 @@ async function seedAdmin() {
       role: 'admin',
     });
 
+    server.log.info(adminEmail);
     await defaultAdmin.save();
 
     server.log.info('--------------------------------------------------');

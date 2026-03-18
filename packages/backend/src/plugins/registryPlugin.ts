@@ -70,10 +70,8 @@ const serverAutoRegistry: FastifyPluginAsync = async function (server: FastifyIn
   server.decorate('productController', productController);
   server.decorate('cycleController', cycleController);
 
-  server.decorate('cycleService', cycleService); // [NOVO]
-
   await server.register(ApiPlugin, { prefix: '/api' });
-  await server.register(queuePlugin); // [NOVO]
+  await server.register(queuePlugin, { cycleService });
 
   const allowedOrigins = ['http://localhost:5173', 'http://localhost:80'];
 

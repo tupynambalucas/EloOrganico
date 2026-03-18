@@ -1,4 +1,4 @@
-import type { ClientSession, FilterQuery, AnyBulkWriteOperation } from 'mongoose';
+import { ClientSession, QueryFilter, AnyBulkWriteOperation } from 'mongoose';
 import type { IProduct } from '@elo-organico/shared';
 import type { IProductRepository } from './product.repository.interface.js';
 import type { ListProductsRoute } from './product.schema.js';
@@ -12,7 +12,7 @@ export class ProductService {
   constructor(private readonly repo: IProductRepository) {}
 
   public async listProducts(filters: ListQuery): Promise<IProductDocument[]> {
-    const query: FilterQuery<IProductDocument> = {};
+    const query: QueryFilter<IProductDocument> = {};
 
     if (filters.availableOnly) {
       query.available = true;
@@ -36,7 +36,7 @@ export class ProductService {
 
     try {
       const bulkOps: Array<AnyBulkWriteOperation<IProductDocument>> = products.map((p) => {
-        const filter: FilterQuery<IProductDocument> = {
+        const filter: QueryFilter<IProductDocument> = {
           name: p.name,
           category: p.category,
           'measure.type': p.measure.type,

@@ -16,8 +16,6 @@ import { AuthController } from '../domains/auth/auth.controller.js';
 import { CycleController } from '../domains/cycle/cycle.controller.js';
 import { ProductController } from '../domains/product/product.controller.js';
 
-import { CycleService } from '../domains/cycle/cycle.service.js'; // [NOVO]
-
 import { IUserDocument } from '../models/user.model.js';
 import { IProductDocument } from '../models/product.model.js';
 import { ICycleDocument } from '../models/cycle.model.js';
@@ -54,8 +52,6 @@ declare module 'fastify' {
     authController: AuthController;
     cycleController: CycleController;
     productController: ProductController;
-
-    cycleService: CycleService; // [NOVO]
 
     models: {
       User: Model<IUserDocument>;

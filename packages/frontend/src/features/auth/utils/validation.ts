@@ -19,7 +19,7 @@ export const validateAuthForm = (
       };
 
   const result = schema.safeParse(dataToValidate);
-
+  console.log(result);
   const errorRefs: Record<string, React.RefObject<HTMLInputElement | null>> = {
     identifier: refs.identifier,
     password: isLogin ? refs.passwordLogin : refs.passwordRegister,
@@ -29,7 +29,8 @@ export const validateAuthForm = (
   };
 
   if (!result.success) {
-    const firstError = result.error.errors[0];
+    const firstError = result.error.issues[0];
+    console.log(firstError);
     const field = firstError.path[0] as keyof AuthFormData;
     const minVal = field === 'username' ? AUTH_RULES.USERNAME.MIN : AUTH_RULES.PASSWORD.MIN;
 

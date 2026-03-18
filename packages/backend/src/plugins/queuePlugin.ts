@@ -1,15 +1,21 @@
 import fp from 'fastify-plugin';
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { Worker } from 'bullmq';
 import { cycleQueue, CYCLE_QUEUE_NAME, connection } from '../config/queueConfig.js';
+import type { CycleService } from '../domains/cycle/cycle.service.js';
 
-const queuePlugin = async (server: FastifyInstance) => {
+interface QueuePluginOptions {
+  cycleService: CycleService;
+}
+
+const queuePlugin: FastifyPluginAsync<QueuePluginOptions> = async (server, opts) => {
+  const { cycleService } = opts;
   const worker = new Worker(
     CYCLE_QUEUE_NAME,
     async (job) => {
       if (job.name === 'archive-expired-cycles') {
         server.log.info('[Queue] Processando arquivamento de ciclos...');
-        await server.cycleService.performScheduledArchival();
+        await cycleService.performScheduledArchival();
       }
     },
     {

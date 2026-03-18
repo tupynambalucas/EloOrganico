@@ -98,4 +98,20 @@ export class CycleService {
       await session.endSession();
     }
   }
+
+  public async performScheduledArchival(): Promise<void> {
+    const session = await this.mongoose.startSession();
+    session.startTransaction();
+    try {
+      const toleranceDate = new Date();
+      await this.cycleRepo.archiveExpired(toleranceDate, session);
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      if (error instanceof AppError) throw error;
+      throw new AppError('CYCLE_ARCHIVAL_FAILED', 500);
+    } finally {
+      await session.endSession();
+    }
+  }
 }

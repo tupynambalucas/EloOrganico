@@ -1,10 +1,10 @@
-import type {
+import {
   Model,
-  FilterQuery,
   ClientSession,
   AnyBulkWriteOperation,
   UpdateQuery,
   UpdateWriteOpResult,
+  QueryFilter,
   mongo,
 } from 'mongoose';
 import type { IProductDocument } from '../../models/product.model.js';
@@ -13,7 +13,7 @@ import type { IProductRepository, ProductKey } from './product.repository.interf
 export class ProductRepository implements IProductRepository {
   constructor(private readonly model: Model<IProductDocument>) {}
 
-  public async findAll(queryFilters: FilterQuery<IProductDocument>): Promise<IProductDocument[]> {
+  public async findAll(queryFilters: QueryFilter<IProductDocument>): Promise<IProductDocument[]> {
     return this.model.find(queryFilters).sort({ category: 1, name: 1 }).exec();
   }
 
@@ -30,7 +30,7 @@ export class ProductRepository implements IProductRepository {
     }
 
     const criteria = keys.map((k) => {
-      const filter: FilterQuery<IProductDocument> = {
+      const filter: QueryFilter<IProductDocument> = {
         name: k.name,
         category: k.category,
         'measure.type': k.measureType,
@@ -59,7 +59,7 @@ export class ProductRepository implements IProductRepository {
   }
 
   public async updateMany(
-    filter: FilterQuery<IProductDocument>,
+    filter: QueryFilter<IProductDocument>,
     update: UpdateQuery<IProductDocument>,
     session: ClientSession,
   ): Promise<UpdateWriteOpResult> {

@@ -1,8 +1,8 @@
 {
   "files.exclude": {
     "**/.git": true,
-    "**/.eslintcache": true,
-    "**/node_modules": true,
+    "**/.eslintcache": false,
+    "**/node_modules": false,
     "**/dist": false
   },
   "eslint.debug": false,
@@ -13,14 +13,14 @@
       "mode": "auto"
     }
   ],
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", ""],
   "eslint.options": {
     "cache": true,
     "cacheLocation": ".eslintcache"
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "off",
+    "source.fixAll.eslint": "never",
     "source.organizeImports": "never"
   },
   "editor.formatOnSave": true,
@@ -29,19 +29,14 @@
       "source.fixAll.eslint": "explicit"
     }
   },
-  "[javascriptreact]": {
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    }
-  },
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "off"
+      "source.fixAll.eslint": "never"
     }
   },
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "off"
+      "source.fixAll.eslint": "never"
     }
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
@@ -55,7 +50,5 @@
   "css.validate": false,
   "scss.validate": false,
   "less.validate": false,
-  "chat.extensionUnification.enabled": true,
-  "javascript.suggest.includeCompletionsForImportStatements": false,
   "typescript.suggest.includeCompletionsForImportStatements": false
 }

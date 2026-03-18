@@ -1,4 +1,4 @@
-import type { Model, ClientSession, FilterQuery, UpdateWriteOpResult } from 'mongoose';
+import type { Model, ClientSession, QueryFilter, UpdateWriteOpResult } from 'mongoose';
 import type { ICycleDocument } from '../../models/cycle.model.js';
 import type { ICycleRepository } from './cycle.repository.interface.js';
 
@@ -16,7 +16,7 @@ export class CycleRepository implements ICycleRepository {
     endDate?: string,
   ): Promise<{ cycles: ICycleDocument[]; total: number }> {
     const skip = (page - 1) * limit;
-    const query: FilterQuery<ICycleDocument> = {};
+    const query: QueryFilter<ICycleDocument> = {};
 
     if (startDate || endDate) {
       const dateFilter: { $gte?: Date; $lte?: Date } = {};

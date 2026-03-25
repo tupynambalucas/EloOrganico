@@ -1,0 +1,3 @@
+# 🏗️ Architecture Overview
+
+This document describes the high-level architecture of the **Elo Orgânico - Integrated Management Platform**. We utilize a **Monorepo** strategy to...

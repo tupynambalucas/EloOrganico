@@ -18,6 +18,12 @@
     "cache": true,
     "cacheLocation": ".eslintcache"
   },
+  "json.schemas": [
+    {
+      "fileMatch": ["/.gemini/settings.json"],
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json"
+    }
+  ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "never",

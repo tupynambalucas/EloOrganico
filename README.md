@@ -154,8 +154,3 @@ npm run prod:down
 | `npm run infra:reset` | Resets the entire infrastructure (Removes volumes/data). |
 | `npm run build:all`   | Executes the build process across all monorepo packages. |
 | `npm run lint:all`    | Executes static code analysis (Linter).                  |
-
-## © License and Rights
-
-This software is protected under the **CC-BY-NC-4.0** license.
-Developed by **Tupynambá Lucas Varela Rodrigues**.

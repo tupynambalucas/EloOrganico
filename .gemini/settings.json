@@ -1,0 +1,37 @@
+{
+  "context": {
+    "fileName": ["CONTEXT.md", "GEMINI.md", "README.md", "STYLEGRUIDE.md", "IMPLEMENTATION.md"],
+    "discoveryMaxDirs": 200,
+    "loadMemoryFromIncludeDirectories": true,
+    "fileFiltering": {
+      "enableRecursiveFileSearch": true,
+      "respectGitIgnore": false,
+      "respectGeminiIgnore": true,
+      "enableFuzzySearch": true
+    }
+  },
+  "advanced": {
+    "excludedEnvVars": []
+  },
+  "ide": {
+    "hasSeenNudge": true,
+    "enabled": true
+  },
+  "ui": {
+    "footer": {
+      "hideContextPercentage": false
+    },
+    "showMemoryUsage": true,
+    "showModelInfoInChat": true,
+    "showUserIdentity": true
+  },
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github@latest"]
+    }
+  },
+  "experimental": {
+    "modelSteering": true
+  }
+}

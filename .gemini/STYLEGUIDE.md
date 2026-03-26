@@ -1,63 +1,79 @@
-# Guia de Estilo e Padrões - Elo Orgânico
+# Style Guide and Standards - Elo Organico
 
-Este documento serve como a "Instrução Mestre" para a geração e revisão de código neste monorepo. O Gemini deve consultar e seguir estas diretrizes obrigatoriamente.
+This document serves as the "Master Instruction" for code generation and review within this monorepo. Gemini must consult and strictly follow these guidelines.
 
-## 1. Arquitetura e Estrutura do Monorepo
+## 1. Architecture and Guiding Principles
 
-- **Estrutura:** Monorepo gerenciado com NPM Workspaces.
-- **Divisão de Pacotes:**
-  - `packages/shared`: Contém schemas Zod, constantes, tipos DTO e traduções i18n.
-  - `packages/backend`: API Node.js utilizando Fastify e Mongoose.
-  - `packages/frontend`: Aplicação SPA utilizando React, Vite e Zustand.
+The project adheres to modern software architecture principles to ensure scalability, maintainability, and code quality.
 
-## 2. Formatação de Código (Prettier)
+### 1.1. Monorepo Structure
 
-O código deve seguir as regras definidas no `.prettierrc`:
+- **Framework:** Monorepo managed with NPM Workspaces.
+- **Package Division:**
+  - `packages/shared`: Contains Zod schemas, constants, DTO types, and i18n translations. It is the **Single Source of Truth** for data contracts.
+  - `packages/backend`: Node.js API using Fastify and Mongoose.
+  - `packages/frontend`: SPA application using React, Vite, and Zustand.
 
-- **Tabulação:** 2 espaços.
-- **Semicolons:** Sempre utilizar (true).
-- **Aspas:** Utilizar aspas simples (true), exceto em JSX.
-- **Trailing Comma:** Sempre utilizar em todas as posições possíveis (all).
-- **Largura da Linha:** Máximo de 100 caracteres.
+### 1.2. Architectural Principles
 
-## 3. Regras de TypeScript (Baseadas no eslint.config.ts)
+- **Domain-Driven Design (DDD):** The business logic is organized into domains to facilitate maintenance and scalability. This is evident in both the backend (`packages/backend/src/domains`) and frontend (`packages/frontend/src/features`) directories. Each domain (e.g., Auth, Cycle, Product) encapsulates a specific part of the business logic.
+- **SOLID Principles:**
+  - **Single Responsibility:** Each class, function, or module has one specific purpose. (e.g., a Controller handles HTTP requests, a Service contains business logic, a Repository handles database interaction).
+  - **Open/Closed:** Modules are open for extension but closed for modification. We achieve this by using plugins (like in Fastify) and component-based architecture (React).
+  - **Liskov Substitution:** Subtypes must be substitutable for their base types. TypeScript's strict type system helps enforce this.
+  - **Interface Segregation:** Clients should not be forced to depend on interfaces they do not use. We define precise `interface` definitions for each use case.
+  - **Dependency Inversion:** High-level modules do not depend on low-level modules; both depend on abstractions. We use dependency injection (e.g., passing services to controllers) and rely on interfaces from `@elo-organico/shared`.
 
-- **Definições de Objeto:** Utilize obrigatoriamente `interface` em vez de `type` para definições consistentes.
-- **Arrays:** Utilize a sintaxe simplificada `T[]` em vez de `Array<T>`.
-- **Imports de Tipo:** Sempre utilize `import type` para tipos. Os tipos devem ser importados separadamente dos valores (estilo `separate-type-imports`).
-- **Variáveis não utilizadas:** Devem ser prefixadas com sublinhado (ex: `_id`, `_args`) para serem ignoradas pelo linter.
-- **Tipagem Estrita:** O uso de `any` é proibido. Regras de `unsafe-assignment` e `unsafe-call` são tratadas como erro no linter.
-- **Comparações:** Utilize sempre igualdade estrita (`===`), exceto para checagem de null/undefined quando permitido.
+## 2. Code Formatting (Prettier)
 
-## 4. Gerenciamento de Assincronismo (Crítico)
+Code must follow the rules defined in `.prettierrc`:
 
-- **Floating Promises:** É proibido deixar promessas "flutuando". Toda operação assíncrona deve ser aguardada com `await` ou tratada com `.catch()`.
-- **Fastify Handlers:** No backend, as promessas em handlers podem retornar void para compatibilidade com o framework.
+- **Indentation:** 2 spaces.
+- **Semicolons:** Always use (true).
+- **Quotes:** Use single quotes (true), except in JSX.
+- **Trailing Comma:** Always use where possible (all).
+- **Line Width:** Maximum of 100 characters.
 
-## 5. Padrões por Pacote
+## 3. TypeScript Rules (Based on eslint.config.ts)
+
+The configuration is set for maximum type safety.
+
+- **Object Definitions:** You **must** use `interface` instead of `type` for object definitions to ensure consistency.
+- **Arrays:** Use the simplified `T[]` syntax instead of `Array<T>`.
+- **Type Imports:** Always use `import type` for types. Types must be imported separately from values (style: `separate-type-imports`).
+- **Unused Variables:** Must be prefixed with an underscore (e.g., `_id`, `_args`) to be ignored by the linter.
+- **Strict Typing:** The use of `any` is forbidden. Rules like `unsafe-assignment` and `unsafe-call` are treated as errors by the linter.
+- **Comparisons:** Always use strict equality (`===`), except for null/undefined checks where allowed.
+
+## 4. Asynchronous Code Management (Critical)
+
+- **No Floating Promises:** It is forbidden to leave promises "floating". Every async operation must be handled with `await` or a `.catch()` block.
+- **Fastify Handlers:** In the backend, promises in handlers can return `void` for framework compatibility, but they are still managed by the async-aware framework.
+
+## 5. Package-Specific Standards
 
 ### 5.1. Shared (@elo-organico/shared)
 
-- **Rigor Máximo:** Expressões booleanas devem ser estritas.
-- **APIs Públicas:** Devem ter tipos de retorno explicitamente definidos (`explicit-module-boundary-types`).
-- **Validação:** Centralizar todos os schemas de domínio utilizando Zod.
+- **Maximum Rigor:** Boolean expressions must be strict.
+- **Public APIs:** Must have explicitly defined return types (`explicit-module-boundary-types`).
+- **Validation:** Centralize all domain schemas using Zod.
 
 ### 5.2. Backend (Fastify + Mongoose)
 
-- **Camadas de Domínio:** Seguir o padrão Controller -> Service -> Repository.
-- **Handlers:** Devem utilizar o tipo `FastifyZodHandler` importado dos tipos locais.
-- **Erros:** Lançar exceções utilizando a classe personalizada `AppError` com códigos de erro específicos.
-- **Models:** Utilizar interfaces Mongoose (ex: `IUserDocument`) para tipagem de modelos.
+- **Domain Layers:** Follow the pattern: Controller -> Service -> Repository.
+- **Handlers:** Should use the `FastifyZodHandler` type imported from local types.
+- **Errors:** Throw exceptions using the custom `AppError` class with specific error codes.
+- **Models:** Use Mongoose interfaces (e.g., `IUserDocument`) for model typing.
 
 ### 5.3. Frontend (React + Zustand)
 
-- **Componentes:** Funcionais com exportação padrão ou nomeada. Utilize `lazy` e `Suspense` para carregamento de layouts.
-- **Hooks:** Regras de hooks são obrigatórias, incluindo dependências exaustivas no `useEffect`.
-- **Estado Global:** Utilizar Zustand. As stores devem gerenciar estados de `status` ('LOADING', 'AUTHENTICATED', etc.), `error` e `errorCode`.
-- **Estilização:** Utilizar **CSS Modules** (`.module.css`) para escopo local.
-- **Logs:** `console.log` gera aviso; em produção, utilize apenas `console.error` ou `console.warn`.
+- **Components:** Functional components with default or named exports. Use `lazy` and `Suspense` for loading layouts.
+- **Hooks:** Rules of hooks are mandatory, including exhaustive dependencies in `useEffect`.
+- **Global State:** Use Zustand. Stores should manage `status` ('LOADING', 'AUTHENTICATED', etc.), `error`, and `errorCode` states.
+- **Styling:** Use **CSS Modules** (`.module.css`) for local scope.
+- **Logs:** `console.log` generates a warning; in production, use only `console.error` or `console.warn`.
 
-## 6. Convenções de Nomenclatura
+## 6. Naming Conventions
 
-- **Schemas:** Terminar sempre com `Schema` (ex: `LoginRouteSchema`).
-- **Arquivos:** Seguir o padrão `nome.tipo.ts` (ex: `auth.controller.ts`, `auth.api.ts`).
+- **Schemas:** Always end with `Schema` (e.g., `LoginRouteSchema`).
+- **Files:** Follow the `name.type.ts` pattern (e.g., `auth.controller.ts`, `auth.api.ts`).

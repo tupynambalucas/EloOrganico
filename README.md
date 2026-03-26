@@ -154,3 +154,9 @@ npm run prod:down
 | `npm run infra:reset` | Resets the entire infrastructure (Removes volumes/data). |
 | `npm run build:all`   | Executes the build process across all monorepo packages. |
 | `npm run lint:all`    | Executes static code analysis (Linter).                  |
+
+## 📖 Documentation Reference
+
+- **[Project Context & Goals](.gemini/CONTEXT.md)**: The "North Star" for the AI agent.
+- **[Architecture](ARCHITECTURE.md)**: Detailed system design and data flow.
+- **[Style Guide](.gemini/STYLEGUIDE.md)**: Strict coding conventions and ESLint rules.

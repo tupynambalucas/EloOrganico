@@ -52,7 +52,12 @@ To populate the database with initial data (e.g., Admin user):
 
 *   **Shared First:** When modifying data structures, **ALWAYS** start by updating `packages/shared`. Changes here propagate to both backend and frontend.
 *   **Style Guide:** Adhere strictly to the guidelines in `.gemini/styleguide.md`.
-*   **Language:** The codebase uses English for code (variables, functions) but Portuguese for domain terms (e.g., specific business logic strings) and i18n content (`pt-br`).
+*   **Language Policy (Strict):** English is the official language for all aspects of this project.
+    *   **Code and Comments:** All variable names, function names, classes, and code comments **must** be in English.
+    *   **New Files and Documents:** All new source code files and markdown documents **must** be created in English.
+    *   **Exceptions:**
+        *   The `docs/` directory may contain parallel translations (e.g., `NAME.en.md` and `NAME.pt-br.md`).
+        *   Internationalization (i18n) files are explicitly for translation and contain other languages.
 *   **State Management:** Use **Zustand** for global client state.
 *   **Styling:** Use **TailwindCSS** (v4) and **CSS Modules** where appropriate.
 

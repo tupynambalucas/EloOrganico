@@ -51,13 +51,13 @@ A arquitetura é baseada em uma aplicação web coesa, utilizando a *stack* Java
 ### **2.2. Stack Tecnológica Confirmada**
 
 * **Gestão de Código:** Monorepo gerenciado via NPM Workspaces (backend, frontend, shared).  
-* **Backend:** Fastify v5 (Foco em API, alta taxa de transferência).  
-* **Frontend:** React 19 \+ Vite (Performance maxima de *build* e runtime).  
+* **Backend:** Fastify v5 (Foco em API, alta taxa de transferência), Mongoose, Sentry (Monitoramento de Erros).
+* **Frontend:** React 19, Vite (Performance de build), Zustand (Gestão de Estado), TailwindCSS (Estilização), GSAP (Animações), i18next (Internacionalização).
 * **Linguagem:** TypeScript (Strict Mode global, garantindo segurança de tipos).  
 * **Banco de Dados:** MongoDB (Replica Set para integridade transacional).  
-* **Cache & Sessão:** Redis (Cache em memória de alta velocidade).  
+* **Cache & Filas:** Redis e BullMQ (Cache em memória de alta velocidade e processamento de jobs).  
 * **Fonte da Verdade:** Pacote @elo-organico/shared (Contém Schemas Zod compartilhados para validação *full-stack*).  
-* **Gateway de Pagamento:** API Pix da **EFI Bank**.
+* **Gateway de Pagamento:** API Pix da **EFI Bank** (`sdk-node-apis-efi`).
 
 ### **2.3. Decisões de Design e Infraestrutura**
 

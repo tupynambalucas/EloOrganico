@@ -23,15 +23,13 @@
     },
     "showMemoryUsage": true,
     "showModelInfoInChat": true,
-    "showUserIdentity": true
+    "showUserIdentity": true,
+    "incrementalRendering": false
   },
   "mcpServers": {
     "github": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github@latest"]
     }
-  },
-  "experimental": {
-    "modelSteering": true
   }
 }

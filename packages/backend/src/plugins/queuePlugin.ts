@@ -1,5 +1,5 @@
 import fp from 'fastify-plugin';
-import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import { Worker } from 'bullmq';
 import { cycleQueue, CYCLE_QUEUE_NAME, connection } from '../config/queueConfig.js';
 import type { CycleService } from '../domains/cycle/cycle.service.js';

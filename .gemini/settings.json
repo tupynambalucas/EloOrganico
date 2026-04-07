@@ -1,6 +1,6 @@
 {
   "context": {
-    "fileName": ["CONTEXT.md", "GEMINI.md", "README.md", "STYLEGRUIDE.md", "IMPLEMENTATION.md"],
+    "fileName": ["CONTEXT.md", "README.md", "STYLEGUIDE.md", "ARCHITECTURE.md", "PRODUCT.md"],
     "discoveryMaxDirs": 200,
     "loadMemoryFromIncludeDirectories": true,
     "fileFiltering": {
@@ -26,10 +26,18 @@
     "showUserIdentity": true,
     "incrementalRendering": false
   },
+  // Its necessary to create (./.gemini/.env) file containing the keys GITHUB_MCP_PAT and CONTEXT7_API_KEY with your respect API keys
   "mcpServers": {
     "github": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github@latest"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
     }
+  },
+  "experimental": {
+    "modelSteering": true
   }
 }

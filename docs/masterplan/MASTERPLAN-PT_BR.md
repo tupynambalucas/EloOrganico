@@ -52,7 +52,7 @@ A arquitetura é baseada em uma aplicação web coesa, utilizando a *stack* Java
 
 * **Gestão de Código:** Monorepo gerenciado via NPM Workspaces (backend, frontend, shared).  
 * **Backend:** Fastify v5 (Foco em API, alta taxa de transferência), Mongoose, Sentry (Monitoramento de Erros).
-* **Frontend:** React 19, Vite (Performance de build), Zustand (Gestão de Estado), TailwindCSS (Estilização), GSAP (Animações), i18next (Internacionalização).
+* **Frontend:** React 19, Vite (Performance de build), Zustand (Gestão de Estado), TailwindCSS (Estilização), GSAP (Animations), i18next (Internacionalização).
 * **Linguagem:** TypeScript (Strict Mode global, garantindo segurança de tipos).  
 * **Banco de Dados:** MongoDB (Replica Set para integridade transacional).  
 * **Cache & Filas:** Redis e BullMQ (Cache em memória de alta velocidade e processamento de jobs).  
@@ -66,7 +66,7 @@ A arquitetura é baseada em uma aplicação web coesa, utilizando a *stack* Java
 A adoção de uma arquitetura totalmente conteinerizada maximiza o controle e otimiza custos operacionais.
 
 * **Servidor:** VPS Linux (Ubuntu/Debian) de baixo custo na Hetzner Cloud.  
-* **Orquestração:** **Docker Compose** gerenciando a stack na mesma rede interna privada, garantindo segurança e latência mínima:  
+* **Orchestration:** **Docker Compose** gerenciando a stack na mesma rede interna privada, garantindo segurança e latência mínima:  
   * backend: API Node.js.  
   * frontend: Servidor Nginx (Reverse Proxy/Servidor estático).  
   * db: MongoDB configurado como Replica Set (rs0) para transações ACID.  
@@ -105,7 +105,7 @@ A arquitetura selecionada garante **previsibilidade total** dos custos de infrae
 * **Nome Escolhido:** Elo Orgânico  
 * **Conceito Central:** "De igual para igual, do solo para a mesa."  
 * **Arquétipo:** O Cara Comum / O Vizinho (Acessível, Empático, Realista e Comunitário).  
-* **Pilares:** Pertencimento, Simplicidade Honesta, Conexão Humana.  
+* **Pillars:** Pertencimento, Simplicidade Honesta, Conexão Humana.  
 * **Tom de Voz:** Próximo, Descomplicado e Parceiro ("A gente" em vez de "O Sistema").
 
 
@@ -232,3 +232,18 @@ Este fluxo detalha a jornada completa de um ciclo de partilha na nova infraestru
 * **Consolidação:** O Admin acessa relatórios de consolidação de pedidos (total por produto/produtor) para iniciar a logística.  
 * **Histórico:** Os dados são permanentemente arquivados e permanecem disponíveis para consulta futura e *BI* (Business Intelligence).
 
+## **🌐 Fase 6: Escalonamento para SaaS (Multi-tenancy)**
+
+### **6.1. Visão Estratégica**
+O objetivo de longo prazo do Elo Orgânico é evoluir de uma ferramenta comunitária de instância única para uma **Plataforma SaaS Robusta e Multi-tenant**. Isso permitirá que outras ecovilas, condomínios e comunidades privadas assinem o serviço e gerenciem seus próprios ciclos independentes de partilha de orgânicos.
+
+### **6.2. Funcionalidades Chave SaaS**
+*   **Isolamento de Tenants:** Dados e configurações independentes para cada comunidade (subdomínios ou IDs de tenant).
+*   **Auto-gestão do Produtor:** Fazendeiros ganham seu próprio login para gerenciar catálogos, preços e estoque diretamente, reduzindo a carga do Admin.
+*   **Gestão de Assinaturas:** Níveis de serviço diferenciados para comunidades com base no volume de pedidos ou requisitos de funcionalidades.
+*   **Catálogo Global:** Capacidade para produtores listarem produtos em múltiplos "tenants" de comunidades que eles atendem.
+
+### **6.3. Evolução Arquitetural**
+*   **Banco de Dados:** Transição para um esquema multi-tenant (banco de dados compartilhado com isolamento de tenant ou bancos de dados separados por tenant).
+*   **API:** Roteamento dinâmico e middleware de autenticação capaz de identificar e isolar requisições específicas de cada tenant.
+*   **Infrastructure:** Cluster escalável (Kubernetes ou similar) para lidar com o crescimento do tráfego de múltiplas comunidades simultaneamente.

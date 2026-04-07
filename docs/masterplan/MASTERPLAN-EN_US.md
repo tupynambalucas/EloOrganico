@@ -144,3 +144,20 @@ This flow details the complete journey of a sharing cycle in the new **"Always-o
 *   **Closing:** The system **automatically** blocks the creation of new orders at the configured deadline.
 *   **Consolidation:** The Admin accesses consolidated order reports (total per product/producer) to begin logistics.
 *   **History:** The data is permanently archived and remains available for future consultation and *Business Intelligence* (BI).
+
+## **🌐 Phase 6: Long-Term Scaling to SaaS (Post-v1.0)**
+
+### **6.1. Strategic Vision**
+**IMPORTANT:** This phase describes the long-term evolution of the project. The current focus is strictly on Phase 1-5 to deliver a polished single-instance product. SaaS development will only commence after the core application is fully operational.
+The long-term goal of Elo Orgânico is to evolve from a single-instance community tool into a **Robust Multi-tenant SaaS Platform**. This will allow other ecovillages, condominiums, and private communities to subscribe and manage their own independent organic sharing cycles.
+
+### **6.2. Key SaaS Features**
+*   **Tenant Isolation:** Independent data and configuration for each community (subdomains or tenant IDs).
+*   **Producer Self-Management:** Farmers gain their own login to manage catalogs, prices, and stock directly, reducing the Admin's workload.
+*   **Subscription Management:** Tiered service levels for communities based on order volume or feature requirements.
+*   **Global Catalog:** Ability for producers to list products across multiple community "tenants" they serve.
+
+### **6.3. Architectural Evolution**
+*   **Database:** Shift to a multi-tenant schema (shared database with tenant isolation or separate databases per tenant).
+*   **API:** Dynamic routing and authentication middleware capable of identifying and isolating tenant-specific requests.
+*   **Infrastructure:** Scalable cluster (Kubernetes or similar) to handle growing traffic from multiple communities simultaneously.

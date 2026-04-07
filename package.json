@@ -45,20 +45,19 @@
     "prod:down": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "devDependencies": {
-    "@types/node": "^25.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.55.0",
+    "@types/node": "^25.2.1",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
     "concurrently": "^9.2.1",
-    "eslint": "^10.0.0",
+    "eslint": "^9.39.2",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.0",
-    "npm": "^11.7.0",
     "prettier": "^3.8.1",
     "rimraf": "^6.1.2",
-    "turbo": "^2.8.5",
     "typescript": "5.9.3",
-    "typescript-eslint": "^8.55.0"
+    "typescript-eslint": "^8.54.0",
+    "tsx": "^4.21.0"
   }
 }

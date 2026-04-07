@@ -1,7 +1,9 @@
 # Elo Orgânico - Project Context
 
 ## Project Overview
-**Elo Orgânico** is an organic product trading platform designed to connect producers and consumers. The core business logic revolves around **scheduled sales cycles** ("ciclos de venda programados").
+**Elo Orgânico** is an organic product trading platform designed to connect producers and consumers through **scheduled sales cycles**. 
+
+**STRATEGIC FOCUS:** The current and absolute priority is to deliver a **complete, 100% functional, and polished single-instance application** for a private ecovillage. While the project is architected to eventually scale into a **multi-tenant SaaS platform**, this is a long-term goal. **Do not implement multi-tenant logic, tenant IDs, or cluster routing at this stage.** All development must focus on single-community excellence.
 
 This project is a **monorepo** managed with **NPM Workspaces** and **Turbo**, containing a Fastify backend, a React frontend, and a shared library for contracts/types.
 
@@ -50,6 +52,7 @@ To populate the database with initial data (e.g., Admin user):
 
 ## Development Conventions
 
+*   **Single-Instance First:** All code generation must assume a single-tenant environment. Avoid premature optimization for multi-tenancy.
 *   **Shared First:** When modifying data structures, **ALWAYS** start by updating `packages/shared`. Changes here propagate to both backend and frontend.
 *   **Style Guide:** Adhere strictly to the guidelines in `.gemini/styleguide.md`.
 *   **Language Policy (Strict):** English is the official language for all aspects of this project.

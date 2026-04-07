@@ -37,7 +37,13 @@ const SessionPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   });
 
   await server.register(fastifyJwt, {
-    secret: server.config.JWT_SECRET,
+    secret: server.config.JWT_SECRET.trim(), // Mitigate GHSA-mvf2-f6gm-w987: Always trim secrets
+    verify: {
+      algorithms: ['HS256'], // Mitigate GHSA-mvf2-f6gm-w987: Force symmetric HS256 to prevent confusion with public keys
+    },
+    sign: {
+      algorithm: 'HS256',
+    },
   });
 
   server.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -48,7 +54,9 @@ const SessionPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         return reply.status(401).send({ message: 'Não autenticado' });
       }
 
-      const decoded = server.jwt.verify<UserPayload>(token);
+      const decoded = server.jwt.verify<UserPayload>(token, {
+        algorithms: ['HS256'], // Redundant but safer: ensure HS256 is enforced
+      });
       request.user = decoded;
     } catch {
       return reply.status(401).send({ message: 'Sessão inválida ou expirada' });

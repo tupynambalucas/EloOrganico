@@ -43,13 +43,18 @@ export class AuthService {
       throw new AppError('INVALID_PASSWORD', 401);
     }
 
-    const token = this.server.jwt.sign({
-      _id: String(user._id),
-      email: user.email,
-      username: user.username,
-      role: user.role,
-      icon: user.icon,
-    });
+    const token = this.server.jwt.sign(
+      {
+        _id: String(user._id),
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        icon: user.icon,
+      },
+      {
+        algorithm: 'HS256', // Force symmetric HS256 (Security mitigation)
+      },
+    );
 
     return { user, token };
   }
